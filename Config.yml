@@ -1,0 +1,39 @@
+backend:
+  name: github
+  repo: YOUR-GITHUB-USERNAME/YOUR-REPO
+  branch: main
+  base_url: https://YOUR-OAUTH-PROXY.workers.dev
+media_folder: images
+public_folder: /images
+collections:
+  - name: site
+    label: Website
+    files:
+      - name: content
+        label: Everything
+        file: content.json
+        fields:
+          - {name: name, label: Your name, widget: string}
+          - {name: kicker, label: Small line above name, widget: string}
+          - {name: role, label: Line under name, widget: string}
+          - {name: intro, label: Who-am-I heading, widget: string}
+          - {name: about, label: About text, widget: text}
+          - {name: portrait, label: Your portrait, widget: image, required: false}
+          - {name: stats, label: Key numbers, widget: list, fields: [{name: n, label: Number, widget: string}, {name: l, label: Label, widget: string}]}
+          - {name: points, label: Key points, widget: list, fields: [{name: t, label: Title, widget: string}, {name: d, label: Description, widget: text}]}
+          - {name: brands, label: Brands worked with, widget: list, fields: [{name: name, label: Name, widget: string}]}
+          - name: clients
+            label: Client galleries (all photos here feed the shuffle and portfolio)
+            widget: list
+            fields:
+              - {name: name, label: Client / gallery name, widget: string}
+              - {name: slug, label: Link name (lowercase-with-dashes), widget: string}
+              - {name: date, label: Date, widget: string, required: false}
+              - {name: story, label: Short story, widget: text, required: false}
+              - {name: cover, label: Cover photo (optional), widget: image, required: false}
+              - {name: private, label: "Private? (hidden from site; only reachable by link)", widget: boolean, default: false}
+              - {name: photos, label: Photos (select many at once), widget: image, allow_multiple: true, required: false}
+          - {name: email, label: Email, widget: string}
+          - {name: phone, label: WhatsApp (country code, no +), widget: string, required: false}
+          - {name: instagram, label: Instagram URL, widget: string}
+          - {name: formEndpoint, label: Formspree URL, widget: string}
