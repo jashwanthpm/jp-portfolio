@@ -1,0 +1,25 @@
+{
+  "name": "Jashwanth JP",
+  "kicker": "Capturing the raw emotions of life's biggest days",
+  "role": "Wedding & pre-wedding photographer — honest, heartfelt, timeless frames.",
+  "intro": "Discover the heartfelt moments captured by JP",
+  "about": "Hi, I'm Jashwanth, a wedding photographer who loves capturing real emotions and meaningful moments. I focus on telling stories through natural, heartfelt images. I believe the best photos are the ones that feel honest and timeless. Let's create memories you'll cherish forever.",
+  "portrait": "",
+  "stats": [{"n": "100+", "l": "Weddings"}, {"n": "5+", "l": "Years"}, {"n": "10", "l": "Brands"}, {"n": "∞", "l": "Memories"}],
+  "points": [
+    {"t": "Real emotion", "d": "I stay in the background and capture moments as they happen, not as they're posed."},
+    {"t": "Natural storytelling", "d": "Heartfelt images that follow the story of your day from first look to last dance."},
+    {"t": "Honest & timeless", "d": "Edits that feel true to the day and will still feel right decades from now."},
+    {"t": "Made to cherish", "d": "Every frame is chosen to become a memory you'll want to hold on to."}
+  ],
+  "brands": [{"name": "Forever"}, {"name": "Vijayeesam"}, {"name": "Colors & Emotions"}, {"name": "Ballads of Love"}, {"name": "Karwaan"}, {"name": "Love Collective"}, {"name": "Magnum & Co."}, {"name": "BWP"}, {"name": "The Imagery House"}, {"name": "It Takes Two"}],
+  "clients": [
+    {"name": "Sample Wedding", "slug": "sample-wedding", "date": "2026", "story": "Replace with the story of this wedding.", "cover": "", "private": false, "photos": []},
+    {"name": "Sample Pre-wedding", "slug": "sample-pre-wedding", "date": "2026", "story": "Replace with the story of this shoot.", "cover": "", "private": false, "photos": []},
+    {"name": "Private Family Gallery", "slug": "family-2026", "date": "2026", "story": "Unlisted — only people with the link can find it.", "cover": "", "private": true, "photos": []}
+  ],
+  "email": "jashwanthjp18@gmail.com",
+  "phone": "",
+  "instagram": "https://instagram.com/jp_jashwanth",
+  "formEndpoint": "https://formspree.io/f/YOUR_FORM_ID"
+}
