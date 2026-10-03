@@ -52,6 +52,7 @@ gallery(){
 },
 about(){},
 contact(){
+ if((C.faq||[]).length)$('#faq').innerHTML=C.faq.map(x=>`<details><summary>${x.q}</summary><p>${x.a}</p></details>`).join('');
  $('#f').onsubmit=async e=>{e.preventDefault();txt('ok','Sending…');
  try{const r=await fetch(C.formEndpoint,{method:'POST',body:new FormData(e.target),headers:{Accept:'application/json'}});if(!r.ok)throw 0;e.target.reset();txt('ok',"Thank you — I'll reply to you personally, soon.")}catch{txt('ok','Could not send. Please email me directly.')}}}
 };
