@@ -29,15 +29,12 @@ function common(){
  const wa=$('#wa');if(wa&&C.phone){wa.hidden=false;wa.href='https://wa.me/'+C.phone}
 }
 const cards=(list)=>list.map(c=>`<a class="cd rv" href="gallery.html?c=${c.slug}">${img(c.cover||(c.photos||[])[0],c.name.length%5)}<div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.name}</h3></div></a>`).join('');
-function igInit(){
- const ps=(C.igPosts||[]).map(x=>(x.url||'').split('?')[0].trim()).filter(u=>/instagram\.com\/(p|reel|tv)\//.test(u)),hl=(C.igHighlights||[]).filter(h=>h.url||h.cover),sec=$('#igsec');
- if(!sec)return;if(!ps.length&&!hl.length){sec.style.display='none';return}
+function igInit(){const sec=$('#igsec');if(!sec)return;const it=(C.igItems||[]).filter(x=>x.cover);
+ if(!it.length){sec.style.display='none';return}
  const hn=(C.instagram||'').replace(/\/$/,'').split('/').pop();$('#igbtn').href=C.instagram||'#';$('#igbtn').textContent=hn?'@'+hn+' ↗':'Follow ↗';
- $('#hl').innerHTML=hl.map(h=>`<a class="hi" href="${h.url||C.instagram}" target="_blank" rel="noopener"><i>${img(h.cover)}</i><span>${h.title||''}</span></a>`).join('');
- $('#hl').style.display=hl.length?'':'none';$('.igw').style.display=ps.length?'':'none';
- $('#igs').innerHTML=ps.map(u=>`<div><blockquote class="instagram-media" data-instgrm-permalink="${u.replace(/\/?$/,'/')}" data-instgrm-version="14"><a href="${u}"></a></blockquote></div>`).join('');
- $('#igl').onclick=()=>$('#igs').scrollBy({left:-360,behavior:'smooth'});$('#igr').onclick=()=>$('#igs').scrollBy({left:360,behavior:'smooth'});
- if(!ps.length)return;if(window.instgrm)window.instgrm.Embeds.process();else if(!window.__ig){window.__ig=1;const s=document.createElement('script');s.async=1;s.src='https://www.instagram.com/embed.js';document.body.appendChild(s)}}
+ const half=Array.from({length:Math.max(1,Math.ceil(8/it.length))},()=>it).flat(),all=[...half,...half];
+ $('#igr').innerHTML=all.map(x=>`<a class="igi" href="${x.url||C.instagram}" target="_blank" rel="noopener"><img src="${x.cover}" alt="" loading="lazy"></a>`).join('');
+ $('#igr').style.setProperty('--t',Math.max(24,half.length*5)+'s')}
 const INIT={
 home(){
  txt('kick',C.kicker);txt('role',C.role);const all=pics(),sl=shuf(all).slice(0,5);
