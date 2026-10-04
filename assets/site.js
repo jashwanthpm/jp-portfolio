@@ -29,14 +29,26 @@ function common(){
  const wa=$('#wa');if(wa&&C.phone){wa.hidden=false;wa.href='https://wa.me/'+C.phone}
 }
 const cards=(list)=>list.map(c=>`<a class="cd rv" href="gallery.html?c=${c.slug}">${img(c.cover||(c.photos||[])[0],c.name.length%5)}<div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.name}</h3></div></a>`).join('');
+function igInit(){
+ const ps=(C.igPosts||[]).map(x=>(x.url||'').split('?')[0].trim()).filter(u=>/instagram\.com\/(p|reel|tv)\//.test(u)),hl=(C.igHighlights||[]).filter(h=>h.url||h.cover),sec=$('#igsec');
+ if(!sec)return;if(!ps.length&&!hl.length){sec.style.display='none';return}
+ const hn=(C.instagram||'').replace(/\/$/,'').split('/').pop();$('#igbtn').href=C.instagram||'#';$('#igbtn').textContent=hn?'@'+hn+' ↗':'Follow ↗';
+ $('#hl').innerHTML=hl.map(h=>`<a class="hi" href="${h.url||C.instagram}" target="_blank" rel="noopener"><i>${img(h.cover)}</i><span>${h.title||''}</span></a>`).join('');
+ $('#hl').style.display=hl.length?'':'none';$('.igw').style.display=ps.length?'':'none';
+ $('#igs').innerHTML=ps.map(u=>`<div><blockquote class="instagram-media" data-instgrm-permalink="${u.replace(/\/?$/,'/')}" data-instgrm-version="14"><a href="${u}"></a></blockquote></div>`).join('');
+ $('#igl').onclick=()=>$('#igs').scrollBy({left:-360,behavior:'smooth'});$('#igr').onclick=()=>$('#igs').scrollBy({left:360,behavior:'smooth'});
+ if(!ps.length)return;if(window.instgrm)window.instgrm.Embeds.process();else if(!window.__ig){window.__ig=1;const s=document.createElement('script');s.async=1;s.src='https://www.instagram.com/embed.js';document.body.appendChild(s)}}
 const INIT={
 home(){
  txt('kick',C.kicker);txt('role',C.role);const all=pics(),sl=shuf(all).slice(0,5);
  $('#slides').innerHTML=(sl.length?sl:[{}]).map((p,i)=>`<div class="${i?'':'on'}" style="${p.src?`background-image:url('${p.src}')`:'background:radial-gradient(90% 80% at 30% 20%,#4a3426,#0d0c0b)'}"></div>`).join('');
  let k=0;const ds=$$('#slides div');clearInterval(window.SL);if(ds.length>1)window.SL=setInterval(()=>{ds[k].classList.remove('on');k=(k+1)%ds.length;ds[k].classList.add('on')},5500);
- const f=()=>{const s=all.length?shuf(all).slice(0,6):demo(6);$('#feat').innerHTML=s.map(p=>tile(p,p.client)).join('');bind($('#feat'),s)};f();$('#sh').onclick=f;
+ const f=()=>{const s=all.length?shuf(all).slice(0,6):demo(6);$('#feat').innerHTML=s.map(p=>tile(p)).join('');bind($('#feat'),s)};f();$('#sh').onclick=f;
  $('#gal').innerHTML=cards((C.clients||[]).filter(c=>!c.private).slice(0,3));
- const hm=C.home||[];let ref=$('.hero');hm.forEach(h=>{const e=$(`[data-sec="${h.id}"]`);if(!e)return;e.style.display=h.show===false?'none':'';ref.after(e);ref=e});
+ const DEF=['who','stats','feat','pts','brands','ig','gal','cta'];let hm=(C.home||[]).slice();
+ DEF.forEach((id,i)=>{if(!hm.some(h=>h.id==id)){const pi=hm.findIndex(h=>h.id==DEF[i-1]);hm.splice(pi+1,0,{id,show:true})}});
+ let ref=$('.hero');hm.forEach(h=>{const e=$(`[data-sec="${h.id}"]`);if(!e)return;e.style.display=h.show===false?'none':'';ref.after(e);ref=e});
+ igInit();
 },
 portfolio(){
  const all=pics(),names=[...new Set(all.map(p=>p.client))],g=$('#grid');
