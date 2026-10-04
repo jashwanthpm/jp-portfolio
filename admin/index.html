@@ -33,7 +33,7 @@ const enc=s=>btoa(unescape(encodeURIComponent(s))),dec=b=>decodeURIComponent(esc
 const hd=()=>({Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'});
 const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const HOME=[['who','Who am I'],['stats','Key numbers'],['feat','Selected frames (shuffle)'],['pts','How I work'],['brands','Brands strip'],['ig','Instagram strip'],['gal','Client galleries'],['cta','Booking call-to-action']];
-const NEW={stats:()=>({n:'',l:''}),points:()=>({t:'',d:''}),brands:()=>({name:''}),igItems:()=>({url:'',cover:''}),faq:()=>({q:'',a:''}),clients:()=>({name:'New gallery',slug:'gallery-'+(Date.now()%10000),date:'',story:'',cover:'',private:false,photos:[]})};
+const NEW={stats:()=>({n:'',l:''}),points:()=>({t:'',d:''}),brands:()=>({name:''}),igItems:()=>({url:'',covers:[]}),faq:()=>({q:'',a:''}),clients:()=>({name:'New gallery',slug:'gallery-'+(Date.now()%10000),date:'',story:'',cover:'',private:false,photos:[]})};
 const msg=(t,e)=>{$('#msg').textContent=t||'';$('#msg').className=e?'e':''};
 const touch=()=>{dirty=true;$('#save').disabled=false;msg('Unsaved changes')};
 const src=v=>blobs[v]||(v&&v[0]=='/'?'..'+v:v);
@@ -43,7 +43,8 @@ const imf=(p,l)=>{const v=g(D,p);return `<label>${l}</label><div class="ih">${v?
 const ctl=(l,i,n,nd)=>`<button class="ib" data-act="up" data-l="${l}" data-i="${i}" ${i?'':'disabled'}>↑</button><button class="ib" data-act="dn" data-l="${l}" data-i="${i}" ${i<n-1?'':'disabled'}>↓</button>${nd?'':`<button class="ib" data-act="del" data-l="${l}" data-i="${i}">✕</button>`}`;
 const list=(l,t,row,add)=>{const a=D[l];return a.map((x,i)=>`<div class="item"><div class="ih"><span>${esc(t(x,i))}</span>${ctl(l,i,a.length)}</div>${row(i)}</div>`).join('')+`<button class="add" data-act="add" data-l="${l}">+ ${add}</button>`};
 const sec=(id,t,b)=>`<details data-id="${id}" ${opn.has(id)?'open':''}><summary>${t}</summary><div>${b}</div></details>`;
-const photos=i=>{const a=D.clients[i].photos;return `<label>Photos (${a.length}) · drag to reorder</label><div class="pg">${a.map((p,k)=>`<div draggable="true" data-i="${i}" data-k="${k}"><img src="${esc(src(p))}"><i>${k+1}</i><button class="x" data-act="pdel" data-i="${i}" data-k="${k}">✕</button></div>`).join('')}</div><div class="drop" data-act="padd" data-i="${i}">Drop photos here or click to add (auto-resized)</div>`};
+const arr=(g,i)=>g=='ig'?D.igItems[i].covers:D.clients[i].photos;
+const photos=(i,g='c')=>{const a=arr(g,i);return `<label>${g=='ig'?'Pictures — add every slide, in order':'Photos'} (${a.length}) · drag to reorder</label><div class="pg">${a.map((p,k)=>`<div draggable="true" data-g="${g}" data-i="${i}" data-k="${k}"><img src="${esc(src(p))}"><i>${k+1}</i><button class="x" data-act="pdel" data-g="${g}" data-i="${i}" data-k="${k}">✕</button></div>`).join('')}</div><div class="drop" data-act="padd" data-g="${g}" data-i="${i}">Drop pictures here or click to add (auto-resized)</div>`};
 function render(){
  const y=side.scrollTop;
  side.innerHTML=
@@ -52,7 +53,7 @@ function render(){
  sec('n','Key numbers',list('stats',x=>`${x.n} ${x.l}`,i=>f(`stats.${i}.n`,'Number')+f(`stats.${i}.l`,'Label'),'Add number'))+
  sec('p','How I work',list('points',x=>x.t||'New point',i=>f(`points.${i}.t`,'Title')+f(`points.${i}.d`,'Description',3),'Add point'))+
  sec('r','Brands worked with',list('brands',x=>x.name||'New brand',i=>f(`brands.${i}.name`,'Name'),'Add brand'))+
- sec('i','Instagram strip',`<p style="color:var(--m);margin:10px 0 0">Paste links to your highlights, posts or reels. Their pictures slide across your home page and a click opens Instagram. If the cover can't be read automatically, upload it.</p>`+list('igItems',x=>x.url?x.url.replace(/^https?:\/\/(www\.)?instagram\.com\//,'').slice(0,30):'New item',i=>f(`igItems.${i}.url`,'Instagram link')+imf(`igItems.${i}.cover`,'Cover picture')+`<button data-act="auto" data-i="${i}" style="margin-top:10px">Find cover from link</button>`,'Add Instagram item'))+
+ sec('i','Instagram strip',`<p style="color:var(--m);margin:10px 0 0">Paste links to your highlights, posts or reels. Their pictures slide across your home page at their original proportions, and a click opens Instagram. For a post with several slides, add every slide picture in order. If a cover can't be read automatically, upload it.</p>`+list('igItems',x=>x.url?x.url.replace(/^https?:\/\/(www\.)?instagram\.com\//,'').slice(0,30):'New item',i=>f(`igItems.${i}.url`,'Instagram link')+photos(i,'ig')+`<button data-act="auto" data-i="${i}" style="margin-top:10px">Find cover from link</button>`,'Add Instagram item'))+
  sec('c','Client galleries',list('clients',x=>x.name+(x.private?' (private)':''),i=>f(`clients.${i}.name`,'Gallery / client name')+f(`clients.${i}.slug`,'Link name')+f(`clients.${i}.date`,'Date')+f(`clients.${i}.story`,'Short story',3)+`<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-p="clients.${i}.private" ${D.clients[i].private?'checked':''}> Private (hidden from site, link only)</label>`+imf(`clients.${i}.cover`,'Cover photo (optional)')+photos(i),'Add gallery'))+
  sec('f','FAQ (contact page)',list('faq',x=>x.q||'New question',i=>f(`faq.${i}.q`,'Question')+f(`faq.${i}.a`,'Answer',3),'Add question'))+
  sec('k','Contact & bookings',f('email','Email')+f('phone','WhatsApp (country code, no +)')+f('instagram','Instagram URL')+f('formEndpoint','Formspree URL (receives bookings)'));
@@ -68,7 +69,7 @@ $('#dk').onclick=()=>{$('#st').classList.remove('m');$('#dk').className='on';$('
 async function prep(file){const bm=await createImageBitmap(file),mk=m=>{const s=Math.min(1,m/Math.max(bm.width,bm.height)),c=document.createElement('canvas');c.width=bm.width*s|0;c.height=bm.height*s|0;c.getContext('2d').drawImage(bm,0,0,c.width,c.height);return c};
  const p='/images/'+Date.now()+'-'+Math.random().toString(36).slice(2,6)+'.jpg';pend[p]=mk(2000).toDataURL('image/jpeg',.85).split(',')[1];blobs[p]=mk(700).toDataURL('image/jpeg',.7);return p}
 async function ingest(files,t){files=[...files].filter(x=>x.type.startsWith('image/'));if(!files.length)return;msg('Preparing photos…');const ps=[];for(const x of files)ps.push(await prep(x));
- if(t.p!=null)st(D,t.p,ps[0]);else D.clients[t.i].photos.push(...ps);render();touch();push();msg(ps.length+' photo(s) added — click Save & publish')}
+ if(t.p!=null)st(D,t.p,ps[0]);else arr(t.g,t.i).push(...ps);render();touch();push();msg(ps.length+' photo(s) added — click Save & publish')}
 fi.onchange=()=>{const x=[...fi.files];fi.value='';ingest(x,tgt)};
 /* ---------- events ---------- */
 side.addEventListener('input',e=>{const t=e.target,p=t.dataset.p;if(!p)return;const v=t.type=='checkbox'?t.checked:t.value;
@@ -81,28 +82,28 @@ side.onclick=e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.d
  else if(a=='add')D[l].push(NEW[l]());
  else if(a=='eye')D.home[i].show=!D.home[i].show;
  else if(a=='clr')st(D,p,'');
- else if(a=='pdel')D.clients[i].photos.splice(k,1);
+ else if(a=='pdel')arr(b.dataset.g,i).splice(k,1);
  else if(a=='auto'){autoCover(i);return}
  else if(a=='pick'){tgt={p};fi.multiple=false;fi.click();return}
- else if(a=='padd'){tgt={i};fi.multiple=true;fi.click();return}
+ else if(a=='padd'){tgt={i,g:b.dataset.g};fi.multiple=true;fi.click();return}
  render();touch();push();if(l=='clients'||a=='pdel')pages()};
-side.addEventListener('dragstart',e=>{const d=e.target.closest('.pg div');if(d)drag={i:+d.dataset.i,k:+d.dataset.k}});
+side.addEventListener('dragstart',e=>{const d=e.target.closest('.pg div');if(d)drag={g:d.dataset.g,i:+d.dataset.i,k:+d.dataset.k}});
 side.addEventListener('dragover',e=>{const z=e.target.closest('.drop,.pg div');if(z){e.preventDefault();if(z.classList.contains('drop'))z.classList.add('h')}});
 side.addEventListener('dragleave',e=>{const z=e.target.closest('.drop');if(z)z.classList.remove('h')});
 side.addEventListener('drop',e=>{const z=e.target.closest('.drop,.pg div');if(!z)return;e.preventDefault();z.classList.remove('h');
- if(e.dataTransfer.files.length)return ingest(e.dataTransfer.files,{i:+z.dataset.i});
- if(drag&&z.matches('.pg div')&&+z.dataset.i==drag.i){const a=D.clients[drag.i].photos,[m]=a.splice(drag.k,1);a.splice(+z.dataset.k,0,m);drag=null;render();touch();push()}});
-side.addEventListener('change',e=>{const m=(e.target.dataset.p||'').match(/^igItems\.(\d+)\.url$/);if(m&&!D.igItems[+m[1]].cover)autoCover(+m[1])});
+ if(e.dataTransfer.files.length)return ingest(e.dataTransfer.files,{i:+z.dataset.i,g:z.dataset.g});
+ if(drag&&z.matches('.pg div')&&+z.dataset.i==drag.i&&z.dataset.g==drag.g){const a=arr(drag.g,drag.i),[m]=a.splice(drag.k,1);a.splice(+z.dataset.k,0,m);drag=null;render();touch();push()}});
+side.addEventListener('change',e=>{const m=(e.target.dataset.p||'').match(/^igItems\.(\d+)\.url$/);if(m&&!D.igItems[+m[1]].covers.length)autoCover(+m[1])});
 async function autoCover(i){const it=D.igItems[i];if(!it.url)return msg('Paste the Instagram link first.',1);msg('Reading the Instagram link…');
  try{const j=await (await fetch('https://api.microlink.io/?url='+encodeURIComponent(it.url))).json(),im=j.data&&j.data.image&&j.data.image.url;
   if(!im||/static\.cdninstagram|logo/i.test(im)||/log ?in/i.test(j.data.title||''))throw 0;
-  it.cover=await prep(await (await fetch(im)).blob());render();touch();push();msg('Cover found ✓ — click Save & publish')}
+  it.covers.push(await prep(await (await fetch(im)).blob()));render();touch();push();msg('Cover found ✓ — click Save & publish')}
  catch{msg("Instagram didn't share a cover for this link — please upload the cover picture.",1)}}
 /* ---------- GitHub ---------- */
 async function load(){const r=await fetch(API+'content.json?ref='+BR+'&t='+Date.now(),{headers:hd()});
  if(!r.ok){$('#login').hidden=false;$('#le').textContent=r.status==401?'That token was not accepted.':'Could not load content ('+r.status+'). Check the token has Contents access to '+REPO+'.';return}
  $('#login').hidden=true;const j=await r.json();sha=j.sha;D=JSON.parse(dec(j.content));
- if(!D.igItems)D.igItems=(D.igHighlights||[]).filter(h=>h.url).map(h=>({url:h.url,cover:h.cover||''}));delete D.igPosts;delete D.igHighlights;['stats','points','brands','clients','faq','igItems'].forEach(k=>D[k]=D[k]||[]);D.clients.forEach(c=>c.photos=c.photos||[]);
+ if(!D.igItems)D.igItems=(D.igHighlights||[]).filter(h=>h.url).map(h=>({url:h.url,cover:h.cover||''}));delete D.igPosts;delete D.igHighlights;['stats','points','brands','clients','faq','igItems'].forEach(k=>D[k]=D[k]||[]);D.clients.forEach(c=>c.photos=c.photos||[]);D.igItems.forEach(x=>{x.covers=x.covers||(x.cover?[x.cover]:[]);delete x.cover});
  const cur=(D.home||[]).filter(h=>HOME.some(x=>x[0]==h.id));HOME.forEach((x,i)=>{if(!cur.some(h=>h.id==x[0])){const pi=cur.findIndex(h=>h.id==(HOME[i-1]||[])[0]);cur.splice(pi+1,0,{id:x[0],show:true})}});D.home=cur;
  render();pages();go();msg('Loaded')}
 async function save(){$('#save').disabled=true;msg('Saving…');
