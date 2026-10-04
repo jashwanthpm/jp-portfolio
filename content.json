@@ -106,5 +106,35 @@
   "email": "jashwanthjp18@gmail.com",
   "phone": "+91 9482819581",
   "instagram": "https://instagram.com/jp_jashwanth",
-  "formEndpoint": "https://formspree.io/f/YOUR_FORM_ID"
+  "formEndpoint": "https://formspree.io/f/YOUR_FORM_ID",
+  "home": [
+    {
+      "id": "who",
+      "show": true
+    },
+    {
+      "id": "stats",
+      "show": true
+    },
+    {
+      "id": "feat",
+      "show": true
+    },
+    {
+      "id": "pts",
+      "show": true
+    },
+    {
+      "id": "brands",
+      "show": true
+    },
+    {
+      "id": "gal",
+      "show": true
+    },
+    {
+      "id": "cta",
+      "show": true
+    }
+  ]
 }
