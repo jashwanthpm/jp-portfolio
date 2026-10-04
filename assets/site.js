@@ -56,5 +56,5 @@ contact(){
  $('#f').onsubmit=async e=>{e.preventDefault();txt('ok','Sending…');
  try{const r=await fetch(C.formEndpoint,{method:'POST',body:new FormData(e.target),headers:{Accept:'application/json'}});if(!r.ok)throw 0;e.target.reset();txt('ok',"Thank you — I'll reply to you personally, soon.")}catch{txt('ok','Could not send. Please email me directly.')}}}
 };
-fetch('content.json').then(r=>r.json()).catch(()=>({})).then(c=>{C=c;shell();common();INIT[P]&&INIT[P]();
+fetch('content.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).catch(()=>({})).then(c=>{C=c;shell();common();INIT[P]&&INIT[P]();
  const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('on'),io.unobserve(e.target))),{threshold:.1});$$('.rv').forEach(x=>io.observe(x))});
