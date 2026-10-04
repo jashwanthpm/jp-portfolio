@@ -31,7 +31,7 @@ collections:
               - {name: story, label: Short story, widget: text, required: false}
               - {name: cover, label: Cover photo (optional), widget: image, required: false}
               - {name: private, label: "Private? (hidden from site; only reachable by link)", widget: boolean, default: false}
-              - {name: photos, label: Photos (select many at once), widget: image, allow_multiple: true, required: false}
+            - {name: photos, label: Photos (select many at once), widget: image, multiple: true, required: false}
           - name: faq
             label: FAQ (contact page)
             widget: list
