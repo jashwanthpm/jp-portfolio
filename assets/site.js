@@ -29,12 +29,12 @@ function common(){
  const wa=$('#wa');if(wa&&C.phone){wa.hidden=false;wa.href='https://wa.me/'+C.phone}
 }
 const cards=(list)=>list.map(c=>`<a class="cd rv" href="gallery.html?c=${c.slug}">${img(c.cover||(c.photos||[])[0],c.name.length%5)}<div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.name}</h3></div></a>`).join('');
-function igInit(){const sec=$('#igsec');if(!sec)return;const it=(C.igItems||[]).filter(x=>x.cover);
+function igInit(){const sec=$('#igsec');if(!sec)return;const it=(C.igItems||[]).flatMap(x=>(x.covers||(x.cover?[x.cover]:[])).map(s=>({src:s,url:x.url})));
  if(!it.length){sec.style.display='none';return}
  const hn=(C.instagram||'').replace(/\/$/,'').split('/').pop();$('#igbtn').href=C.instagram||'#';$('#igbtn').textContent=hn?'@'+hn+' ↗':'Follow ↗';
  const half=Array.from({length:Math.max(1,Math.ceil(8/it.length))},()=>it).flat(),all=[...half,...half];
- $('#igr').innerHTML=all.map(x=>`<a class="igi" href="${x.url||C.instagram}" target="_blank" rel="noopener"><img src="${x.cover}" alt="" loading="lazy"></a>`).join('');
- $('#igr').style.setProperty('--t',Math.max(24,half.length*5)+'s')}
+ $('#igr').innerHTML=all.map(x=>`<a class="igi" href="${x.url||C.instagram}" target="_blank" rel="noopener"><img src="${x.src}" alt=""></a>`).join('');
+ $('#igr').style.setProperty('--t',Math.max(30,half.length*7)+'s')}
 const INIT={
 home(){
  txt('kick',C.kicker);txt('role',C.role);const all=pics(),sl=shuf(all).slice(0,5);
