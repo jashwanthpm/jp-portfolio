@@ -31,13 +31,13 @@ collections:
               - {name: story, label: Short story, widget: text, required: false}
               - {name: cover, label: Cover photo (optional), widget: image, required: false}
               - {name: private, label: "Private? (hidden from site; only reachable by link)", widget: boolean, default: false}
-            - {name: photos, label: Photos (select many at once), widget: image, multiple: true, required: false}
+              - {name: photos, label: Photos (select many at once), widget: image, multiple: true, required: false}
           - name: faq
             label: FAQ (contact page)
             widget: list
             required: false
             fields: [{name: q, label: Question, widget: string}, {name: a, label: Answer, widget: text}]
           - {name: email, label: Email, widget: string}
-          - {name: phone, label: WhatsApp (country code, no +), widget: string, required: false}
+          - {name: phone, label: "WhatsApp number (country code, no +)", widget: string, required: false}
           - {name: instagram, label: Instagram URL, widget: string}
           - {name: formEndpoint, label: Formspree URL, widget: string}
