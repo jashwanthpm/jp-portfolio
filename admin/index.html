@@ -32,8 +32,8 @@ const g=(o,p)=>p.split('.').reduce((a,k)=>a?.[k],o),st=(o,p,v)=>{const k=p.split
 const enc=s=>btoa(unescape(encodeURIComponent(s))),dec=b=>decodeURIComponent(escape(atob(b.replace(/\n/g,''))));
 const hd=()=>({Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'});
 const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-const HOME=[['who','Who am I'],['stats','Key numbers'],['feat','Selected frames (shuffle)'],['pts','How I work'],['brands','Brands strip'],['gal','Client galleries'],['cta','Booking call-to-action']];
-const NEW={stats:()=>({n:'',l:''}),points:()=>({t:'',d:''}),brands:()=>({name:''}),faq:()=>({q:'',a:''}),clients:()=>({name:'New gallery',slug:'gallery-'+(Date.now()%10000),date:'',story:'',cover:'',private:false,photos:[]})};
+const HOME=[['who','Who am I'],['stats','Key numbers'],['feat','Selected frames (shuffle)'],['pts','How I work'],['brands','Brands strip'],['ig','Instagram highlights & posts'],['gal','Client galleries'],['cta','Booking call-to-action']];
+const NEW={stats:()=>({n:'',l:''}),points:()=>({t:'',d:''}),brands:()=>({name:''}),igPosts:()=>({url:''}),igHighlights:()=>({title:'',cover:'',url:''}),faq:()=>({q:'',a:''}),clients:()=>({name:'New gallery',slug:'gallery-'+(Date.now()%10000),date:'',story:'',cover:'',private:false,photos:[]})};
 const msg=(t,e)=>{$('#msg').textContent=t||'';$('#msg').className=e?'e':''};
 const touch=()=>{dirty=true;$('#save').disabled=false;msg('Unsaved changes')};
 const src=v=>blobs[v]||(v&&v[0]=='/'?'..'+v:v);
@@ -52,6 +52,7 @@ function render(){
  sec('n','Key numbers',list('stats',x=>`${x.n} ${x.l}`,i=>f(`stats.${i}.n`,'Number')+f(`stats.${i}.l`,'Label'),'Add number'))+
  sec('p','How I work',list('points',x=>x.t||'New point',i=>f(`points.${i}.t`,'Title')+f(`points.${i}.d`,'Description',3),'Add point'))+
  sec('r','Brands worked with',list('brands',x=>x.name||'New brand',i=>f(`brands.${i}.name`,'Name'),'Add brand'))+
+ sec('i','Instagram',`<p style="color:var(--m);margin:10px 0 0">Paste links of your posts or reels; they play on your site. Highlights show as circles that open on Instagram. Your profile link is under Contact.</p><label>Posts &amp; reels</label>`+list('igPosts',x=>x.url||'New post link',i=>f(`igPosts.${i}.url`,'Post / reel link (instagram.com/p/… or /reel/…)'),'Add post or reel')+`<label style="margin-top:18px">Highlights</label>`+list('igHighlights',x=>x.title||'New highlight',i=>f(`igHighlights.${i}.title`,'Title')+imf(`igHighlights.${i}.cover`,'Cover image')+f(`igHighlights.${i}.url`,'Highlight link (optional)'),'Add highlight'))+
  sec('c','Client galleries',list('clients',x=>x.name+(x.private?' (private)':''),i=>f(`clients.${i}.name`,'Gallery / client name')+f(`clients.${i}.slug`,'Link name')+f(`clients.${i}.date`,'Date')+f(`clients.${i}.story`,'Short story',3)+`<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-p="clients.${i}.private" ${D.clients[i].private?'checked':''}> Private (hidden from site, link only)</label>`+imf(`clients.${i}.cover`,'Cover photo (optional)')+photos(i),'Add gallery'))+
  sec('f','FAQ (contact page)',list('faq',x=>x.q||'New question',i=>f(`faq.${i}.q`,'Question')+f(`faq.${i}.a`,'Answer',3),'Add question'))+
  sec('k','Contact & bookings',f('email','Email')+f('phone','WhatsApp (country code, no +)')+f('instagram','Instagram URL')+f('formEndpoint','Formspree URL (receives bookings)'));
@@ -94,8 +95,8 @@ side.addEventListener('drop',e=>{const z=e.target.closest('.drop,.pg div');if(!z
 async function load(){const r=await fetch(API+'content.json?ref='+BR+'&t='+Date.now(),{headers:hd()});
  if(!r.ok){$('#login').hidden=false;$('#le').textContent=r.status==401?'That token was not accepted.':'Could not load content ('+r.status+'). Check the token has Contents access to '+REPO+'.';return}
  $('#login').hidden=true;const j=await r.json();sha=j.sha;D=JSON.parse(dec(j.content));
- ['stats','points','brands','clients','faq'].forEach(k=>D[k]=D[k]||[]);D.clients.forEach(c=>c.photos=c.photos||[]);
- const cur=(D.home||[]).filter(h=>HOME.some(x=>x[0]==h.id));D.home=[...cur,...HOME.filter(x=>!cur.some(h=>h.id==x[0])).map(x=>({id:x[0],show:true}))];
+ ['stats','points','brands','clients','faq','igPosts','igHighlights'].forEach(k=>D[k]=D[k]||[]);D.clients.forEach(c=>c.photos=c.photos||[]);
+ const cur=(D.home||[]).filter(h=>HOME.some(x=>x[0]==h.id));HOME.forEach((x,i)=>{if(!cur.some(h=>h.id==x[0])){const pi=cur.findIndex(h=>h.id==(HOME[i-1]||[])[0]);cur.splice(pi+1,0,{id:x[0],show:true})}});D.home=cur;
  render();pages();go();msg('Loaded')}
 async function save(){$('#save').disabled=true;msg('Saving…');
  try{const used=JSON.stringify(D);for(const p of Object.keys(pend)){if(!used.includes(p)){delete pend[p];continue}
