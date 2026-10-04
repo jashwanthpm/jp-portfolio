@@ -33,9 +33,10 @@ const INIT={
 home(){
  txt('kick',C.kicker);txt('role',C.role);const all=pics(),sl=shuf(all).slice(0,5);
  $('#slides').innerHTML=(sl.length?sl:[{}]).map((p,i)=>`<div class="${i?'':'on'}" style="${p.src?`background-image:url('${p.src}')`:'background:radial-gradient(90% 80% at 30% 20%,#4a3426,#0d0c0b)'}"></div>`).join('');
- let k=0;const ds=$$('#slides div');if(ds.length>1)setInterval(()=>{ds[k].classList.remove('on');k=(k+1)%ds.length;ds[k].classList.add('on')},5500);
+ let k=0;const ds=$$('#slides div');clearInterval(window.SL);if(ds.length>1)window.SL=setInterval(()=>{ds[k].classList.remove('on');k=(k+1)%ds.length;ds[k].classList.add('on')},5500);
  const f=()=>{const s=all.length?shuf(all).slice(0,6):demo(6);$('#feat').innerHTML=s.map(p=>tile(p,p.client)).join('');bind($('#feat'),s)};f();$('#sh').onclick=f;
  $('#gal').innerHTML=cards((C.clients||[]).filter(c=>!c.private).slice(0,3));
+ const hm=C.home||[];let ref=$('.hero');hm.forEach(h=>{const e=$(`[data-sec="${h.id}"]`);if(!e)return;e.style.display=h.show===false?'none':'';ref.after(e);ref=e});
 },
 portfolio(){
  const all=pics(),names=[...new Set(all.map(p=>p.client))],g=$('#grid');
@@ -56,5 +57,9 @@ contact(){
  $('#f').onsubmit=async e=>{e.preventDefault();txt('ok','Sending…');
  try{const r=await fetch(C.formEndpoint,{method:'POST',body:new FormData(e.target),headers:{Accept:'application/json'}});if(!r.ok)throw 0;e.target.reset();txt('ok',"Thank you — I'll reply to you personally, soon.")}catch{txt('ok','Could not send. Please email me directly.')}}}
 };
-fetch('content.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).catch(()=>({})).then(c=>{C=c;shell();common();INIT[P]&&INIT[P]();
- const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('on'),io.unobserve(e.target))),{threshold:.1});$$('.rv').forEach(x=>io.observe(x))});
+const PV=new URLSearchParams(location.search).has('preview');
+const obs=()=>{const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('on'),io.unobserve(e.target))),{threshold:.1});$$('.rv').forEach(x=>io.observe(x))};
+function boot(c){C=c;$$('#hd,#ft,#lb').forEach(e=>e.remove());shell();common();INIT[P]&&INIT[P]();obs();
+ if(PV)$$('a[href]').forEach(a=>{const h=a.getAttribute('href');if(/\.html/.test(h)&&!/preview/.test(h))a.setAttribute('href',h+(h.includes('?')?'&':'?')+'preview=1')})}
+if(PV){addEventListener('message',e=>{if(e.origin==location.origin&&e.data&&e.data.type=='content')boot(e.data.data)});parent.postMessage({type:'ready'},location.origin)}
+else fetch('content.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).catch(()=>({})).then(boot);
