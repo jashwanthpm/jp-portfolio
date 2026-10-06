@@ -164,12 +164,12 @@
       ]
     },
     {
-      "name": "Private Family Gallery",
-      "slug": "family-2026",
+      "name": "Happy 40 Love!",
+      "slug": "happy-40-love",
       "date": "2026",
-      "story": "Unlisted — only people with the link can find it.",
+      "story": "",
       "cover": "",
-      "private": true,
+      "private": false,
       "photos": []
     }
   ],
@@ -212,13 +212,111 @@
       "show": true
     }
   ],
-  "igItems": [],
+  "igItems": [
+    {
+      "url": "",
+      "covers": [
+        "/images/1791287244140-q8n1.jpg"
+      ]
+    },
+    {
+      "url": "",
+      "covers": [
+        "/images/1791287212787-gdv9.jpg"
+      ]
+    },
+    {
+      "url": "",
+      "covers": [
+        "/images/1791287258585-gyus.jpg"
+      ]
+    },
+    {
+      "url": "",
+      "covers": [
+        "/images/1791287306978-2kbi.jpg"
+      ]
+    },
+    {
+      "url": "",
+      "covers": [
+        "/images/1791287885135-mu4l.jpg"
+      ]
+    },
+    {
+      "url": "",
+      "covers": [
+        "/images/1791287905790-a52s.jpg"
+      ]
+    },
+    {
+      "url": "",
+      "covers": [
+        "/images/1791287912807-0b5c.jpg"
+      ]
+    },
+    {
+      "url": "",
+      "covers": []
+    }
+  ],
   "theme": {
     "bodyScale": 100,
     "headFont": "Cormorant Garamond"
   },
   "vis": {},
-  "portfolio": [],
+  "portfolio": [
+    "/images/1791286867264-6bg2.jpg",
+    "/images/1791286867814-wwd4.jpg",
+    "/images/1791286868355-2wth.jpg",
+    "/images/1791286868984-34fq.jpg",
+    "/images/1791286869542-enne.jpg",
+    "/images/1791286870386-q2lc.jpg",
+    "/images/1791286871208-oofr.jpg",
+    "/images/1791286871758-6e5h.jpg",
+    "/images/1791286872286-h9nd.jpg",
+    "/images/1791286872843-ic78.jpg",
+    "/images/1791286873352-m3x8.jpg",
+    "/images/1791286898110-3dvq.jpg",
+    "/images/1791286874269-1mz6.jpg",
+    "/images/1791286874722-22y4.jpg",
+    "/images/1791286875121-k4kg.jpg",
+    "/images/1791286875553-iuhj.jpg",
+    "/images/1791286875992-ggyh.jpg",
+    "/images/1791286876427-zfhj.jpg",
+    "/images/1791286879051-lk91.jpg",
+    "/images/1791286880348-psah.jpg",
+    "/images/1791286878324-wj6o.jpg",
+    "/images/1791286881051-7z88.jpg",
+    "/images/1791286882960-7ffe.jpg",
+    "/images/1791286877650-81f3.jpg",
+    "/images/1791286882142-6q21.jpg",
+    "/images/1791286883779-rofe.jpg",
+    "/images/1791286884612-ilwd.jpg",
+    "/images/1791286885416-qlgx.jpg",
+    "/images/1791286886061-9fcq.jpg",
+    "/images/1791286887486-jjdv.jpg",
+    "/images/1791286887006-yomk.jpg",
+    "/images/1791286888060-teh3.jpg",
+    "/images/1791286888792-715c.jpg",
+    "/images/1791286889174-t640.jpg",
+    "/images/1791286889398-urit.jpg",
+    "/images/1791286891473-1u8o.jpg",
+    "/images/1791286891981-hjx5.jpg",
+    "/images/1791286892509-pfqj.jpg",
+    "/images/1791286893250-itng.jpg",
+    "/images/1791286893962-zbgd.jpg",
+    "/images/1791286876867-mtge.jpg",
+    "/images/1791286894547-cguu.jpg",
+    "/images/1791286895014-uzyb.jpg",
+    "/images/1791286895415-0aoo.jpg",
+    "/images/1791286895950-6jx3.jpg",
+    "/images/1791286896548-9azt.jpg",
+    "/images/1791286897530-2cr0.jpg",
+    "/images/1791286898304-ex0c.jpg",
+    "/images/1791286898441-ef3t.jpg",
+    "/images/1791286898842-6vrx.jpg"
+  ],
   "aboutPics": [],
   "story": "I didn't pick up a camera to make perfect pictures. I picked it up to keep real moments from slipping away.\n\nOn a wedding day I stay close but quiet, watching for the glances, the nervous laughs, the blessings of elders and the tears nobody planned. Those are the frames families return to years later.\n\nMy style is natural, candid and unhurried. I work with the light and the moment as they are, and I edit honestly, so your gallery feels like your day, nothing more and nothing less.",
   "services": [
