@@ -1,7 +1,7 @@
 {
   "name": "Jashwanth JP",
   "kicker": "Capturing the raw emotions of life's biggest days",
-  "role": "Wedding & pre-wedding photographer — honest, heartfelt, timeless frames.",
+  "role": "Photographer - Honest, heartfelt, timeless frames.",
   "intro": "Discover the heartfelt moments captured by JP",
   "about": "Hi, I'm Jashwanth, a wedding photographer who loves capturing real emotions and meaningful moments. I focus on telling stories through natural, heartfelt images. I believe the best photos are the ones that feel honest and timeless. Let's create memories you'll cherish forever.",
   "portrait": "/images/IMG_5172.JPG",
@@ -12,7 +12,8 @@
     },
     {
       "n": "5+",
-      "l": "Years"
+      "l": "Years",
+      "hide": false
     },
     {
       "n": "19+",
@@ -75,22 +76,92 @@
   ],
   "clients": [
     {
-      "name": "jp - no one",
-      "slug": "sample-wedding",
-      "date": "2026",
-      "story": "Replace with the story of this wedding.",
-      "cover": "",
-      "private": false,
-      "photos": []
-    },
-    {
-      "name": "Sample Pre-wedding",
-      "slug": "sample-pre-wedding",
+      "name": "Prashanth - Nance",
+      "slug": "prashanth-nance",
       "date": "2026",
       "story": "Replace with the story of this shoot.",
       "cover": "",
       "private": false,
-      "photos": []
+      "photos": [
+        "/images/1791271551231-d809.jpg",
+        "/images/1791271551814-uo1c.jpg",
+        "/images/1791271552440-9o44.jpg",
+        "/images/1791271552708-ltnb.jpg",
+        "/images/1791271553016-c6ze.jpg",
+        "/images/1791271553282-bihu.jpg",
+        "/images/1791271553699-5774.jpg",
+        "/images/1791271554206-wwiy.jpg",
+        "/images/1791271554658-47np.jpg",
+        "/images/1791271555254-3zgm.jpg",
+        "/images/1791271555670-j4ly.jpg",
+        "/images/1791271556085-pl7y.jpg",
+        "/images/1791271556552-k9zd.jpg",
+        "/images/1791271557011-3310.jpg",
+        "/images/1791271557385-laka.jpg",
+        "/images/1791271557799-y9t4.jpg",
+        "/images/1791271558254-xq7r.jpg",
+        "/images/1791271558517-pclu.jpg",
+        "/images/1791271558955-6i0r.jpg",
+        "/images/1791271559576-mlhi.jpg",
+        "/images/1791271560156-5xze.jpg",
+        "/images/1791271560861-089n.jpg",
+        "/images/1791271561610-hgf0.jpg",
+        "/images/1791271562163-peno.jpg",
+        "/images/1791271562762-ed6r.jpg",
+        "/images/1791271563042-brtj.jpg",
+        "/images/1791271563510-89p8.jpg",
+        "/images/1791271564237-ffnd.jpg",
+        "/images/1791271564791-gxx3.jpg",
+        "/images/1791271565201-36pa.jpg",
+        "/images/1791271565616-v51v.jpg",
+        "/images/1791271566092-utz5.jpg",
+        "/images/1791271566717-wtlx.jpg",
+        "/images/1791271567186-jwvu.jpg",
+        "/images/1791271567660-kw0b.jpg",
+        "/images/1791271568026-9lfv.jpg",
+        "/images/1791271568440-trxp.jpg",
+        "/images/1791271568862-pn5o.jpg",
+        "/images/1791271569362-8haz.jpg",
+        "/images/1791271569799-7zsb.jpg",
+        "/images/1791271570177-mbvt.jpg",
+        "/images/1791271570601-98lu.jpg",
+        "/images/1791271570999-b70b.jpg",
+        "/images/1791271571422-mnpf.jpg",
+        "/images/1791271571833-c5ih.jpg",
+        "/images/1791271572293-i1yh.jpg",
+        "/images/1791271572675-acgz.jpg",
+        "/images/1791271572892-lq97.jpg",
+        "/images/1791271573301-j44f.jpg",
+        "/images/1791271573784-q2fu.jpg",
+        "/images/1791271574284-8ty3.jpg",
+        "/images/1791271574741-g87o.jpg",
+        "/images/1791271575225-3l89.jpg",
+        "/images/1791271575717-uzk5.jpg",
+        "/images/1791271576172-myzd.jpg",
+        "/images/1791271576841-ovvb.jpg",
+        "/images/1791271577513-fkly.jpg",
+        "/images/1791271578170-qp7j.jpg",
+        "/images/1791271578650-a4nh.jpg",
+        "/images/1791271579100-04mb.jpg",
+        "/images/1791271579599-jdrd.jpg",
+        "/images/1791271580080-5mn4.jpg",
+        "/images/1791271580544-eqzw.jpg",
+        "/images/1791271581162-yl6e.jpg",
+        "/images/1791271581749-5rer.jpg",
+        "/images/1791271582363-xb0l.jpg",
+        "/images/1791271582833-4mjs.jpg",
+        "/images/1791271583415-2xuj.jpg",
+        "/images/1791271584120-1i34.jpg",
+        "/images/1791271584778-3om7.jpg",
+        "/images/1791271585370-eu7i.jpg",
+        "/images/1791271585956-huha.jpg",
+        "/images/1791271586563-gk7z.jpg",
+        "/images/1791271587148-81sn.jpg",
+        "/images/1791271587551-rcm5.jpg",
+        "/images/1791271588039-6215.jpg",
+        "/images/1791271588552-y25r.jpg",
+        "/images/1791271589116-dh0t.jpg"
+      ]
     },
     {
       "name": "Private Family Gallery",
@@ -104,7 +175,7 @@
   ],
   "faq": [],
   "email": "jashwanthjp18@gmail.com",
-  "phone": "+91 9482819581",
+  "phone": "91 9482819581",
   "instagram": "https://instagram.com/jp_jashwanth",
   "formEndpoint": "https://formspree.io/f/YOUR_FORM_ID",
   "home": [
@@ -129,6 +200,10 @@
       "show": true
     },
     {
+      "id": "ig",
+      "show": true
+    },
+    {
       "id": "gal",
       "show": true
     },
@@ -136,5 +211,33 @@
       "id": "cta",
       "show": true
     }
-  ]
+  ],
+  "igItems": [],
+  "theme": {},
+  "vis": {},
+  "portfolio": [],
+  "aboutPics": [],
+  "story": "I didn't pick up a camera to make perfect pictures. I picked it up to keep real moments from slipping away.\n\nOn a wedding day I stay close but quiet, watching for the glances, the nervous laughs, the blessings of elders and the tears nobody planned. Those are the frames families return to years later.\n\nMy style is natural, candid and unhurried. I work with the light and the moment as they are, and I edit honestly, so your gallery feels like your day, nothing more and nothing less.",
+  "services": [
+    {
+      "t": "Weddings",
+      "d": "Full-day coverage of rituals, family and the small in-between moments."
+    },
+    {
+      "t": "Pre-wedding & engagement",
+      "d": "Relaxed, story-led shoots in places that mean something to you."
+    },
+    {
+      "t": "Haldi, Mehendi & Sangeet",
+      "d": "Colour, music and energy, captured as it happens."
+    },
+    {
+      "t": "Portraits",
+      "d": "Honest portraits for brides, grooms, families and brands."
+    }
+  ],
+  "logoMark": "JJ",
+  "logoText": "Jashwanth JP",
+  "svcEyebrow": "What I shoot",
+  "svcHeading": "What I *shoot*"
 }
