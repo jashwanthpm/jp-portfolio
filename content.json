@@ -168,9 +168,50 @@
       "slug": "happy-40-love",
       "date": "2026",
       "story": "",
-      "cover": "",
+      "cover": "/images/1791288495765-23w9.jpg",
       "private": false,
-      "photos": []
+      "photos": [
+        "/images/1791288458595-0rwu.jpg",
+        "/images/1791288459855-zhiz.jpg",
+        "/images/1791288461062-ehgz.jpg",
+        "/images/1791288462482-bl02.jpg",
+        "/images/1791288463451-13jl.jpg",
+        "/images/1791288464933-4zsz.jpg",
+        "/images/1791288465932-5j1t.jpg",
+        "/images/1791288467070-bwns.jpg",
+        "/images/1791288467896-e8fu.jpg",
+        "/images/1791288468476-a21j.jpg",
+        "/images/1791288469461-ngxw.jpg",
+        "/images/1791288470141-ikop.jpg",
+        "/images/1791288471117-hqax.jpg",
+        "/images/1791288471616-w2xw.jpg",
+        "/images/1791288472140-tkpt.jpg",
+        "/images/1791288472804-h2bc.jpg",
+        "/images/1791288473712-y3q6.jpg",
+        "/images/1791288474530-ln1k.jpg",
+        "/images/1791288475096-0ugz.jpg",
+        "/images/1791288475577-2eel.jpg",
+        "/images/1791288476313-bdvz.jpg",
+        "/images/1791288476658-d9f4.jpg",
+        "/images/1791288477047-n5qv.jpg",
+        "/images/1791288477551-9p7w.jpg",
+        "/images/1791288478179-2ygb.jpg",
+        "/images/1791288478760-dg7s.jpg",
+        "/images/1791288479308-em3q.jpg",
+        "/images/1791288479927-yj3r.jpg",
+        "/images/1791288480596-oh9x.jpg",
+        "/images/1791288481331-d4x9.jpg",
+        "/images/1791288481990-edc8.jpg",
+        "/images/1791288482921-r01t.jpg",
+        "/images/1791288483833-t13z.jpg",
+        "/images/1791288484658-lndc.jpg",
+        "/images/1791288485397-579b.jpg",
+        "/images/1791288486202-c3df.jpg",
+        "/images/1791288487096-sptb.jpg",
+        "/images/1791288488014-r53c.jpg",
+        "/images/1791288489240-25zh.jpg",
+        "/images/1791288489960-duok.jpg"
+      ]
     }
   ],
   "faq": [],
@@ -344,7 +385,8 @@
   "heroPics": [],
   "focus": {
     "/images/1791272321262-xmf3.jpg": "46% 36%",
-    "/images/IMG_5172.JPG": "50% 57%"
+    "/images/IMG_5172.JPG": "50% 57%",
+    "/images/1791288495765-23w9.jpg": "32% 17%"
   },
   "favicon": "/images/favicon-1791284648615.png"
 }
