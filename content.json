@@ -3,7 +3,7 @@
   "kicker": "Capturing the raw emotions of life's biggest days",
   "role": "Photographer - Honest, heartfelt, timeless frames.",
   "intro": "Discover the heartfelt moments captured by JP",
-  "about": "Hi, I'm Jashwanth, a wedding photographer who loves capturing real emotions and meaningful moments. I focus on telling stories through natural, heartfelt images. I believe the best photos are the ones that feel honest and timeless. Let's create memories you'll cherish forever.",
+  "about": "Hi, I’m Jashwanth a wedding photographer who loves capturing real emotions and meaningful moments. I focus on telling stories through natural, heartfelt images. I believe the best photos are the ones that feel honest and timeless.\n\n\nLet’s create memories you’ll cherish forever.",
   "portrait": "/images/IMG_5172.JPG",
   "stats": [
     {
@@ -213,7 +213,10 @@
     }
   ],
   "igItems": [],
-  "theme": {},
+  "theme": {
+    "bodyScale": 100,
+    "headFont": "Cormorant Garamond"
+  },
   "vis": {},
   "portfolio": [],
   "aboutPics": [],
@@ -236,8 +239,14 @@
       "d": "Honest portraits for brides, grooms, families and brands."
     }
   ],
-  "logoMark": "JJ",
-  "logoText": "Jashwanth JP",
+  "logoMark": "JP",
+  "logoText": "",
   "svcEyebrow": "What I shoot",
-  "svcHeading": "What I *shoot*"
+  "svcHeading": "What I *shoot*",
+  "heroPics": [],
+  "focus": {
+    "/images/1791272321262-xmf3.jpg": "46% 36%",
+    "/images/IMG_5172.JPG": "50% 57%"
+  },
+  "favicon": "/images/favicon-1791284648615.png"
 }
