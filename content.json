@@ -218,17 +218,9 @@
       "photos": [
         "/images/1791289735781-0wkf.jpg",
         "/images/1791289736526-qcc9.jpg",
-        "/images/1791289737310-gfkp.jpg",
         "/images/1791289737932-v85i.jpg",
-        "/images/1791289738155-0g7e.jpg",
-        "/images/1791289738775-7p97.jpg",
-        "/images/1791289740540-7wei.jpg",
-        "/images/1791289741634-6wxs.jpg",
-        "/images/1791289742781-ai2x.jpg",
-        "/images/1791289743431-cis5.jpg",
         "/images/1791289743979-uou3.jpg",
         "/images/1791289744325-22g9.jpg",
-        "/images/1791289744957-bsa3.jpg",
         "/images/1791289746143-jq5i.jpg",
         "/images/1791289746609-c31i.jpg",
         "/images/1791289747067-2f2j.jpg",
@@ -238,8 +230,6 @@
         "/images/1791289748658-oiu4.jpg",
         "/images/1791289749189-nqsm.jpg",
         "/images/1791289749913-2o31.jpg",
-        "/images/1791289750595-zm3m.jpg",
-        "/images/1791289751388-0sx0.jpg",
         "/images/1791289751937-7ra7.jpg",
         "/images/1791289752451-6qa4.jpg",
         "/images/1791289753058-gqjt.jpg",
@@ -257,15 +247,10 @@
         "/images/1791289761104-ogf6.jpg",
         "/images/1791289762350-2jc0.jpg",
         "/images/1791289763354-6s11.jpg",
-        "/images/1791289764403-qx1m.jpg",
         "/images/1791289764990-yy7h.jpg",
         "/images/1791289765416-4sus.jpg",
-        "/images/1791289766126-bzp6.jpg",
         "/images/1791289766434-6181.jpg",
-        "/images/1791289766870-q3pe.jpg",
-        "/images/1791289768036-w8dl.jpg",
-        "/images/1791289769095-6dsx.jpg",
-        "/images/1791289770127-cl7o.jpg"
+        "/images/1791289766870-q3pe.jpg"
       ]
     }
   ],
@@ -369,13 +354,12 @@
     "/images/1791286869542-enne.jpg",
     "/images/1791286870386-q2lc.jpg",
     "/images/1791286871208-oofr.jpg",
-    "/images/1791286871758-6e5h.jpg",
     "/images/1791286872286-h9nd.jpg",
     "/images/1791286872843-ic78.jpg",
     "/images/1791286873352-m3x8.jpg",
     "/images/1791286898110-3dvq.jpg",
     "/images/1791286874269-1mz6.jpg",
-    "/images/1791286874722-22y4.jpg",
+    "/images/1791286871758-6e5h.jpg",
     "/images/1791286875121-k4kg.jpg",
     "/images/1791286875553-iuhj.jpg",
     "/images/1791286875992-ggyh.jpg",
@@ -411,9 +395,14 @@
     "/images/1791286897530-2cr0.jpg",
     "/images/1791286898304-ex0c.jpg",
     "/images/1791286898441-ef3t.jpg",
-    "/images/1791286898842-6vrx.jpg"
+    "/images/1791286898842-6vrx.jpg",
+    "/images/1791286874722-22y4.jpg"
   ],
-  "aboutPics": [],
+  "aboutPics": [
+    "/images/1791354750587-rn0x.jpg",
+    "/images/1791354726037-cvk8.jpg",
+    "/images/1791354834185-2smq.jpg"
+  ],
   "story": "I didn't pick up a camera to make perfect pictures. I picked it up to keep real moments from slipping away.\n\nOn a wedding day I stay close but quiet, watching for the glances, the nervous laughs, the blessings of elders and the tears nobody planned. Those are the frames families return to years later.\n\nMy style is natural, candid and unhurried. I work with the light and the moment as they are, and I edit honestly, so your gallery feels like your day, nothing more and nothing less.",
   "services": [
     {
@@ -442,7 +431,9 @@
     "/images/1791272321262-xmf3.jpg": "46% 36%",
     "/images/IMG_5172.JPG": "50% 57%",
     "/images/1791288495765-23w9.jpg": "32% 17%",
-    "/images/1791289788872-ry1t.jpg": "19% 19%"
+    "/images/1791289788872-ry1t.jpg": "19% 19%",
+    "/images/1791354351758-evpd.jpg": "49% 30%",
+    "/images/1791354371381-56q8.jpg": "34% 75%"
   },
   "favicon": "/images/favicon-1791284648615.png",
   "dims": {
@@ -1341,6 +1332,34 @@
     "/images/1791287912807-0b5c.jpg": [
       1080,
       1920
+    ],
+    "/images/1791354249919-7grd.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791354351758-evpd.jpg": [
+      2000,
+      1333
+    ],
+    "/images/1791354371381-56q8.jpg": [
+      1333,
+      2000
+    ],
+    "/images/1791354726037-cvk8.jpg": [
+      2000,
+      1333
+    ],
+    "/images/1791354750587-rn0x.jpg": [
+      1599,
+      2000
+    ],
+    "/images/1791354834185-2smq.jpg": [
+      1333,
+      2000
+    ],
+    "/images/1791354866916-ihhr.jpg": [
+      2000,
+      1333
     ]
   }
 }
