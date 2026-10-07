@@ -407,19 +407,23 @@
   "services": [
     {
       "t": "Weddings",
-      "d": "Full-day coverage of rituals, family and the small in-between moments."
+      "d": "",
+      "img": "/images/1791362201509-c6h6.jpg"
     },
     {
       "t": "Pre-wedding & engagement",
-      "d": "Relaxed, story-led shoots in places that mean something to you."
+      "d": "",
+      "img": "/images/1791362353833-93pq.jpg"
     },
     {
       "t": "Haldi, Mehendi & Sangeet",
-      "d": "Colour, music and energy, captured as it happens."
+      "d": "",
+      "img": "/images/1791362459181-abty.jpg"
     },
     {
       "t": "Portraits",
-      "d": "Honest portraits for brides, grooms, families and brands."
+      "d": "",
+      "img": "/images/1791362557553-ik4k.jpg"
     }
   ],
   "logoMark": "JP",
@@ -1396,6 +1400,30 @@
     "/images/1791361266804-wiqg.jpg": [
       1600,
       2000
+    ],
+    "/images/1791362201509-c6h6.jpg": [
+      1333,
+      2000
+    ],
+    "/images/1791362264640-0j86.jpg": [
+      1333,
+      1999
+    ],
+    "/images/1791362353833-93pq.jpg": [
+      1333,
+      2000
+    ],
+    "/images/1791362459181-abty.jpg": [
+      1333,
+      2000
+    ],
+    "/images/1791362522565-8p0t.jpg": [
+      1333,
+      2000
+    ],
+    "/images/1791362557553-ik4k.jpg": [
+      1236,
+      1854
     ]
   }
 }
