@@ -79,9 +79,19 @@ const hp=(C.heroPics||[]).filter(Boolean);
  const draw=async s=>{await Promise.all(s.map(async p=>{p.r=p.src?await getR(p.src):.8}));const per=innerWidth<700?2:3,rows=[];for(let i=0;i<s.length;i+=per)rows.push(s.slice(i,i+per));
   $('#feat').innerHTML=rows.map(r=>`<div class="fr">${r.map(p=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="flex:${p.r} 1 0;aspect-ratio:${p.r}">${p.src?`${thimg(p.src)}`:`<span class="ph" style="--h:${p.h||0}"></span>`}</figure>`).join('')}</div>`).join('');bind($('#feat'),s)};
  const sig=JSON.stringify([C.portfolio,(C.clients||[]).map(c=>[c.slug,c.photos,c.private])]);if(window.__fsig!=sig){window.__fsig=sig;window.__fs=gp()}
- window.__redraw=()=>draw(window.__fs);draw(window.__fs);$('#sh').onclick=()=>{window.__fs=gp();draw(window.__fs)};
- if(!window.__fr){window.__fr=1;let w0=innerWidth<700;addEventListener('resize',()=>{const w=innerWidth<700;if(w!=w0){w0=w;window.__redraw&&window.__redraw()}})}
- $('#gal').innerHTML=cards((C.clients||[]).filter(c=>!c.private).slice(0,3));
+ window.__redraw=()=>draw(window.__fs);draw(window.__fs);
+ const pre=s=>Promise.race([Promise.all(s.map(p=>p.src?new Promise(r=>{const i=new Image();i.onload=i.onerror=r;i.src=th(p.src)}):0)),new Promise(r=>setTimeout(r,3000))]);
+ clearInterval(window.__gt);
+ if(!PV){const fe=$('#feat');let hov=false,seen=true;fe.onmouseenter=()=>hov=true;fe.onmouseleave=()=>hov=false;fe.ontouchstart=()=>{hov=true;clearTimeout(window.__ht);window.__ht=setTimeout(()=>hov=false,8000)};
+  if(window.IntersectionObserver)new IntersectionObserver(es=>seen=es[0].isIntersecting).observe(fe);
+  window.__gt=setInterval(async()=>{const sc=fe.closest('[data-sec]');if(document.hidden||hov||!seen||(sc&&getComputedStyle(sc).display=='none')||($('#lb')&&$('#lb').classList.contains('o')))return;
+   const s=gp();await Promise.all(s.map(async p=>{p.r=p.src?await getR(p.src):.8}));await pre(s);fe.style.opacity=0;await new Promise(r=>setTimeout(r,450));window.__fs=s;await draw(s);fe.style.opacity=1},5000)}
+ const galRender=resz=>{const pubs=(C.clients||[]).filter(c=>!c.private),sig=JSON.stringify((C.clients||[]).map(c=>[c.slug,c.onHome,c.private]))+(innerWidth<700);
+  if(window.__gsig!=sig){window.__gsig=sig;const f=pubs.filter(c=>c.onHome);window.__gs=(f.length?f:shuf(pubs).slice(0,innerWidth<700?4:3)).map(c=>c.slug)}
+  $('#gal').innerHTML=cards(window.__gs.map(s=>pubs.find(c=>c.slug==s)).filter(Boolean));if(resz)$$('#gal .rv').forEach(x=>x.classList.add('on'))};
+ window.__galr=galRender;galRender();
+ if(!window.__fr){window.__fr=1;let w0=innerWidth<700;addEventListener('resize',()=>{const w=innerWidth<700;if(w!=w0){w0=w;window.__redraw&&window.__redraw();window.__galr&&window.__galr(true)}})}
+ if(!$('.hero .sd')){$('.hero').insertAdjacentHTML('beforeend','<button class="sd" aria-label="Scroll down"><span></span></button>');$('.hero .sd').onclick=()=>{let e=$('.hero').nextElementSibling;while(e&&getComputedStyle(e).display=='none')e=e.nextElementSibling;e&&e.scrollIntoView({behavior:'smooth'})}}
  const DEF=['who','stats','feat','pts','brands','ig','gal','cta'];let hm=(C.home||[]).slice();
  DEF.forEach((id,i)=>{if(!hm.some(h=>h.id==id)){const pi=hm.findIndex(h=>h.id==DEF[i-1]);hm.splice(pi+1,0,{id,show:true})}});
  let ref=$('.hero');hm.forEach(h=>{const e=$(`[data-sec="${h.id}"]`);if(!e)return;e.style.display=h.show===false?'none':'';ref.after(e);ref=e});
