@@ -341,10 +341,7 @@
       "covers": []
     }
   ],
-  "theme": {
-    "bodyScale": 100,
-    "headFont": "Cormorant Garamond"
-  },
+  "theme": {},
   "vis": {},
   "portfolio": [
     "/images/1791286867264-6bg2.jpg",
@@ -426,14 +423,22 @@
   "logoText": "",
   "svcEyebrow": "What I shoot",
   "svcHeading": "What I *shoot*",
-  "heroPics": [],
+  "heroPics": [
+    "/images/1791355238038-e3zu.jpg",
+    "/images/1791355333015-yz3b.jpg"
+  ],
   "focus": {
     "/images/1791272321262-xmf3.jpg": "46% 36%",
     "/images/IMG_5172.JPG": "50% 57%",
     "/images/1791288495765-23w9.jpg": "32% 17%",
     "/images/1791289788872-ry1t.jpg": "19% 19%",
     "/images/1791354351758-evpd.jpg": "49% 30%",
-    "/images/1791354371381-56q8.jpg": "34% 75%"
+    "/images/1791354371381-56q8.jpg": "34% 75%",
+    "/images/1791355128060-pu8u.jpg": "44% 76%",
+    "/images/1791355238038-e3zu.jpg": "51% 52%",
+    "/images/1791355300019-fz3x.jpg": "12% 0%",
+    "/images/1791355333015-yz3b.jpg": "63% 56%",
+    "/images/1791355365649-pmrr.jpg": "48% 58%"
   },
   "favicon": "/images/favicon-1791284648615.png",
   "dims": {
@@ -1360,6 +1365,26 @@
     "/images/1791354866916-ihhr.jpg": [
       2000,
       1333
+    ],
+    "/images/1791355128060-pu8u.jpg": [
+      2000,
+      1333
+    ],
+    "/images/1791355238038-e3zu.jpg": [
+      2000,
+      1333
+    ],
+    "/images/1791355300019-fz3x.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791355333015-yz3b.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791355365649-pmrr.jpg": [
+      1600,
+      2000
     ]
   }
 }
