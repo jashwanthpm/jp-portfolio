@@ -432,7 +432,8 @@
   "svcHeading": "What I *shoot*",
   "heroPics": [
     "/images/1791355238038-e3zu.jpg",
-    "/images/1791355333015-yz3b.jpg"
+    "/images/1791355333015-yz3b.jpg",
+    "/images/1791362921368-7rvr.jpg"
   ],
   "focus": {
     "/images/1791272321262-xmf3.jpg": "46% 36%",
@@ -445,7 +446,8 @@
     "/images/1791355238038-e3zu.jpg": "51% 52%",
     "/images/1791355300019-fz3x.jpg": "12% 0%",
     "/images/1791355333015-yz3b.jpg": "63% 56%",
-    "/images/1791355365649-pmrr.jpg": "48% 58%"
+    "/images/1791355365649-pmrr.jpg": "48% 58%",
+    "/images/1791362921368-7rvr.jpg": "38% 54%"
   },
   "favicon": "/images/favicon-1791284648615.png",
   "dims": {
@@ -1424,6 +1426,10 @@
     "/images/1791362557553-ik4k.jpg": [
       1236,
       1854
+    ],
+    "/images/1791362921368-7rvr.jpg": [
+      1333,
+      2000
     ]
   }
 }
