@@ -8,6 +8,21 @@ const wk=()=>(C.portfolio||[]).length?C.portfolio.map(s=>({src:s})):pics();
 const ME=[['.hero h1','b:name'],['.logo','lg:logoText'],['#portrait','b:portrait'],['#mq','r'],['#igsec','i'],['#feat','pf'],['#gal','c'],['#apics','a']];
 const pos=s=>(C.focus||{})[s]||'50% 50%';
 const imgp=(s,h=0)=>s?`<img src="${s}" alt="" style="object-position:${pos(s)}">`:`<span class="ph" style="--h:${h}"></span>`;
+const th=s=>/^\/images\/[^/]/.test(s||'')?s.replace('/images/','/images/t/'):s;
+const thimg=(s,x='')=>`<img src="${th(s)}"${th(s)!=s?` onerror="this.onerror=null;this.src='${s}'"`:''} alt="" decoding="async"${x}>`;
+const imgt=(s,h=0)=>s?`<img src="${th(s)}"${th(s)!=s?` onerror="this.onerror=null;this.src='${s}'"`:''} alt="" decoding="async" style="object-position:${pos(s)}">`:`<span class="ph" style="--h:${h}"></span>`;
+const RC={};
+const getR=s=>{const d=(C.dims||{})[s];if(d)return Promise.resolve(d[0]/d[1]);return RC[s]||(RC[s]=new Promise(res=>{const a=new Image();a.onload=()=>res(a.naturalWidth/a.naturalHeight||.8);a.onerror=()=>{const b=new Image();b.onload=()=>res(b.naturalWidth/b.naturalHeight||.8);b.onerror=()=>res(.8);b.src=s};a.src=th(s)}))};
+function lprog(el){let bar=$('#lp');if(!bar){document.body.insertAdjacentHTML('beforeend','<div id="lp"><i></i><span></span></div>');bar=$('#lp')}
+ const imgs=$$('img',el),t=Math.min(12,imgs.length);let n=0;const upd=()=>{bar.firstChild.style.width=(t?n/t*100:100)+'%';bar.lastChild.textContent=n<t?`Loading pictures ${n} / ${t}`:'';bar.classList.toggle('done',n>=t)};
+ imgs.forEach((im,k)=>{const d=()=>{im.classList.add('l');if(im._c)return;im._c=1;if(k<12){n++;upd()}};im.complete&&im.naturalWidth?d():(im.addEventListener('load',d),im.addEventListener('error',d))});upd()}
+async function mason(el,items){const gen=el._g=(el._g||0)+1;el._items=items;
+ await Promise.all(items.map(async p=>{if(p.r==null)p.r=p.src?await getR(p.src):.8}));if(el._g!=gen)return;
+ const n=innerWidth<700?2:3,H=Array(n).fill(0),cols=Array.from({length:n},()=>[]);
+ items.forEach((p,i)=>{const k=H.indexOf(Math.min(...H));cols[k].push([p,i]);H[k]+=1/p.r});
+ el.innerHTML=cols.map(c=>`<div class="mc">${c.map(([p,i])=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="aspect-ratio:${p.r};--d:${Math.min(i,10)}">${p.src?thimg(p.src,i<8?'':' loading="lazy"'):`<span class="ph"></span>`}</figure>`).join('')}</div>`).join('');
+ el._n=n;bind(el,items);lprog(el);
+ if(!window.__mr){window.__mr=1;addEventListener('resize',()=>{const m=$('.mas');if(m&&m._items&&(innerWidth<700?2:3)!=m._n)mason(m,m._items)})}}
 const at=(l,i,x)=>PV?` data-item="${l}:${i}"${x.hide?' data-hid="1"':''}`:'';
 const shown=a=>(a||[]).map((x,i)=>[x,i]).filter(([x])=>PV||!x.hide);
 const em=s=>String(s).replace(/\*(.+?)\*/g,'<em>$1</em>');
@@ -42,26 +57,27 @@ function common(){
  const em=$('#em');if(em){em.href='mailto:'+C.email;txt('emt',C.email)}const ig=$('#ig');if(ig){ig.href=C.instagram;txt('igt','@'+(C.instagram||'').replace(/\/$/,'').split('/').pop())}
  const wa=$('#wa');if(wa&&C.phone){wa.hidden=false;wa.href='https://wa.me/'+C.phone;txt('wat','+'+C.phone)}
 }
-const cards=(list)=>list.map(c=>`<a class="cd rv" href="gallery.html?c=${c.slug}">${imgp(c.cover||(c.photos||[])[0],c.name.length%5)}<div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.name}</h3></div></a>`).join('');
+const cards=(list)=>list.map(c=>`<a class="cd rv" href="gallery.html?c=${c.slug}"><span class="cv">${imgt(c.cover||(c.photos||[])[0],c.name.length%5)}</span><div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.name}</h3></div></a>`).join('');
 function igInit(){const sec=$('#igsec');if(!sec)return;const it=(C.igItems||[]).flatMap((x,k)=>(PV||!x.hide?(x.covers||(x.cover?[x.cover]:[])):[]).map(s=>({src:s,url:x.url,k,h:x.hide})));
  if(!it.length){sec.style.display='none';return}
  const hn=(C.instagram||'').replace(/\/$/,'').split('/').pop();$('#igbtn').href=C.instagram||'#';$('#igbtn').textContent=hn?'@'+hn+' ↗':'Follow ↗';
  const half=Array.from({length:Math.max(1,Math.ceil(8/it.length))},()=>it).flat(),all=[...half,...half];
- $('#igr').innerHTML=all.map(x=>`<a class="igi"${PV?` data-item="igItems:${x.k}"${x.h?' data-hid="1"':''}`:''} href="${x.url||C.instagram}" target="_blank" rel="noopener"><img src="${x.src}" alt=""></a>`).join('');
+ $('#igr').innerHTML=all.map(x=>`<a class="igi"${PV?` data-item="igItems:${x.k}"${x.h?' data-hid="1"':''}`:''} href="${x.url||C.instagram}" target="_blank" rel="noopener">${thimg(x.src)}</a>`).join('');
  $('#igr').style.setProperty('--t',Math.max(30,half.length*7)+'s')}
 const INIT={
 home(){
  txt('kick',C.kicker);txt('role',C.role);
  {const nm=(C.name||'').trim().split(/\s+/).filter(Boolean),bs=$$('.hero h1 b');if(nm.length&&bs.length>1){bs[0].textContent=nm.length>1?nm.slice(0,-1).join(' '):nm[0];bs[1].innerHTML=nm.length>1?`<em>${nm[nm.length-1]}</em>`:''}}
 const hp=(C.heroPics||[]).filter(Boolean);
+ if(hp[0]&&!document.querySelector(`link[rel=preload][href="${hp[0]}"]`)){const l=document.createElement('link');l.rel='preload';l.as='image';l.href=hp[0];document.head.appendChild(l)}
  $('#slides').innerHTML=`<div class="trk">${(hp.length?hp:[null]).map(s=>`<div class="sl" style="${s?`background-image:url('${s}');background-position:${pos(s)}`:'background:radial-gradient(90% 80% at 30% 20%,#4a3426,#0d0c0b)'}"></div>`).join('')}</div>${hp.length>1?`<div class="dots">${hp.map((_,i)=>`<button aria-label="Slide ${i+1}" data-i="${i}"></button>`).join('')}</div>`:''}`;
  let k=0,dir=1;const trk=$('#slides .trk'),go=n=>{k=n;trk.style.transform=`translateX(-${k*100}%)`;$$('#slides .dots button').forEach((b,i)=>b.classList.toggle('on',i==k))};go(0);
  clearInterval(window.SL);if(hp.length>1){window.SL=setInterval(()=>{if(k+dir>=hp.length||k+dir<0)dir=-dir;go(k+dir)},5500);$$('#slides .dots button').forEach(b=>b.onclick=()=>go(+b.dataset.i))}
  const gp=()=>{const cap=2,pool=[...(C.portfolio||[]).map(s=>({src:s,g:'pf'})),...(C.clients||[]).filter(c=>!c.private).flatMap(c=>shuf(c.photos||[]).slice(0,cap).map(s=>({src:s,g:c.slug})))],out=[],cnt={};
   shuf(pool).forEach(p=>{if(out.length<6&&(cnt[p.g]||0)<(p.g=='pf'?6:cap)){out.push(p);cnt[p.g]=(cnt[p.g]||0)+1}});return out.length?out:demo(6)};
  const dims=ps=>Promise.all(ps.map(p=>new Promise(r=>{if(!p.src){p.r=.8;return r()}const i=new Image();i.onload=()=>{p.r=i.naturalWidth/i.naturalHeight||.8;r()};i.onerror=()=>{p.r=.8;r()};i.src=p.src})));
- const draw=async s=>{await dims(s);const per=innerWidth<700?2:3,rows=[];for(let i=0;i<s.length;i+=per)rows.push(s.slice(i,i+per));
-  $('#feat').innerHTML=rows.map(r=>`<div class="fr">${r.map(p=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="flex:${p.r} 1 0;aspect-ratio:${p.r}">${p.src?`<img src="${p.src}" alt="">`:`<span class="ph" style="--h:${p.h||0}"></span>`}</figure>`).join('')}</div>`).join('');bind($('#feat'),s)};
+ const draw=async s=>{await Promise.all(s.map(async p=>{p.r=p.src?await getR(p.src):.8}));const per=innerWidth<700?2:3,rows=[];for(let i=0;i<s.length;i+=per)rows.push(s.slice(i,i+per));
+  $('#feat').innerHTML=rows.map(r=>`<div class="fr">${r.map(p=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="flex:${p.r} 1 0;aspect-ratio:${p.r}">${p.src?`${thimg(p.src)}`:`<span class="ph" style="--h:${p.h||0}"></span>`}</figure>`).join('')}</div>`).join('');bind($('#feat'),s)};
  const sig=JSON.stringify([C.portfolio,(C.clients||[]).map(c=>[c.slug,c.photos,c.private])]);if(window.__fsig!=sig){window.__fsig=sig;window.__fs=gp()}
  window.__redraw=()=>draw(window.__fs);draw(window.__fs);$('#sh').onclick=()=>{window.__fs=gp();draw(window.__fs)};
  if(!window.__fr){window.__fr=1;let w0=innerWidth<700;addEventListener('resize',()=>{const w=innerWidth<700;if(w!=w0){w0=w;window.__redraw&&window.__redraw()}})}
@@ -72,14 +88,14 @@ const hp=(C.heroPics||[]).filter(Boolean);
  igInit();
 },
 portfolio(){
- const s=(C.portfolio||[]).length?C.portfolio.map(src=>({src})):demo(9),g=$('#grid');g.innerHTML=s.map(p=>tile(p)).join('');bind(g,s);
+ const s=(C.portfolio||[]).length?C.portfolio.map(src=>({src})):demo(9);mason($('#grid'),s);
 },
 clients(){$('#gal').innerHTML=cards((C.clients||[]).filter(c=>!c.private))},
 gallery(){
  const s=new URLSearchParams(location.search).get('c'),c=(C.clients||[]).find(x=>x.slug==s);
  if(!c){$('#gt').textContent='Gallery not found';return}
  document.title=c.name+' — '+C.name;$('#gt').textContent=c.name;txt('gd',c.date);txt('gs',c.story);
- const ps=(c.photos||[]).length?c.photos.map(src=>({src,client:c.name})):demo(9);$('#grid').innerHTML=ps.map(p=>tile(p)).join('');bind($('#grid'),ps);
+ const ps=(c.photos||[]).length?c.photos.map(src=>({src,client:c.name})):demo(9);mason($('#grid'),ps);
 },
 about(){
  $('#story').innerHTML=(C.story||DFL.story).split(/\n\s*\n/).filter(Boolean).map(p=>`<p>${p}</p>`).join('');txt('quote',C.intro);
