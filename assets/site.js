@@ -1,6 +1,7 @@
+(function(){const p=location.pathname;if(/\.html$/.test(p)){const n=p.replace(/\/index\.html$/,'/').replace(/\.html$/,'');history.replaceState(null,'',(n||'/')+location.search+location.hash)}})();
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const shuf=a=>{a=[...a];for(let i=a.length;i>1;){const j=Math.random()*i--|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const NAV=[['index.html','Home','home'],['portfolio.html','Portfolio','portfolio'],['clients.html','Galleries','clients'],['about.html','About','about'],['contact.html','Contact','contact']];
+const NAV=[['/','Home','home'],['/portfolio','Portfolio','portfolio'],['/clients','Galleries','clients'],['/about','About','about'],['/contact','Contact','contact']];
 const NV=()=>NAV.filter(n=>n[2]=='home'||!((C.vis||{})['nav_'+n[2]]===false));
 const P=document.body.dataset.p;let C={},LB=[],LI=0;
 const DFL={story:"I didn't pick up a camera to make perfect pictures. I picked it up to keep real moments from slipping away.\n\nOn a wedding day I stay close but quiet, watching for the glances, the nervous laughs, the blessings of elders and the tears nobody planned. Those are the frames families return to years later.\n\nMy style is natural, candid and unhurried. I work with the light and the moment as they are, and I edit honestly, so your gallery feels like your day, nothing more and nothing less.",services:[{"t": "Weddings", "d": "Full-day coverage of rituals, family and the small in-between moments."}, {"t": "Pre-wedding & engagement", "d": "Relaxed, story-led shoots in places that mean something to you."}, {"t": "Haldi, Mehendi & Sangeet", "d": "Colour, music and energy, captured as it happens."}, {"t": "Portraits", "d": "Honest portraits for brides, grooms, families and brands."}],note:"Tell me about your day: date, venue and what matters most. I reply personally."};
@@ -54,7 +55,7 @@ const txt=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null)e.textConte
 function bind(root,list){root.onclick=e=>{if(e.target.closest('.dli'))return;const f=e.target.closest('.t[data-s]');if(!f)return;LB=list.filter(p=>p.src).map(p=>p.src);LI=LB.indexOf(f.dataset.s);show()}}
 function show(){const l=$('#lb');l.classList.add('o');$('img',l).src=LB[LI];$('small',l).textContent=`${LI+1} / ${LB.length}`;const dl=$('.dl',l);if(dl){if(window.__dlon){dl.hidden=false;dl.href=dlSrc(LB[LI]);dl.setAttribute('download',dlName(LB[LI]))}else dl.hidden=true}}
 function shell(){
- document.body.insertAdjacentHTML('afterbegin',`<header id="hd"><div class="wrap"><a class="logo" href="index.html">${logoHtml()}</a><button id="mb" aria-label="Menu">☰</button><nav>${NV().map(n=>`<a href="${n[0]}" class="${n[2]==P?'on':''}">${n[1]}</a>`).join('')}</nav></div></header>`);
+ document.body.insertAdjacentHTML('afterbegin',`<header id="hd"><div class="wrap"><a class="logo" href="/">${logoHtml()}</a><button id="mb" aria-label="Menu">☰</button><nav>${NV().map(n=>`<a href="${n[0]}" class="${n[2]==P?'on':''}">${n[1]}</a>`).join('')}</nav></div></header>`);
  document.body.insertAdjacentHTML('beforeend',`<footer id="ft"><div class="wrap"><div class="r"><div>${NV().map(n=>`<a href="${n[0]}">${n[1]}</a>`).join('')}</div><div><a href="mailto:${C.email}">${C.email}</a><a href="${C.instagram}">Instagram</a></div><div>© ${new Date().getFullYear()} ${C.name||''}</div></div></div></footer><div id="lb"><button class="x">×</button><button class="p">‹</button><img alt=""><button class="n">›</button><a class="dl" hidden>⬇ Download full size</a><small></small></div>`);
  const l=$('#lb'),mv=d=>{LI=(LI+d+LB.length)%LB.length;show()};
  $('.x',l).onclick=()=>l.classList.remove('o');$('.p',l).onclick=()=>mv(-1);$('.n',l).onclick=()=>mv(1);
@@ -72,7 +73,7 @@ function common(){
  const em=$('#em');if(em){em.href='mailto:'+C.email;txt('emt',C.email)}const ig=$('#ig');if(ig){ig.href=C.instagram;txt('igt','@'+(C.instagram||'').replace(/\/$/,'').split('/').pop())}
  const wa=$('#wa');if(wa&&C.phone){wa.hidden=false;wa.href='https://wa.me/'+C.phone;txt('wat','+'+C.phone)}
 }
-const cards=(list)=>list.map(c=>`<a class="cd rv" href="gallery.html?c=${c.slug}"><span class="cv">${imgt(c.cover||(c.photos||[])[0],c.name.length%5)}</span><div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.pinHash?LOCK:''}${c.name}</h3></div></a>`).join('');
+const cards=(list)=>list.map(c=>`<a class="cd rv" href="/gallery?c=${c.slug}"><span class="cv">${imgt(c.cover||(c.photos||[])[0],c.name.length%5)}</span><div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.pinHash?LOCK:''}${c.name}</h3></div></a>`).join('');
 function igInit(){const sec=$('#igsec');if(!sec)return;const it=(C.igItems||[]).flatMap((x,k)=>(PV||!x.hide?(x.covers||(x.cover?[x.cover]:[])):[]).map(s=>({src:s,url:x.url,k,h:x.hide})));
  if(!it.length){sec.style.display='none';return}
  const hn=(C.instagram||'').replace(/\/$/,'').split('/').pop();$('#igbtn').href=C.instagram||'#';$('#igbtn').textContent=hn?'@'+hn+' ↗':'Follow ↗';
@@ -149,7 +150,7 @@ function theme(){const t=C.theme||{},s=document.documentElement.style,set=(k,v)=
  [t.headFont,t.bodyFont].filter(Boolean).forEach(n=>{const id='gf-'+n.replace(/\W/g,'');if(!document.getElementById(id)){const l=document.createElement('link');l.id=id;l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+n.replace(/ /g,'+')+':ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap';document.head.appendChild(l)}})}
 function boot(c){C=c;theme();const bc=document.body.classList;[...bc].filter(x=>x.startsWith('x-')).forEach(x=>bc.remove(x));Object.entries(C.vis||{}).forEach(([k,v])=>v===false&&bc.add('x-'+k));
  $$('#hd,#ft,#lb').forEach(e=>e.remove());shell();common();INIT[P]&&INIT[P]();obs();favicon();if(PV){markItems();markText()}
- if(PV){bc.add('pv');ME.forEach(([s,p])=>$$(s).forEach(x=>x.dataset.edit=p));$$('a[href]').forEach(a=>{const h=a.getAttribute('href');if(/\.html/.test(h)&&!/preview/.test(h))a.setAttribute('href',h+(h.includes('?')?'&':'?')+'preview=1')})}}
+ if(PV){bc.add('pv');ME.forEach(([s,p])=>$$(s).forEach(x=>x.dataset.edit=p));$$('a[href]').forEach(a=>{const h=a.getAttribute('href');if(/^\/(portfolio|clients|gallery|about|contact)?(\?|$)/.test(h)&&!/preview/.test(h))a.setAttribute('href',h+(h.includes('?')?'&':'?')+'preview=1')})}}
 if(PV){addEventListener('message',e=>{if(e.origin!=location.origin||!e.data)return;if(e.data.type=='content')boot(e.data.data);if(e.data.type=='scroll'){const el=$(e.data.sel);el&&el.scrollIntoView({behavior:'smooth',block:'center'})}});
  document.addEventListener('click',e=>{const ia=e.target.closest('[data-ia]');if(ia){e.preventDefault();e.stopPropagation();const it=ia.closest('[data-item]'),[l,i]=it.dataset.item.split(':');parent.postMessage({type:'item',list:l,i:+i,act:ia.dataset.ia},location.origin);return}
   const t=e.target.closest('[data-edit]');if(t&&!e.target.closest('[data-f]')){e.preventDefault();e.stopPropagation();parent.postMessage({type:'edit',path:t.dataset.edit},location.origin)}},true);
