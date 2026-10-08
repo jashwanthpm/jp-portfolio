@@ -23,11 +23,13 @@ async function mason(el,items){const gen=el._g=(el._g||0)+1;el._items=items;
  el.innerHTML=cols.map(c=>`<div class="mc">${c.map(([p,i])=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="aspect-ratio:${p.r};--d:${Math.min(i,10)}">${p.src?thimg(p.src,i<8?'':' loading="lazy"'):`<span class="ph"></span>`}${window.__dlon&&p.src?`<a class="dli" href="${dlSrc(p.src)}" download="${dlName(p.src)}" title="Download full size">⬇</a>`:''}</figure>`).join('')}</div>`).join('');
  el._n=n;bind(el,items);lprog(el);
  if(!window.__mr){window.__mr=1;addEventListener('resize',()=>{const m=$('.mas');if(m&&m._items&&(innerWidth<700?2:3)!=m._n)mason(m,m._items)})}}
+const LOCK='<svg class="lk" viewBox="0 0 24 24" role="img" aria-label="PIN protected"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 const dlSrc=p=>(C.hi||{})[p]||p;
 const dlName=p=>{const c=window.__dlc||{},i=(c.photos||[]).indexOf(p),q=dlSrc(p),ext=(q.match(/\.(\w+)$/)||[0,'jpg'])[1];return `${c.slug||'photo'}-${String(i+1).padStart(3,'0')}.${ext}`};
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-function gate(c,ok){document.body.insertAdjacentHTML('beforeend',`<div id="gate"><form><span class="eb">Private gallery</span><h2>${c.name}</h2><p>Enter the PIN you were given to open this gallery.</p><input type="password" id="pin" autocomplete="off" placeholder="PIN" aria-label="PIN"><button class="btn f">Open gallery</button><small id="pe"></small></form></div>`);
- const f=$('#gate form');setTimeout(()=>$('#pin').focus(),50);
+function gate(c,ok){document.body.insertAdjacentHTML('beforeend',`<div id="gate"><i class="gbg"></i><form><span class="eb">Private gallery</span><h2>${c.name}</h2><p>Enter the PIN you were given to open this gallery.</p><input type="password" id="pin" autocomplete="off" placeholder="PIN" aria-label="PIN"><button class="btn f">Open gallery</button><small id="pe"></small></form></div>`);
+ const f=$('#gate form'),bg=c.cover||(c.photos||[])[0];if(bg){const im=new Image();im.onload=()=>{const g=$('#gate .gbg');if(g){g.style.backgroundImage=`url('${bg}')`;g.style.backgroundPosition=pos(bg);g.classList.add('on')}};im.src=bg}
+ setTimeout(()=>$('#pin').focus(),50);
  f.onsubmit=async e=>{e.preventDefault();const v=$('#pin').value.trim(),h=await sha((c.pinSalt||'')+v);
   if(h==c.pinHash){try{sessionStorage.setItem('pin_'+c.slug,c.pinHash)}catch{}$('#gate').remove();ok()}
   else{$('#pe').textContent='That PIN is not correct.';f.classList.add('shake');setTimeout(()=>f.classList.remove('shake'),500);$('#pin').value=''}}}
@@ -70,7 +72,7 @@ function common(){
  const em=$('#em');if(em){em.href='mailto:'+C.email;txt('emt',C.email)}const ig=$('#ig');if(ig){ig.href=C.instagram;txt('igt','@'+(C.instagram||'').replace(/\/$/,'').split('/').pop())}
  const wa=$('#wa');if(wa&&C.phone){wa.hidden=false;wa.href='https://wa.me/'+C.phone;txt('wat','+'+C.phone)}
 }
-const cards=(list)=>list.map(c=>`<a class="cd rv" href="gallery.html?c=${c.slug}"><span class="cv">${imgt(c.cover||(c.photos||[])[0],c.name.length%5)}</span><div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.pinHash?'🔒 ':''}${c.name}</h3></div></a>`).join('');
+const cards=(list)=>list.map(c=>`<a class="cd rv" href="gallery.html?c=${c.slug}"><span class="cv">${imgt(c.cover||(c.photos||[])[0],c.name.length%5)}</span><div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.pinHash?LOCK:''}${c.name}</h3></div></a>`).join('');
 function igInit(){const sec=$('#igsec');if(!sec)return;const it=(C.igItems||[]).flatMap((x,k)=>(PV||!x.hide?(x.covers||(x.cover?[x.cover]:[])):[]).map(s=>({src:s,url:x.url,k,h:x.hide})));
  if(!it.length){sec.style.display='none';return}
  const hn=(C.instagram||'').replace(/\/$/,'').split('/').pop();$('#igbtn').href=C.instagram||'#';$('#igbtn').textContent=hn?'@'+hn+' ↗':'Follow ↗';
