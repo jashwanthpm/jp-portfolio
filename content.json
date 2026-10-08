@@ -253,7 +253,9 @@
         "/images/1791289766434-6181.jpg",
         "/images/1791289766870-q3pe.jpg"
       ],
-      "download": "orig"
+      "download": "off",
+      "pinSalt": "969c94d9f2effe42",
+      "pinHash": "3c889b7456c17a8e34c40f2902eb74b7146e4c351da24b2047b69583fbcd5a3d"
     }
   ],
   "faq": [],
