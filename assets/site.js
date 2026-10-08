@@ -20,9 +20,22 @@ async function mason(el,items){const gen=el._g=(el._g||0)+1;el._items=items;
  await Promise.all(items.map(async p=>{if(p.r==null)p.r=p.src?await getR(p.src):.8}));if(el._g!=gen)return;
  const n=innerWidth<700?2:3,H=Array(n).fill(0),cols=Array.from({length:n},()=>[]);
  items.forEach((p,i)=>{const k=H.indexOf(Math.min(...H));cols[k].push([p,i]);H[k]+=1/p.r});
- el.innerHTML=cols.map(c=>`<div class="mc">${c.map(([p,i])=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="aspect-ratio:${p.r};--d:${Math.min(i,10)}">${p.src?thimg(p.src,i<8?'':' loading="lazy"'):`<span class="ph"></span>`}</figure>`).join('')}</div>`).join('');
+ el.innerHTML=cols.map(c=>`<div class="mc">${c.map(([p,i])=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="aspect-ratio:${p.r};--d:${Math.min(i,10)}">${p.src?thimg(p.src,i<8?'':' loading="lazy"'):`<span class="ph"></span>`}${window.__dlon&&p.src?`<a class="dli" href="${dlSrc(p.src)}" download="${dlName(p.src)}" title="Download full size">⬇</a>`:''}</figure>`).join('')}</div>`).join('');
  el._n=n;bind(el,items);lprog(el);
  if(!window.__mr){window.__mr=1;addEventListener('resize',()=>{const m=$('.mas');if(m&&m._items&&(innerWidth<700?2:3)!=m._n)mason(m,m._items)})}}
+const dlSrc=p=>(C.hi||{})[p]||p;
+const dlName=p=>{const c=window.__dlc||{},i=(c.photos||[]).indexOf(p),q=dlSrc(p),ext=(q.match(/\.(\w+)$/)||[0,'jpg'])[1];return `${c.slug||'photo'}-${String(i+1).padStart(3,'0')}.${ext}`};
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function gate(c,ok){document.body.insertAdjacentHTML('beforeend',`<div id="gate"><form><span class="eb">Private gallery</span><h2>${c.name}</h2><p>Enter the PIN you were given to open this gallery.</p><input type="password" id="pin" autocomplete="off" placeholder="PIN" aria-label="PIN"><button class="btn f">Open gallery</button><small id="pe"></small></form></div>`);
+ const f=$('#gate form');setTimeout(()=>$('#pin').focus(),50);
+ f.onsubmit=async e=>{e.preventDefault();const v=$('#pin').value.trim(),h=await sha((c.pinSalt||'')+v);
+  if(h==c.pinHash){try{sessionStorage.setItem('pin_'+c.slug,c.pinHash)}catch{}$('#gate').remove();ok()}
+  else{$('#pe').textContent='That PIN is not correct.';f.classList.add('shake');setTimeout(()=>f.classList.remove('shake'),500);$('#pin').value=''}}}
+async function zipAll(c,btn){const t=btn.textContent;btn.disabled=true;
+ try{if(!window.JSZip)await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+  const z=new JSZip(),ps=c.photos;let n=0;for(const p of ps){const r=await fetch(dlSrc(p));if(!r.ok)throw 0;z.file(dlName(p),await r.blob());n++;btn.textContent=`Preparing ${n} / ${ps.length}…`}
+  const blob=await z.generateAsync({type:'blob',compression:'STORE'},m=>btn.textContent=`Zipping ${Math.round(m.percent)}%`),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=c.slug+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
+ catch{alert('Could not prepare the download. Please download the pictures one by one instead.')}btn.textContent=t;btn.disabled=false}
 const at=(l,i,x)=>PV?` data-item="${l}:${i}"${x.hide?' data-hid="1"':''}`:'';
 const shown=a=>(a||[]).map((x,i)=>[x,i]).filter(([x])=>PV||!x.hide);
 const em=s=>String(s).replace(/\*(.+?)\*/g,'<em>$1</em>');
@@ -36,11 +49,11 @@ const tile=(p,cap)=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''}>${p.src?`
 const demo=n=>Array.from({length:n},(_,i)=>({h:i%5,client:'Client'}));
 const img=(s,h=0)=>s?`<img src="${s}" alt="">`:`<span class="ph" style="--h:${h}"></span>`;
 const txt=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null)e.textContent=v};
-function bind(root,list){root.onclick=e=>{const f=e.target.closest('.t[data-s]');if(!f)return;LB=list.filter(p=>p.src).map(p=>p.src);LI=LB.indexOf(f.dataset.s);show()}}
-function show(){const l=$('#lb');l.classList.add('o');$('img',l).src=LB[LI];$('small',l).textContent=`${LI+1} / ${LB.length}`}
+function bind(root,list){root.onclick=e=>{if(e.target.closest('.dli'))return;const f=e.target.closest('.t[data-s]');if(!f)return;LB=list.filter(p=>p.src).map(p=>p.src);LI=LB.indexOf(f.dataset.s);show()}}
+function show(){const l=$('#lb');l.classList.add('o');$('img',l).src=LB[LI];$('small',l).textContent=`${LI+1} / ${LB.length}`;const dl=$('.dl',l);if(dl){if(window.__dlon){dl.hidden=false;dl.href=dlSrc(LB[LI]);dl.setAttribute('download',dlName(LB[LI]))}else dl.hidden=true}}
 function shell(){
  document.body.insertAdjacentHTML('afterbegin',`<header id="hd"><div class="wrap"><a class="logo" href="index.html">${logoHtml()}</a><button id="mb" aria-label="Menu">☰</button><nav>${NV().map(n=>`<a href="${n[0]}" class="${n[2]==P?'on':''}">${n[1]}</a>`).join('')}</nav></div></header>`);
- document.body.insertAdjacentHTML('beforeend',`<footer id="ft"><div class="wrap"><div class="r"><div>${NV().map(n=>`<a href="${n[0]}">${n[1]}</a>`).join('')}</div><div><a href="mailto:${C.email}">${C.email}</a><a href="${C.instagram}">Instagram</a></div><div>© ${new Date().getFullYear()} ${C.name||''}</div></div></div></footer><div id="lb"><button class="x">×</button><button class="p">‹</button><img alt=""><button class="n">›</button><small></small></div>`);
+ document.body.insertAdjacentHTML('beforeend',`<footer id="ft"><div class="wrap"><div class="r"><div>${NV().map(n=>`<a href="${n[0]}">${n[1]}</a>`).join('')}</div><div><a href="mailto:${C.email}">${C.email}</a><a href="${C.instagram}">Instagram</a></div><div>© ${new Date().getFullYear()} ${C.name||''}</div></div></div></footer><div id="lb"><button class="x">×</button><button class="p">‹</button><img alt=""><button class="n">›</button><a class="dl" hidden>⬇ Download full size</a><small></small></div>`);
  const l=$('#lb'),mv=d=>{LI=(LI+d+LB.length)%LB.length;show()};
  $('.x',l).onclick=()=>l.classList.remove('o');$('.p',l).onclick=()=>mv(-1);$('.n',l).onclick=()=>mv(1);
  document.onkeydown=e=>{if(!l.classList.contains('o'))return;if(e.key=='Escape')l.classList.remove('o');if(e.key=='ArrowLeft')mv(-1);if(e.key=='ArrowRight')mv(1)};
@@ -57,7 +70,7 @@ function common(){
  const em=$('#em');if(em){em.href='mailto:'+C.email;txt('emt',C.email)}const ig=$('#ig');if(ig){ig.href=C.instagram;txt('igt','@'+(C.instagram||'').replace(/\/$/,'').split('/').pop())}
  const wa=$('#wa');if(wa&&C.phone){wa.hidden=false;wa.href='https://wa.me/'+C.phone;txt('wat','+'+C.phone)}
 }
-const cards=(list)=>list.map(c=>`<a class="cd rv" href="gallery.html?c=${c.slug}"><span class="cv">${imgt(c.cover||(c.photos||[])[0],c.name.length%5)}</span><div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.name}</h3></div></a>`).join('');
+const cards=(list)=>list.map(c=>`<a class="cd rv" href="gallery.html?c=${c.slug}"><span class="cv">${imgt(c.cover||(c.photos||[])[0],c.name.length%5)}</span><div><small>${c.date||''} · ${(c.photos||[]).length} photos</small><h3>${c.pinHash?'🔒 ':''}${c.name}</h3></div></a>`).join('');
 function igInit(){const sec=$('#igsec');if(!sec)return;const it=(C.igItems||[]).flatMap((x,k)=>(PV||!x.hide?(x.covers||(x.cover?[x.cover]:[])):[]).map(s=>({src:s,url:x.url,k,h:x.hide})));
  if(!it.length){sec.style.display='none';return}
  const hn=(C.instagram||'').replace(/\/$/,'').split('/').pop();$('#igbtn').href=C.instagram||'#';$('#igbtn').textContent=hn?'@'+hn+' ↗':'Follow ↗';
@@ -73,7 +86,7 @@ const hp=(C.heroPics||[]).filter(Boolean);
  $('#slides').innerHTML=`<div class="trk">${(hp.length?hp:[null]).map(s=>`<div class="sl" style="${s?`background-image:url('${s}');background-position:${pos(s)}`:'background:radial-gradient(90% 80% at 30% 20%,#4a3426,#0d0c0b)'}"></div>`).join('')}</div>${hp.length>1?`<div class="dots">${hp.map((_,i)=>`<button aria-label="Slide ${i+1}" data-i="${i}"></button>`).join('')}</div>`:''}`;
  let k=0,dir=1;const trk=$('#slides .trk'),go=n=>{k=n;trk.style.transform=`translateX(-${k*100}%)`;$$('#slides .dots button').forEach((b,i)=>b.classList.toggle('on',i==k))};go(0);
  clearInterval(window.SL);if(hp.length>1){window.SL=setInterval(()=>{if(k+dir>=hp.length||k+dir<0)dir=-dir;go(k+dir)},5500);$$('#slides .dots button').forEach(b=>b.onclick=()=>go(+b.dataset.i))}
- const gp=()=>{const cap=2,pool=[...(C.portfolio||[]).map(s=>({src:s,g:'pf'})),...(C.clients||[]).filter(c=>!c.private).flatMap(c=>shuf(c.photos||[]).slice(0,cap).map(s=>({src:s,g:c.slug})))],out=[],cnt={};
+ const gp=()=>{const cap=2,pool=[...(C.portfolio||[]).map(s=>({src:s,g:'pf'})),...(C.clients||[]).filter(c=>!c.private&&!c.pinHash).flatMap(c=>shuf(c.photos||[]).slice(0,cap).map(s=>({src:s,g:c.slug})))],out=[],cnt={};
   shuf(pool).forEach(p=>{if(out.length<6&&(cnt[p.g]||0)<(p.g=='pf'?6:cap)){out.push(p);cnt[p.g]=(cnt[p.g]||0)+1}});return out.length?out:demo(6)};
  const dims=ps=>Promise.all(ps.map(p=>new Promise(r=>{if(!p.src){p.r=.8;return r()}const i=new Image();i.onload=()=>{p.r=i.naturalWidth/i.naturalHeight||.8;r()};i.onerror=()=>{p.r=.8;r()};i.src=p.src})));
  const draw=async s=>{await Promise.all(s.map(async p=>{p.r=p.src?await getR(p.src):.8}));const per=innerWidth<700?2:3,rows=[];for(let i=0;i<s.length;i+=per)rows.push(s.slice(i,i+per));
@@ -104,8 +117,15 @@ clients(){$('#gal').innerHTML=cards((C.clients||[]).filter(c=>!c.private))},
 gallery(){
  const s=new URLSearchParams(location.search).get('c'),c=(C.clients||[]).find(x=>x.slug==s);
  if(!c){$('#gt').textContent='Gallery not found';return}
- document.title=c.name+' — '+C.name;$('#gt').textContent=c.name;txt('gd',c.date);txt('gs',c.story);
- const ps=(c.photos||[]).length?c.photos.map(src=>({src,client:c.name})):demo(9);mason($('#grid'),ps);
+ const run=()=>{document.title=c.name+' — '+C.name;$('#gt').textContent=c.name;txt('gd',c.date);txt('gs',c.story);
+  window.__dlc=c;window.__dlon=!!c.download&&c.download!='off';
+  if((c.private||c.pinHash)&&!document.querySelector('meta[name=robots]'))document.head.insertAdjacentHTML('beforeend','<meta name="robots" content="noindex,nofollow">');
+  const ps=(c.photos||[]).length?c.photos.map(src=>({src,client:c.name})):demo(9);mason($('#grid'),ps);
+  let ga=$('#gact');if(!ga){$('#gs').insertAdjacentHTML('afterend','<div id="gact"></div>');ga=$('#gact')}
+  ga.innerHTML=window.__dlon&&(c.photos||[]).length?`<button class="btn f" id="dlall">⬇ Download all</button><small style="color:var(--mute)">${c.photos.length} pictures · ${({high:'high resolution',orig:'original files'}[c.download]||'full size')}</small>`:'';
+  if($('#dlall'))$('#dlall').onclick=()=>zipAll(c,$('#dlall'))};
+ let ok=false;try{ok=sessionStorage.getItem('pin_'+c.slug)==c.pinHash}catch{}
+ if(c.pinHash&&!PV&&!ok){$('#gt').textContent='';gate(c,run)}else run()
 },
 about(){
  $('#story').innerHTML=(C.story||DFL.story).split(/\n\s*\n/).filter(Boolean).map(p=>`<p>${p}</p>`).join('');txt('quote',C.intro);
