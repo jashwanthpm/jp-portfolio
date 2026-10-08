@@ -215,7 +215,7 @@
       "date": "2026",
       "story": "",
       "cover": "/images/1791289788872-ry1t.jpg",
-      "private": false,
+      "private": true,
       "photos": [
         "/images/1791289735781-0wkf.jpg",
         "/images/1791289736526-qcc9.jpg",
