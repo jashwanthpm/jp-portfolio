@@ -215,7 +215,7 @@
       "date": "2026",
       "story": "",
       "cover": "/images/1791289788872-ry1t.jpg",
-      "private": true,
+      "private": false,
       "photos": [
         "/images/1791289735781-0wkf.jpg",
         "/images/1791289736526-qcc9.jpg",
@@ -253,8 +253,6 @@
         "/images/1791289766434-6181.jpg",
         "/images/1791289766870-q3pe.jpg"
       ],
-      "pinSalt": "3e8d9e36bd930d13",
-      "pinHash": "74d3d9f7e042599021ae585f8c9e7d6ea5f3d857e29f4a450d65db5dbd981388",
       "download": "orig"
     }
   ],
