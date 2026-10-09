@@ -392,6 +392,25 @@
         "/images/1791544925760-ohxg.jpg",
         "/images/1791544925999-0eda.jpg"
       ]
+    },
+    {
+      "name": "Divya ",
+      "slug": "divya",
+      "date": "",
+      "story": "",
+      "cover": "/images/1791570376509-8v37.jpg",
+      "private": true,
+      "photos": [
+        "/images/1791570373850-3q0o.jpg",
+        "/images/1791570374349-79ve.jpg",
+        "/images/1791570374839-klcj.jpg",
+        "/images/1791570375331-p3wq.jpg",
+        "/images/1791570375754-3h5u.jpg",
+        "/images/1791570376128-kkhr.jpg",
+        "/images/1791570376509-8v37.jpg",
+        "/images/1791570376797-klsw.jpg"
+      ],
+      "onHome": false
     }
   ],
   "faq": [],
@@ -605,7 +624,8 @@
     "/images/1791548126256-gbvq.jpg": "77% 96%",
     "/images/1791544925286-73zu.jpg": "70% 97%",
     "/images/1791559879975-qbyp.jpg": "48% 28%",
-    "/images/1791559880232-m5xb.jpg": "45% 61%"
+    "/images/1791559880232-m5xb.jpg": "45% 61%",
+    "/images/1791570376509-8v37.jpg": "38% 30%"
   },
   "favicon": "/images/favicon-1791284648615.png",
   "dims": {
@@ -2168,6 +2188,38 @@
     "/images/1791559880232-m5xb.jpg": [
       1745,
       1163
+    ],
+    "/images/1791570373850-3q0o.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791570374349-79ve.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791570374839-klcj.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791570375331-p3wq.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791570375754-3h5u.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791570376128-kkhr.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791570376509-8v37.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791570376797-klsw.jpg": [
+      1600,
+      2000
     ]
   },
   "hi": {},
