@@ -367,7 +367,7 @@
       "slug": "virupa-samarth",
       "date": "",
       "story": "",
-      "cover": "/images/1791545034998-dja0.jpg",
+      "cover": "/images/1791548126256-gbvq.jpg",
       "private": false,
       "photos": [
         "/images/1791544922067-n1d9.jpg",
@@ -600,7 +600,8 @@
     "/images/1791541083984-2f6i.jpg": "53% 45%",
     "/images/1791541442558-8ulx.jpg": "41% 15%",
     "/images/1791544991556-duuj.jpg": "46% 9%",
-    "/images/1791545034998-dja0.jpg": "46% 57%"
+    "/images/1791545034998-dja0.jpg": "46% 57%",
+    "/images/1791548126256-gbvq.jpg": "77% 96%"
   },
   "favicon": "/images/favicon-1791284648615.png",
   "dims": {
@@ -2151,6 +2152,10 @@
     "/images/1791545034998-dja0.jpg": [
       1745,
       1163
+    ],
+    "/images/1791548126256-gbvq.jpg": [
+      1333,
+      2000
     ]
   },
   "hi": {},
