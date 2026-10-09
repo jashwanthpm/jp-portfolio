@@ -410,7 +410,9 @@
         "/images/1791570376509-8v37.jpg",
         "/images/1791570376797-klsw.jpg"
       ],
-      "onHome": false
+      "onHome": false,
+      "pinSalt": "cf8c0ef3801f4c27",
+      "pinHash": "9c8bd147c374a2567547f4eb90412204c67bd117837f7b80251c9f3afc7a736e"
     }
   ],
   "faq": [],
