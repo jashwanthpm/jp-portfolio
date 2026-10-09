@@ -79,7 +79,7 @@
       "name": "Prashanth - Nance",
       "slug": "prashanth-nance",
       "date": "2026",
-      "story": "Replace with the story of this shoot.",
+      "story": "",
       "cover": "/images/1791272321262-xmf3.jpg",
       "private": false,
       "photos": [
@@ -1444,5 +1444,12 @@
       2000
     ]
   },
-  "hi": {}
+  "hi": {},
+  "hdr": {
+    "style": "classic"
+  },
+  "ftr": {
+    "style": "minimal",
+    "wa": false
+  }
 }
