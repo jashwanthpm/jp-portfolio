@@ -76,7 +76,7 @@
   ],
   "clients": [
     {
-      "name": "Prashanth - Nance",
+      "name": "Prashanth & Nance",
       "slug": "prashanth-nance",
       "date": "2026",
       "story": "",
@@ -300,7 +300,8 @@
       "url": "",
       "covers": [
         "/images/1791287244140-q8n1.jpg"
-      ]
+      ],
+      "hide": false
     },
     {
       "url": "",
