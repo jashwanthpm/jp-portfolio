@@ -582,7 +582,8 @@
   "heroPics": [
     "/images/1791355238038-e3zu.jpg",
     "/images/1791355333015-yz3b.jpg",
-    "/images/1791362921368-7rvr.jpg"
+    "/images/1791362921368-7rvr.jpg",
+    "/images/1791559880232-m5xb.jpg"
   ],
   "focus": {
     "/images/1791272321262-xmf3.jpg": "46% 36%",
@@ -602,7 +603,9 @@
     "/images/1791544991556-duuj.jpg": "46% 9%",
     "/images/1791545034998-dja0.jpg": "46% 57%",
     "/images/1791548126256-gbvq.jpg": "77% 96%",
-    "/images/1791544925286-73zu.jpg": "70% 97%"
+    "/images/1791544925286-73zu.jpg": "70% 97%",
+    "/images/1791559879975-qbyp.jpg": "48% 28%",
+    "/images/1791559880232-m5xb.jpg": "45% 61%"
   },
   "favicon": "/images/favicon-1791284648615.png",
   "dims": {
@@ -2157,6 +2160,14 @@
     "/images/1791548126256-gbvq.jpg": [
       1333,
       2000
+    ],
+    "/images/1791559879975-qbyp.jpg": [
+      2000,
+      1333
+    ],
+    "/images/1791559880232-m5xb.jpg": [
+      1745,
+      1163
     ]
   },
   "hi": {},
