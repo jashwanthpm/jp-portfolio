@@ -54,9 +54,18 @@ const img=(s,h=0)=>s?`<img src="${s}" alt="">`:`<span class="ph" style="--h:${h}
 const txt=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null)e.textContent=v};
 function bind(root,list){root.onclick=e=>{if(e.target.closest('.dli'))return;const f=e.target.closest('.t[data-s]');if(!f)return;LB=list.filter(p=>p.src).map(p=>p.src);LI=LB.indexOf(f.dataset.s);show()}}
 function show(){const l=$('#lb');l.classList.add('o');$('img',l).src=LB[LI];$('small',l).textContent=`${LI+1} / ${LB.length}`;const dl=$('.dl',l);if(dl){if(window.__dlon){dl.hidden=false;dl.href=dlSrc(LB[LI]);dl.setAttribute('download',dlName(LB[LI]))}else dl.hidden=true}}
+function footerHtml(){const F=C.ftr||{},s=F.style||'classic',yr=new Date().getFullYear(),cp=(F.copy||'© {year} {name}').replace(/\{year\}/g,yr).replace(/\{name\}/g,C.name||''),tg=F.tagline||'';
+ const menu=F.menu!==false?NV().map(n=>`<a href="${n[0]}">${n[1]}</a>`):[],
+  con=[F.email!==false&&C.email?`<a href="mailto:${C.email}">${C.email}</a>`:'',F.insta!==false&&C.instagram?`<a href="${C.instagram}" target="_blank" rel="noopener">Instagram</a>`:'',F.wa&&C.phone?`<a href="https://wa.me/${C.phone}" target="_blank" rel="noopener">WhatsApp</a>`:''].filter(Boolean),
+  lg=`<a class="logo" href="/">${logoHtml()}</a>`;let h;
+ if(s=='centered')h=`<div class="wrap fc">${lg}${tg?`<p class="tg">${tg}</p>`:''}${menu.length?`<div class="fl">${menu.join('')}</div>`:''}${con.length?`<div class="fl">${con.join('')}</div>`:''}<div class="cp">${cp}</div></div>`;
+ else if(s=='columns')h=`<div class="wrap"><div class="cols"><div>${lg}${tg?`<p class="tg">${tg}</p>`:''}</div>${menu.length?`<div><h4>Menu</h4>${menu.join('')}</div>`:'<div></div>'}${con.length?`<div><h4>Contact</h4>${con.join('')}</div>`:'<div></div>'}</div><div class="bt">${cp}</div></div>`;
+ else if(s=='minimal')h=`<div class="wrap fm"><span>${cp}</span><span class="fl">${[...menu,...con].join('')}</span></div>`;
+ else h=`<div class="wrap"><div class="r"><div>${menu.join('')}</div><div>${con.join('')}</div><div>${cp}</div></div></div>`;
+ return `<footer id="ft" class="f-${s}">${h}</footer>`}
 function shell(){
  document.body.insertAdjacentHTML('afterbegin',`<header id="hd"><div class="wrap"><a class="logo" href="/">${logoHtml()}</a><button id="mb" aria-label="Menu">☰</button><nav>${NV().map(n=>`<a href="${n[0]}" class="${n[2]==P?'on':''}">${n[1]}</a>`).join('')}</nav></div></header>`);
- document.body.insertAdjacentHTML('beforeend',`<footer id="ft"><div class="wrap"><div class="r"><div>${NV().map(n=>`<a href="${n[0]}">${n[1]}</a>`).join('')}</div><div><a href="mailto:${C.email}">${C.email}</a><a href="${C.instagram}">Instagram</a></div><div>© ${new Date().getFullYear()} ${C.name||''}</div></div></div></footer><div id="lb"><button class="x">×</button><button class="p">‹</button><img alt=""><button class="n">›</button><a class="dl" hidden>⬇ Download full size</a><small></small></div>`);
+ document.body.insertAdjacentHTML('beforeend',`${footerHtml()}<div id="lb"><button class="x">×</button><button class="p">‹</button><img alt=""><button class="n">›</button><a class="dl" hidden>⬇ Download full size</a><small></small></div>`);
  const l=$('#lb'),mv=d=>{LI=(LI+d+LB.length)%LB.length;show()};
  $('.x',l).onclick=()=>l.classList.remove('o');$('.p',l).onclick=()=>mv(-1);$('.n',l).onclick=()=>mv(1);
  document.onkeydown=e=>{if(!l.classList.contains('o'))return;if(e.key=='Escape')l.classList.remove('o');if(e.key=='ArrowLeft')mv(-1);if(e.key=='ArrowRight')mv(1)};
@@ -148,7 +157,7 @@ function theme(){const t=C.theme||{},s=document.documentElement.style,set=(k,v)=
  set('--acc',t.accent);set('--hs',t.heroScale&&t.heroScale/100);set('--ds',t.headScale&&t.headScale/100);set('--bs',t.bodyScale&&t.bodyScale/100);
  set('--d',t.headFont&&`'${t.headFont}',serif`);set('--bf',t.bodyFont&&`'${t.bodyFont}',sans-serif`);
  [t.headFont,t.bodyFont].filter(Boolean).forEach(n=>{const id='gf-'+n.replace(/\W/g,'');if(!document.getElementById(id)){const l=document.createElement('link');l.id=id;l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+n.replace(/ /g,'+')+':ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap';document.head.appendChild(l)}})}
-function boot(c){C=c;theme();const bc=document.body.classList;[...bc].filter(x=>x.startsWith('x-')).forEach(x=>bc.remove(x));Object.entries(C.vis||{}).forEach(([k,v])=>v===false&&bc.add('x-'+k));
+function boot(c){C=c;theme();const bc=document.body.classList;[...bc].filter(x=>/^(x|hs)-/.test(x)).forEach(x=>bc.remove(x));bc.add('hs-'+((C.hdr||{}).style||'classic'));Object.entries(C.vis||{}).forEach(([k,v])=>v===false&&bc.add('x-'+k));
  $$('#hd,#ft,#lb').forEach(e=>e.remove());shell();common();INIT[P]&&INIT[P]();obs();favicon();if(PV){markItems();markText()}
  if(PV){bc.add('pv');ME.forEach(([s,p])=>$$(s).forEach(x=>x.dataset.edit=p));$$('a[href]').forEach(a=>{const h=a.getAttribute('href');if(/^\/(portfolio|clients|gallery|about|contact)?(\?|$)/.test(h)&&!/preview/.test(h))a.setAttribute('href',h+(h.includes('?')?'&':'?')+'preview=1')})}}
 if(PV){addEventListener('message',e=>{if(e.origin!=location.origin||!e.data)return;if(e.data.type=='content')boot(e.data.data);if(e.data.type=='scroll'){const el=$(e.data.sel);el&&el.scrollIntoView({behavior:'smooth',block:'center'})}});
