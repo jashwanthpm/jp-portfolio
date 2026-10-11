@@ -413,6 +413,18 @@
       "onHome": false,
       "pinSalt": "cf8c0ef3801f4c27",
       "pinHash": "9c8bd147c374a2567547f4eb90412204c67bd117837f7b80251c9f3afc7a736e"
+    },
+    {
+      "name": "Personal",
+      "slug": "personal",
+      "date": "",
+      "story": "",
+      "cover": "",
+      "private": true,
+      "photos": [
+        "/images/1791739469410-2em5.jpg",
+        "/images/1791739469931-ky8d.jpg"
+      ]
     }
   ],
   "faq": [],
@@ -627,7 +639,8 @@
     "/images/1791544925286-73zu.jpg": "70% 97%",
     "/images/1791559879975-qbyp.jpg": "48% 28%",
     "/images/1791559880232-m5xb.jpg": "45% 61%",
-    "/images/1791570376509-8v37.jpg": "38% 30%"
+    "/images/1791570376509-8v37.jpg": "38% 30%",
+    "/images/1791739469410-2em5.jpg": "38% 18%"
   },
   "favicon": "/images/favicon-1791284648615.png",
   "dims": {
@@ -2222,6 +2235,14 @@
     "/images/1791570376797-klsw.jpg": [
       1600,
       2000
+    ],
+    "/images/1791739469410-2em5.jpg": [
+      1600,
+      2000
+    ],
+    "/images/1791739469931-ky8d.jpg": [
+      1600,
+      2000
     ]
   },
   "hi": {},
@@ -2231,5 +2252,9 @@
   "ftr": {
     "style": "minimal",
     "wa": false
+  },
+  "analytics": {
+    "provider": "off",
+    "id": ""
   }
 }
