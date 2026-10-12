@@ -109,7 +109,7 @@ footer .r{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}foo
  .hero h1{font-size:calc(clamp(3.4rem,20vw,8rem)*var(--hs,1))}.hero .row{flex-direction:column;align-items:flex-start}
  .pg{padding-top:130px}.pg h1{font-size:calc(clamp(2.8rem,15vw,5.5rem)*var(--hs,1))}
  .stats b{font-size:2.6rem}.stats div{padding:26px 8px}.head{align-items:flex-start}
- .mas,.mc{gap:10px}.fr{gap:10px;margin-bottom:10px}
+.fr{gap:10px;margin-bottom:10px}
  .cards{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}.cd h3{font-size:1.5rem}.cd div{padding:16px}
  .svc{grid-template-columns:1fr}.svc>div{min-height:300px}.igi{height:clamp(220px,62vw,320px)}
  .fc{padding:22px}.cc span{font-size:1.45rem}footer .r{flex-direction:column;gap:14px}footer a{display:inline-block;margin-bottom:6px}
@@ -163,3 +163,12 @@ footer.f-minimal{padding:34px 0}footer.f-minimal .fm{display:flex;justify-conten
 @media(hover:none){.dli{display:none}}
 #dlall{display:inline-flex;align-items:center;gap:12px}
 .dl.busy,.dli.busy{opacity:.6;pointer-events:none}.dl.busy span::after{content:'…'}
+
+.mas,.mc{gap:var(--g,14px)}.mas .t{border-radius:var(--rd,0)}.mas .t img{border-radius:var(--rd,0)}
+.mas.gridl{display:grid;grid-template-columns:repeat(var(--n,3),1fr);align-items:stretch}.mas.gridl .t{aspect-ratio:1!important}.mas.gridl .t img{object-fit:cover}
+.mas.rowsl{display:block}.rowsl .fr2{display:flex;gap:var(--g,14px);margin-bottom:var(--g,14px)}.rowsl .t{min-width:0}.rowsl .t img{object-fit:cover}
+.mas.stackl{display:flex;flex-direction:column;max-width:920px;margin:0 auto}.stackl .mc{display:contents}
+.mas.stripl{display:flex;flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:14px;align-items:stretch;scrollbar-width:thin}.stripl .t{flex:none;height:min(70vh,540px);width:auto;scroll-snap-align:start}.stripl .t img{width:auto;height:100%}
+#gact{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:28px}
+.btn.sm{padding:8px 16px;font-size:.62rem;letter-spacing:.16em;gap:9px;border-color:var(--line);color:var(--mute);background:none}.btn.sm:hover{border-color:var(--acc);color:var(--acc);background:none}.btn.sm .dlsv{width:13px;height:13px}#dlall{gap:9px}
+#gact small{font-size:.74rem}
