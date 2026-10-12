@@ -17,13 +17,19 @@ const getR=s=>{const d=(C.dims||{})[s];if(d)return Promise.resolve(d[0]/d[1]);re
 function lprog(el){let bar=$('#lp');if(!bar){document.body.insertAdjacentHTML('beforeend','<div id="lp"><i></i><span></span></div>');bar=$('#lp')}
  const imgs=$$('img',el),t=Math.min(12,imgs.length);let n=0;const upd=()=>{bar.firstChild.style.width=(t?n/t*100:100)+'%';bar.lastChild.textContent=n<t?`Loading pictures ${n} / ${t}`:'';bar.classList.toggle('done',n>=t)};
  imgs.forEach((im,k)=>{const d=()=>{im.classList.add('l');if(im._c)return;im._c=1;if(k<12){n++;upd()}};im.complete&&im.naturalWidth?d():(im.addEventListener('load',d),im.addEventListener('error',d))});upd()}
-async function mason(el,items){const gen=el._g=(el._g||0)+1;el._items=items;
+const LAY=l=>{l=l||{};return{s:l.style||'masonry',g:(l.gap===undefined||l.gap==='')?14:+l.gap,c:+l.cols||3,m:+l.mcols||2,r:+l.round||0}};
+async function mason(el,items,lay){const gen=el._g=(el._g||0)+1;el._items=items;el._lay=lay;const L=LAY(lay);
  await Promise.all(items.map(async p=>{if(p.r==null)p.r=p.src?await getR(p.src):.8}));if(el._g!=gen)return;
- const n=innerWidth<700?2:3,H=Array(n).fill(0),cols=Array.from({length:n},()=>[]);
- items.forEach((p,i)=>{const k=H.indexOf(Math.min(...H));cols[k].push([p,i]);H[k]+=1/p.r});
- el.innerHTML=cols.map(c=>`<div class="mc">${c.map(([p,i])=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="aspect-ratio:${p.r};--d:${Math.min(i,10)}">${p.src?thimg(p.src,i<8?'':' loading="lazy"'):`<span class="ph"></span>`}${window.__dlon&&p.src?`<a class="dli" href="${dlSrc(p.src)}" download="${dlName(p.src)}" title="Download" aria-label="Download">${DLI}</a>`:''}</figure>`).join('')}</div>`).join('');
- el._n=n;bind(el,items);lprog(el);
- if(!window.__mr){window.__mr=1;addEventListener('resize',()=>{const m=$('.mas');if(m&&m._items&&(innerWidth<700?2:3)!=m._n)mason(m,m._items)})}}
+ const n=innerWidth<700?L.m:L.c;el.className='mas '+({grid:'gridl',rows:'rowsl',stack:'stackl',strip:'stripl'}[L.s]||'');el.style.setProperty('--g',L.g+'px');el.style.setProperty('--rd',L.r+'px');el.style.setProperty('--n',n);
+ const tile=(p,i,sq)=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="aspect-ratio:${sq?1:p.r};--d:${Math.min(i,10)}">${p.src?thimg(p.src,i<8?'':' loading="lazy"'):`<span class="ph"></span>`}${window.__dlon&&p.src?`<a class="dli" href="${dlSrc(p.src)}" download="${dlName(p.src)}" title="Download" aria-label="Download">${DLI}</a>`:''}</figure>`;let html;
+ if(L.s=='grid')html=items.map((p,i)=>tile(p,i,1)).join('');
+ else if(L.s=='stack'||L.s=='strip')html=items.map((p,i)=>tile(p,i)).join('');
+ else if(L.s=='rows'){const W=el.clientWidth||1000,avg=items.reduce((s,p)=>s+p.r,0)/(items.length||1)||1,th=W/(n*avg),rows=[];let cur=[],sum=0;
+  items.forEach((p,i)=>{cur.push([p,i]);sum+=p.r;if(sum*th+L.g*(cur.length-1)>=W){rows.push({a:cur,s:sum,last:0});cur=[];sum=0}});if(cur.length)rows.push({a:cur,s:sum,last:1});
+  html=rows.map(r=>{const w=Math.round(r.s*th+L.g*(r.a.length-1)),full=!r.last||w>=W*.7;return `<div class="fr2"${full?'':` style="max-width:${w}px"`}>${r.a.map(([p,i])=>tile(p,i).replace('style="','style="flex:'+p.r+' 1 0;')).join('')}</div>`}).join('')}
+ else{const H=Array(n).fill(0),cols=Array.from({length:n},()=>[]);items.forEach((p,i)=>{const k=H.indexOf(Math.min(...H));cols[k].push([p,i]);H[k]+=1/p.r});html=cols.map(c=>`<div class="mc">${c.map(([p,i])=>tile(p,i)).join('')}</div>`).join('')}
+ el.innerHTML=html;el._n=n;bind(el,items);lprog(el);
+ if(!window.__mr){window.__mr=1;let tt;addEventListener('resize',()=>{clearTimeout(tt);tt=setTimeout(()=>{const m=$('.mas');if(m&&m._items){const l=LAY(m._lay),k=innerWidth<700?l.m:l.c;if(l.s=='rows'||k!=m._n)mason(m,m._items,m._lay)}},150)})}}
 const DLI='<svg class="dlsv" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>';
 const LOCK='<svg class="lk" viewBox="0 0 24 24" role="img" aria-label="PIN protected"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 const dlSrc=p=>(C.hi||{})[p]||p;
@@ -133,7 +139,7 @@ const hp=(C.heroPics||[]).filter(Boolean);
  igInit();
 },
 portfolio(){
- const s=(C.portfolio||[]).length?C.portfolio.map(src=>({src})):demo(9);mason($('#grid'),s);
+ const s=(C.portfolio||[]).length?C.portfolio.map(src=>({src})):demo(9);mason($('#grid'),s,C.pfLay);
 },
 clients(){$('#gal').innerHTML=cards((C.clients||[]).filter(c=>!c.private))},
 gallery(){
@@ -142,9 +148,9 @@ gallery(){
  const run=()=>{document.title=c.name+' — '+C.name;$('#gt').textContent=c.name;txt('gd',c.date);txt('gs',c.story);
   window.__dlc=c;window.__dlon=!!c.download&&c.download!='off';
   if((c.private||c.pinHash)&&!document.querySelector('meta[name=robots]'))document.head.insertAdjacentHTML('beforeend','<meta name="robots" content="noindex,nofollow">');
-  const ps=(c.photos||[]).length?c.photos.map(src=>({src,client:c.name})):demo(9);mason($('#grid'),ps);
+  const ps=(c.photos||[]).length?c.photos.map(src=>({src,client:c.name})):demo(9);mason($('#grid'),ps,c.lay);
   let ga=$('#gact');if(!ga){$('#gs').insertAdjacentHTML('afterend','<div id="gact"></div>');ga=$('#gact')}
-  ga.innerHTML=window.__dlon&&(c.photos||[]).length?`<button class="btn f" id="dlall">${DLI}<span>Download all</span></button><small style="color:var(--mute)">${c.photos.length} pictures · ${({high:'high resolution',orig:'original files'}[c.download]||'full size')}</small>`:'';
+  ga.innerHTML=window.__dlon&&(c.photos||[]).length?`<button class="btn sm" id="dlall">${DLI}<span>Download all</span></button><small style="color:var(--mute)">${c.photos.length} pictures · ${({high:'high resolution',orig:'original files'}[c.download]||'full size')}</small>`:'';
   if($('#dlall'))$('#dlall').onclick=()=>zipAll(c,$('#dlall'))};
  let ok=false;try{ok=sessionStorage.getItem('pin_'+c.slug)==c.pinHash}catch{}
  if(c.pinHash&&!PV&&!ok){$('#gt').textContent='';gate(c,run)}else run()
