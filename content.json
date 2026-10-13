@@ -180,7 +180,11 @@
         "/images/1791541113855-o4y0.jpg",
         "/images/1791541114177-1arq.jpg",
         "/images/1791541114393-u3qq.jpg"
-      ]
+      ],
+      "lay": {
+        "gap": 10
+      },
+      "coverSize": "tall"
     },
     {
       "name": "Happy 40♡",
@@ -226,7 +230,11 @@
         "/images/1791288489240-25zh.jpg",
         "/images/1791288489960-duok.jpg"
       ],
-      "onHome": false
+      "onHome": false,
+      "lay": {
+        "gap": 10
+      },
+      "coverSize": "tall"
     },
     {
       "name": "Pranav & Nishitha",
@@ -272,7 +280,11 @@
         "/images/1791289766434-6181.jpg",
         "/images/1791289766870-q3pe.jpg"
       ],
-      "download": "off"
+      "download": "off",
+      "lay": {
+        "gap": 10
+      },
+      "coverSize": "tall"
     },
     {
       "name": "Prashanth & Nance",
@@ -360,7 +372,11 @@
         "/images/1791271588039-6215.jpg",
         "/images/1791271588552-y25r.jpg",
         "/images/1791271589116-dh0t.jpg"
-      ]
+      ],
+      "lay": {
+        "gap": 10
+      },
+      "coverSize": "tall"
     },
     {
       "name": "Virupa & Samarth",
@@ -391,7 +407,11 @@
         "/images/1791544925533-la37.jpg",
         "/images/1791544925760-ohxg.jpg",
         "/images/1791544925999-0eda.jpg"
-      ]
+      ],
+      "lay": {
+        "gap": 10
+      },
+      "coverSize": "tall"
     },
     {
       "name": "Divya ",
@@ -412,7 +432,14 @@
       ],
       "onHome": false,
       "pinSalt": "cf8c0ef3801f4c27",
-      "pinHash": "9c8bd147c374a2567547f4eb90412204c67bd117837f7b80251c9f3afc7a736e"
+      "pinHash": "9c8bd147c374a2567547f4eb90412204c67bd117837f7b80251c9f3afc7a736e",
+      "lay": {
+        "cols": "3",
+        "mcols": "2",
+        "round": "0",
+        "gap": 10
+      },
+      "coverSize": "tall"
     },
     {
       "name": "Personal",
@@ -425,7 +452,8 @@
         "/images/1791739469410-2em5.jpg",
         "/images/1791739469931-ky8d.jpg"
       ],
-      "download": "orig"
+      "download": "orig",
+      "lay": {}
     }
   ],
   "faq": [],
@@ -2257,5 +2285,6 @@
   "analytics": {
     "provider": "off",
     "id": ""
-  }
+  },
+  "pfLay": {}
 }
