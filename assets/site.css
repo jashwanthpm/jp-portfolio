@@ -172,3 +172,13 @@ footer.f-minimal{padding:34px 0}footer.f-minimal .fm{display:flex;justify-conten
 #gact{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:28px}
 .btn.sm{padding:8px 16px;font-size:.62rem;letter-spacing:.16em;gap:9px;border-color:var(--line);color:var(--mute);background:none}.btn.sm:hover{border-color:var(--acc);color:var(--acc);background:none}.btn.sm .dlsv{width:13px;height:13px}#dlall{gap:9px}
 #gact small{font-size:.74rem}
+
+#gcov{position:relative;height:100svh;min-height:520px;display:grid;place-items:center;text-align:center;overflow:hidden;background:#0d0c0b}#gcov.gc-tall{height:78svh}#gcov.gc-half{height:56svh;min-height:420px}
+#gcov .gcb{position:absolute;inset:0;background:center/cover no-repeat;opacity:0;transform:scale(1.04);transition:opacity 1.2s ease,transform 6s ease}#gcov .gcb.on{opacity:1;transform:scale(1)}
+#gcov::after{content:"";position:absolute;inset:0;background:linear-gradient(#0d0c0b99,#0d0c0b22 38%,#0d0c0bd9)}
+#gcov .gct{position:relative;z-index:2;padding:0 6vw}#gcov h1{font-size:calc(clamp(2.8rem,9vw,8rem)*var(--hs,1));letter-spacing:-.02em;line-height:1;margin:14px 0 0;text-shadow:0 2px 30px #0008}
+#gcov .gdn{margin-top:34px;width:48px;height:48px;border-radius:50%;border:1px solid #efe9dd88;background:#0d0c0b55;backdrop-filter:blur(6px);cursor:pointer;display:inline-grid;place-items:center;padding:0}
+#gcov .gdn span{width:10px;height:10px;border-right:2px solid var(--acc);border-bottom:2px solid var(--acc);transform:rotate(45deg) translate(-2px,-2px);animation:sdb 1.6s ease-in-out infinite}
+.pg.has-cover{padding-top:56px}.pg.has-cover #gt,.pg.has-cover #gd{display:none}
+#gact{justify-content:flex-end}#dlp{color:var(--mute);font-size:.74rem;letter-spacing:.1em}
+.ibtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--mute);display:grid;place-items:center;cursor:pointer;padding:0;transition:.25s}.ibtn:hover{color:var(--acc);border-color:var(--acc)}.ibtn .dlsv{width:18px;height:18px}.ibtn:disabled{opacity:.5;cursor:default}
