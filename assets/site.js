@@ -43,11 +43,16 @@ function gate(c,ok){document.body.insertAdjacentHTML('beforeend',`<div id="gate"
   else{$('#pe').textContent='That PIN is not correct.';f.classList.add('shake');setTimeout(()=>f.classList.remove('shake'),500);$('#pin').value=''}}}
 async function dlBlob(a){a.classList.add('busy');try{const r=await fetch(a.href);if(!r.ok)throw 0;const b=await r.blob(),u=URL.createObjectURL(b),t=document.createElement('a');t.href=u;t.download=a.getAttribute('download')||'photo.jpg';document.body.appendChild(t);t.click();t.remove();setTimeout(()=>URL.revokeObjectURL(u),30000)}catch{window.open(a.href,'_blank')}a.classList.remove('busy')}
 document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a.dl,a.dli');if(a&&a.href&&!PV){e.preventDefault();e.stopPropagation();dlBlob(a)}},true);
-async function zipAll(c,btn){const t=btn.innerHTML;btn.disabled=true;
+async function gcover(c){const old=$('#gcov');if(old)old.remove();const pg=$('.pg');if(pg)pg.classList.remove('has-cover');
+ const im=c.cover||(c.photos||[])[0];if(!im||c.showCover===false||!pg)return;pg.classList.add('has-cover');
+ pg.insertAdjacentHTML('beforebegin',`<section id="gcov" class="gc-${c.coverSize||'full'}"><i class="gcb"></i><div class="gct">${c.date?`<span class="eb">${c.date}</span>`:''}<h1>${c.name}</h1><button class="gdn" aria-label="View pictures"><span></span></button></div></section>`);
+ const b=$('#gcov .gcb'),t=new Image();t.onload=()=>b.classList.add('on');t.src=im;b.style.backgroundImage=`url('${im}')`;b.style.backgroundPosition=pos(im);
+ $('#gcov .gdn').onclick=()=>pg.scrollIntoView({behavior:'smooth'})}
+async function zipAll(c,btn){const sp=$('#dlp')||{};btn.disabled=true;
  try{if(!window.JSZip)await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
-  const z=new JSZip(),ps=c.photos;let n=0;for(const p of ps){const r=await fetch(dlSrc(p));if(!r.ok)throw 0;z.file(dlName(p),await r.blob());n++;btn.textContent=`Preparing ${n} / ${ps.length}…`}
-  const blob=await z.generateAsync({type:'blob',compression:'STORE'},m=>btn.textContent=`Zipping ${Math.round(m.percent)}%`),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=c.slug+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
- catch{alert('Could not prepare the download. Please download the pictures one by one instead.')}btn.innerHTML=t;btn.disabled=false}
+  const z=new JSZip(),ps=c.photos;let n=0;for(const p of ps){const r=await fetch(dlSrc(p));if(!r.ok)throw 0;z.file(dlName(p),await r.blob());n++;sp.textContent=`Preparing ${n} / ${ps.length}…`}
+  const blob=await z.generateAsync({type:'blob',compression:'STORE'},m=>sp.textContent=`Zipping ${Math.round(m.percent)}%`),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=c.slug+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
+ catch{alert('Could not prepare the download. Please download the pictures one by one instead.')}sp.textContent='';btn.disabled=false}
 const at=(l,i,x)=>PV?` data-item="${l}:${i}"${x.hide?' data-hid="1"':''}`:'';
 const shown=a=>(a||[]).map((x,i)=>[x,i]).filter(([x])=>PV||!x.hide);
 const em=s=>String(s).replace(/\*(.+?)\*/g,'<em>$1</em>');
@@ -150,8 +155,9 @@ gallery(){
   if((c.private||c.pinHash)&&!document.querySelector('meta[name=robots]'))document.head.insertAdjacentHTML('beforeend','<meta name="robots" content="noindex,nofollow">');
   const ps=(c.photos||[]).length?c.photos.map(src=>({src,client:c.name})):demo(9);mason($('#grid'),ps,c.lay);
   let ga=$('#gact');if(!ga){$('#gs').insertAdjacentHTML('afterend','<div id="gact"></div>');ga=$('#gact')}
-  ga.innerHTML=window.__dlon&&(c.photos||[]).length?`<button class="btn sm" id="dlall">${DLI}<span>Download all</span></button><small style="color:var(--mute)">${c.photos.length} pictures · ${({high:'high resolution',orig:'original files'}[c.download]||'full size')}</small>`:'';
-  if($('#dlall'))$('#dlall').onclick=()=>zipAll(c,$('#dlall'))};
+  ga.innerHTML=window.__dlon&&(c.photos||[]).length?`<span id="dlp"></span><button class="ibtn" id="dlall" title="Download all pictures" aria-label="Download all pictures">${DLI}</button>`:'';
+  if($('#dlall'))$('#dlall').onclick=()=>zipAll(c,$('#dlall'));
+  gcover(c)};
  let ok=false;try{ok=sessionStorage.getItem('pin_'+c.slug)==c.pinHash}catch{}
  if(c.pinHash&&!PV&&!ok){$('#gt').textContent='';gate(c,run)}else run()
 },
