@@ -188,3 +188,15 @@ footer.f-minimal{padding:34px 0}footer.f-minimal .fm{display:flex;justify-conten
 #lb .dl{top:14px;right:76px;left:auto;bottom:auto;transform:none;width:46px;height:46px;padding:0;border-radius:50%;background:#ffffff14;border:1px solid #ffffff33;color:#fff;font-weight:400;letter-spacing:0;gap:0;justify-content:center;align-items:center;display:flex}
 #lb .dl:hover{background:#ffffff26;color:var(--acc);border-color:var(--acc)}#lb .dl span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}#lb .dl .dlsv{width:20px;height:20px}
 .dli{width:34px;height:34px;background:#0d0c0bb0;border:1px solid #ffffff40}
+
+.nf{position:relative;min-height:100svh;display:grid;place-items:center;text-align:center;overflow:hidden;padding:120px 6vw 80px}
+.nfb{position:absolute;inset:0;background:#0d0c0b center/cover no-repeat;opacity:0;transform:scale(1.05);transition:opacity 1.6s ease,transform 9s ease;filter:saturate(.85)}.nfb.on{opacity:.4;transform:scale(1)}
+.nf::before{content:"";position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse at center,#0d0c0b44 0%,#0d0c0bf0 80%)}
+.nfc{position:relative;z-index:2;max-width:660px;padding:52px 34px;--c:var(--acc);background:linear-gradient(var(--c),var(--c)) top left/24px 1px no-repeat,linear-gradient(var(--c),var(--c)) top left/1px 24px no-repeat,linear-gradient(var(--c),var(--c)) top right/24px 1px no-repeat,linear-gradient(var(--c),var(--c)) top right/1px 24px no-repeat,linear-gradient(var(--c),var(--c)) bottom left/24px 1px no-repeat,linear-gradient(var(--c),var(--c)) bottom left/1px 24px no-repeat,linear-gradient(var(--c),var(--c)) bottom right/24px 1px no-repeat,linear-gradient(var(--c),var(--c)) bottom right/1px 24px no-repeat}
+.nfc .af{position:absolute;top:16px;right:22px;font:500 .62rem Inter,sans-serif;letter-spacing:.22em;color:var(--acc);animation:afb 1.4s steps(2) infinite}@keyframes afb{50%{opacity:0}}
+.nfg{display:flex;justify-content:center;align-items:center;gap:.03em;margin:16px 0 8px;font:400 clamp(6rem,24vw,15rem)/1 var(--d);animation:pull 6s ease-in-out infinite}.nfg b{font-weight:400}
+.nfg svg{width:.76em;height:.76em;fill:none;stroke:var(--acc);stroke-width:2.2;stroke-linecap:round;animation:nfs 40s linear infinite}@keyframes nfs{to{transform:rotate(360deg)}}
+@keyframes pull{0%,38%,100%{filter:blur(0)}52%,68%{filter:blur(7px)}}
+.nfc h1{font-size:calc(clamp(1.8rem,5vw,3rem)*var(--ds,1));margin:6px 0 16px}.nfc p{color:var(--mute);max-width:440px;margin:0 auto}
+.nfa{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:32px}.nfl{display:flex;gap:26px;justify-content:center;margin-top:30px;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}.nfl a{color:var(--mute);transition:.3s}.nfl a:hover{color:var(--acc)}
+@media(max-width:600px){.nfc{padding:46px 20px}.nfa .btn{width:100%}}
