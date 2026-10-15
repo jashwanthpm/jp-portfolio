@@ -2289,8 +2289,10 @@
     "style": "classic"
   },
   "ftr": {
-    "style": "minimal",
-    "wa": false
+    "style": "centered",
+    "wa": true,
+    "email": true,
+    "copy": "© 2026 Jashwanth JP"
   },
   "analytics": {
     "provider": "off",
