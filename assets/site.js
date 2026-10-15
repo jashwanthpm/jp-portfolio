@@ -111,6 +111,7 @@ function igInit(){const sec=$('#igsec');if(!sec)return;const it=(C.igItems||[]).
  $('#igr').innerHTML=all.map(x=>`<a class="igi"${PV?` data-item="igItems:${x.k}"${x.h?' data-hid="1"':''}`:''} href="${x.url||C.instagram}" target="_blank" rel="noopener">${thimg(x.src)}</a>`).join('');
  $('#igr').style.setProperty('--t',Math.max(30,half.length*7)+'s')}
 const INIT={
+notfound(){const im=(C.heroPics||[])[0]||(C.portfolio||[])[0],b=$('.nfb');if(im&&b){b.style.backgroundImage=`url('${im}')`;b.style.backgroundPosition=pos(im);const t=new Image();t.onload=()=>b.classList.add('on');t.src=im}},
 home(){
  txt('kick',C.kicker);txt('role',C.role);
  {const nm=(C.name||'').trim().split(/\s+/).filter(Boolean),bs=$$('.hero h1 b');if(nm.length&&bs.length>1){bs[0].textContent=nm.length>1?nm.slice(0,-1).join(' '):nm[0];bs[1].innerHTML=nm.length>1?`<em>${nm[nm.length-1]}</em>`:''}}
@@ -191,4 +192,4 @@ if(PV){addEventListener('message',e=>{if(e.origin!=location.origin||!e.data)retu
  document.addEventListener('keydown',e=>{const el=e.target.closest&&e.target.closest('[data-f]');if(el&&e.key=='Enter'&&el.dataset.f!='story'&&el.dataset.f!='about'){e.preventDefault();el.blur()}});
  document.addEventListener('paste',e=>{const el=e.target.closest&&e.target.closest('[data-f]');if(!el)return;e.preventDefault();document.execCommand('insertText',false,(e.clipboardData||window.clipboardData).getData('text/plain'))});
  parent.postMessage({type:'ready'},location.origin)}
-else fetch('content.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).catch(()=>({})).then(boot);
+else fetch('/content.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).catch(()=>({})).then(boot);
