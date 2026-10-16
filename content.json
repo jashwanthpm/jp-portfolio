@@ -2298,5 +2298,10 @@
     "provider": "off",
     "id": ""
   },
-  "pfLay": {}
+  "pfLay": {},
+  "share": {
+    "desc": "Honest, heartfelt, timeless frames.",
+    "v": 1792136406810,
+    "image": "/share.jpg"
+  }
 }
