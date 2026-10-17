@@ -149,7 +149,7 @@ portfolio(){
 },
 clients(){$('#gal').innerHTML=cards((C.clients||[]).filter(c=>!c.private))},
 gallery(){
- const s=new URLSearchParams(location.search).get('c')||window.GSLUG,c=(C.clients||[]).find(x=>x.slug==s);
+ const s=new URLSearchParams(location.search).get('c'),c=(C.clients||[]).find(x=>x.slug==s);
  if(!c){$('#gt').textContent='Gallery not found';return}
  const run=()=>{document.title=c.name+' — '+C.name;$('#gt').textContent=c.name;txt('gd',c.date);txt('gs',c.story);
   window.__dlc=c;window.__dlon=!!c.download&&c.download!='off';
