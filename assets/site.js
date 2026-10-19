@@ -158,6 +158,7 @@ gallery(){
   let ga=$('#gact');if(!ga){$('#gs').insertAdjacentHTML('afterend','<div id="gact"></div>');ga=$('#gact')}
   ga.innerHTML=window.__dlon&&(c.photos||[]).length?`<span id="dlp"></span><button class="ibtn" id="dlall" title="Download all pictures" aria-label="Download all pictures">${DLI}</button>`:'';
   if($('#dlall'))$('#dlall').onclick=()=>zipAll(c,$('#dlall'));
+  const galleryBack=$('.pg .wrap > a.eb, #gbar > a.eb');if(galleryBack)galleryBack.style.display=c.private?'none':'';
   let bar=$('#gbar');if(!bar){const back=$('.pg .wrap > a.eb');if(back){bar=document.createElement('div');bar.id='gbar';back.parentNode.insertBefore(bar,back);bar.appendChild(back)}}
   if(bar&&ga&&ga.parentNode!==bar)bar.appendChild(ga);
   gcover(c)};
