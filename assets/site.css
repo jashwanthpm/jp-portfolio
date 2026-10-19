@@ -51,7 +51,7 @@ nav a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;bac
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:26px}
 .cd{position:relative;aspect-ratio:4/5;overflow:hidden;display:block}.cd img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s}.cd:hover img{transform:scale(1.07)}
 .cd::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 40%,#0d0c0bf0)}
-.cd div{position:absolute;inset:auto 0 0;z-index:3;padding:26px}.cd h3{font-size:2.2rem}.cd small{color:var(--acc);letter-spacing:.22em;text-transform:uppercase;font-size:.66rem}
+.cd .cd-info{position:absolute;inset:auto 0 0;z-index:3;padding:26px;display:flex;flex-direction:column;gap:8px;min-width:0}.cd h3{font-size:2.2rem;line-height:1.08;overflow-wrap:break-word;text-wrap:balance}.cd small{color:var(--acc);letter-spacing:.22em;text-transform:uppercase;font-size:.66rem}
 .mq{overflow:hidden;white-space:nowrap;border-block:1px solid var(--line);padding:26px 0;background:var(--bg2)}.mq div{display:inline-block;animation:mq 45s linear infinite}
 .mq span{font:italic 2.4rem var(--d);color:var(--mute);margin:0 30px}.mq b{color:var(--acc);font-weight:400}@keyframes mq{to{transform:translateX(-50%)}}
 .cta{text-align:center}.cta h2{font-size:calc(clamp(2.8rem,9vw,8rem)*var(--ds,1))}
@@ -110,7 +110,7 @@ footer .r{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}foo
  .pg{padding-top:130px}.pg h1{font-size:calc(clamp(2.8rem,15vw,5.5rem)*var(--hs,1))}
  .stats b{font-size:2.6rem}.stats div{padding:26px 8px}.head{align-items:flex-start}
 .fr{gap:10px;margin-bottom:10px}
- .cards{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}.cd h3{font-size:1.5rem}.cd div{padding:16px}
+ .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.cd{aspect-ratio:3/4;border-radius:3px;isolation:isolate}.cd::after{background:linear-gradient(180deg,transparent 32%,rgba(7,6,5,.22) 53%,rgba(7,6,5,.92) 100%)}.cd .cd-info{padding:14px 12px 17px;gap:7px}.cd h3{font-size:clamp(1.25rem,5.5vw,1.75rem);line-height:1.03;letter-spacing:-.02em;text-shadow:0 1px 12px #0008}.cd small{font-size:.58rem;letter-spacing:.17em}
  .svc{grid-template-columns:1fr}.svc>div{min-height:300px}.igi{height:clamp(220px,62vw,320px)}
  .fc{padding:22px}.cc span{font-size:1.45rem}footer .r{flex-direction:column;gap:14px}footer a{display:inline-block;margin-bottom:6px}
  .dots{bottom:14px}.btn{padding:14px 24px}
