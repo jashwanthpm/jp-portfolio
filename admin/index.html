@@ -90,7 +90,7 @@ input[type=text],textarea,#side select{width:100%;background:#100e0d;border:1px 
 @media(max-width:900px){.main{grid-template-columns:1fr;grid-template-rows:auto 48vh 1fr}#rail{flex-direction:row;overflow-x:auto;padding:6px}#rail button{width:76px;flex:none}#side{border:0;border-bottom:1px solid var(--l)}.stage.m iframe{width:100%}.brand span,#chip span{display:none}}
 </style></head><body>
 <div id="login" hidden><div><h1>Site Editor</h1><p>Paste your GitHub token to sign in. It stays only in this browser.</p><input type="text" id="tk" placeholder="github_pat_..." style="margin-bottom:12px"><button class="pri" id="go" style="width:100%">Connect</button><p id="le" style="color:#ff8f80;margin-top:12px"></p></div></div>
-<div class="top"><div class="brand"><b>Studio</b><span>Site editor</span></div><div id="chip"><i></i><span>All changes saved</span></div><div class="sp"></div><div class="seg"><button id="dk" class="on">Desktop</button><button id="mb">Phone</button></div><button class="ghost" id="help">How it works</button><a href=".." target="_blank" rel="noopener">View site ↗</a><button class="pri" id="save" disabled>Publish changes</button></div>
+<div class="top"><div class="brand"><b>Studio</b><span>Site editor</span></div><div id="chip"><i></i><span>All changes saved</span></div><div id="storage" title="Estimated repository usage; GitHub Pages has a separate published-site size guideline" style="font-size:11px;color:var(--m);white-space:nowrap;min-width:120px">Storage: checking…</div><div class="sp"></div><div class="seg"><button id="dk" class="on">Desktop</button><button id="mb">Phone</button></div><button class="ghost" id="help">How it works</button><a href=".." target="_blank" rel="noopener">View site ↗</a><button class="pri" id="save" disabled>Publish changes</button></div>
 <div class="main"><nav id="rail"></nav><div id="side"></div><div class="view"><div class="vbar"><select id="pg" aria-label="Preview page"></select><small>Live preview. Click any text to type on it.</small></div><div class="stage" id="st"><iframe id="fr" title="Preview"></iframe></div></div></div>
 <div id="pm" hidden>
  <div class="pmt"><button class="ghost" data-pm="done">← Back</button><div class="pmti"><b id="pmt"></b><small id="pmn"></small></div><div class="sp"></div><div class="seg" id="pms"><button data-pz="120">S</button><button data-pz="170" class="on">M</button><button data-pz="250">L</button></div><button class="ghost" data-pm="all">Select all</button><button data-pm="add">Add pictures</button><button class="pri" data-pm="done">Done</button></div>
@@ -133,7 +133,17 @@ const SECSEL={hr:'.hero',b:'.hero',h:'.hero',n:'#stats',p:'#pts',r:'#mq',i:'#igs
 function toast(t,e){const el=$('#toast');el.textContent=t||'';el.className=(e?'e ':'')+'on';clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),e?5000:2600)}
 const msg=toast;
 function chip(s){const c=$('#chip');c.className=s;c.querySelector('span').textContent=s=='dirty'?'Unsaved changes':s=='saving'?'Publishing…':'All changes saved'}
-const touch=()=>{dirty=true;$('#save').disabled=false;chip('dirty')};
+const touch=()=>{dirty=true;$('#save').disabled=false;chip('dirty');scheduleDraft()};
+const DRAFT_DB='jp-portfolio-local-draft',DRAFT_STORE='snapshots';let draftTimer=0,draftBusy=false,draftAgain=false,repoKb=null;
+function draftDB(){return new Promise((resolve,reject)=>{const q=indexedDB.open(DRAFT_DB,1);q.onupgradeneeded=()=>q.result.createObjectStore(DRAFT_STORE);q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)})}
+async function draftAction(mode,value){const db=await draftDB();try{return await new Promise((resolve,reject)=>{const t=db.transaction(DRAFT_STORE,mode==='get'?'readonly':'readwrite'),q=t.objectStore(DRAFT_STORE)[mode](...(mode==='put'?[value,'current']:['current']));q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);t.onabort=()=>reject(t.error)})}finally{db.close()}}
+function scheduleDraft(){clearTimeout(draftTimer);draftTimer=setTimeout(writeDraft,850)}
+async function writeDraft(){if(!dirty||!D)return;if(draftBusy){draftAgain=true;return}draftBusy=true;try{await draftAction('put',{version:1,at:Date.now(),data:structuredClone(D),pending:structuredClone(pend),shareDirty,forceStubs});}catch(e){console.warn('Local draft could not be stored',e);toast('Draft backup unavailable. Publish to avoid losing changes.',1)}finally{draftBusy=false;if(draftAgain){draftAgain=false;scheduleDraft()}}}
+async function clearDraft(){clearTimeout(draftTimer);try{await draftAction('delete')}catch(e){console.warn('Draft cleanup failed',e)}}
+async function recoverDraft(){try{const v=await draftAction('get');if(!v||v.version!==1||!v.data)return;const count=Object.keys(v.pending||{}).length;const when=new Date(v.at).toLocaleString();if(!confirm('An unpublished draft from '+when+' was found ('+count+' pending image files). Restore it?\\n\\nOK = Restore | Cancel = Discard this local draft')){await clearDraft();return}D=v.data;pend=v.pending||{};shareDirty=!!v.shareDirty;forceStubs=!!v.forceStubs;blobs={};for(const [path,file] of Object.entries(pend)){if(file.b)blobs[path]='data:image/'+(path.endsWith('.png')?'png':'jpeg')+';base64,'+file.b;else if(file.blob)blobs[path]=URL.createObjectURL(file.blob)}dirty=true;render();pages();go();chip('dirty');$('#save').disabled=false;toast('Draft restored. Review and publish your changes.');}catch(e){console.warn('Draft recovery failed',e);toast('Could not read the local draft backup.',1)}}
+async function storageMeter(){try{const r=await fetch('https://api.github.com/repos/'+REPO+'?t='+Date.now(),{headers:hd()});if(!r.ok)throw Error(r.status);const info=await r.json();repoKb=info.size;const mb=(repoKb/1024).toFixed(0),pct=Math.round(repoKb/1048576*100);const el=$('#storage');el.textContent='Repo ~'+mb+' MB / 1 GB'+(pct>=80?' ⚠':'');el.style.color=pct>=80?'#ffb980':'var(--m)';el.title='GitHub repository size estimate (includes Git history), not exact live-site or remaining upload quota. GitHub Pages published-site guideline is 1 GB.'}catch{$('#storage').textContent='Storage: unavailable'}}
+function incomingBytes(files){return files.reduce((a,f)=>a+(f.size||0),0)}
+function storageWarning(bytes){if(repoKb===null)return true;const projected=repoKb*1024+bytes;if(projected>=.8*1073741824)return confirm('Storage warning: the estimated repository usage plus these files is nearing the 1 GB guideline. Original downloads can add substantial size. Continue?');return true}
 const src=v=>blobs[v]||(v&&v[0]=='/'?'..'+v:v);
 const tsrc=v=>blobs[v]||(v&&v.startsWith('/images/')&&!v.startsWith('/images/t/')?'..'+v.replace('/images/','/images/t/'):src(v));
 const timg=v=>`<img src="${esc(tsrc(v))}" loading="lazy" onerror="this.onerror=null;this.src='${esc(src(v))}'">`;
@@ -225,10 +235,10 @@ async function prep(file,mode){const bm=await createImageBitmap(file),name=Date.
  if(mode=='high'||mode=='orig'){const ext=mode=='orig'?((/\.(\w+)$/.exec(file.name||'')||[0,'jpg'])[1]).toLowerCase():'jpg',hp='/images/hi/'+name.replace(/\.jpg$/,'')+'.'+ext,blob=mode=='orig'?file:await new Promise(r=>mkc(bm,4000).toBlob(r,'image/jpeg',.9));pend[hp]={blob,u:p};D.hi[p]=hp}
  bm.close&&bm.close();return p}
 async function prepIcon(file){const bm=await createImageBitmap(file),s=Math.min(bm.width,bm.height),c=document.createElement('canvas');c.width=c.height=256;c.getContext('2d').drawImage(bm,(bm.width-s)/2,(bm.height-s)/2,s,s,0,0,256,256);const u=c.toDataURL('image/png'),p='/images/favicon-'+Date.now()+'.png';pend[p]={b:u.split(',')[1]};blobs[p]=u;return p}
-async function ingest(files,t){files=[...files].filter(x=>x.type.startsWith('image/'));if(!files.length)return;
+async function ingest(files,t){files=[...files].filter(x=>x.type.startsWith('image/'));if(!files.length)return;if(!storageWarning(incomingBytes(files)))return;
  if(t.share){pOpen('Preparing preview picture');try{await makeShare(files[0])}catch(e){pFail('That picture could not be read.');return}pClose(200);render();touch();toast('Preview picture ready. Publish to make it live.');return}pOpen('Preparing pictures');const ps=[];
  try{for(let n=0;n<files.length;n++){pSet(n/files.length,`Picture ${n+1} of ${files.length}…`);ps.push(await (t.icon?prepIcon(files[n]):prep(files[n],t.g=='c'&&D.clients[t.i]?D.clients[t.i].download:null)))}}catch(e){pFail('One picture could not be read: '+e.message);return}
- if(t.p!=null)st(D,t.p,ps[0]);else arr(t.g,t.i).push(...ps);pSet(1,'Done');pClose(350);render();touch();push();if(PM)pmDraw();toast(ps.length+' picture'+(ps.length>1?'s':'')+' added. Publish when you are ready.')}
+ if(t.p!=null)st(D,t.p,ps[0]);else arr(t.g,t.i).push(...ps);pSet(1,'Done');pClose(350);render();touch();writeDraft();push();if(PM)pmDraw();toast(ps.length+' picture'+(ps.length>1?'s':'')+' added. Publish when you are ready.')}
 fi.onchange=()=>{const x=[...fi.files];fi.value='';ingest(x,tgt)};
 async function optimize(){const ps=[...allPaths()].filter(p=>!D.dims[p]);if(!ps.length)return;pOpen('Optimizing pictures',[{k:'prep',t:'Making small, fast versions'},...SAVE_STEPS.slice(1)]);pStep('prep','run','Starting…');let n=0,fail=0;
  for(const p of ps){n++;pSet(n/ps.length,'');pStep('prep','run',`Picture ${n} of ${ps.length}`);
@@ -386,7 +396,7 @@ async function load(){const r=await fetch(API+'content.json?ref='+BR+'&t='+Date.
  if(D.logoMark===undefined)D.logoMark=ini(D.name);if(D.logoText===undefined)D.logoText=D.name||'';D.svcEyebrow=D.svcEyebrow||'What I shoot';D.svcHeading=D.svcHeading||'What I *shoot*';
  const cur=(D.home||[]).filter(h=>HOME.some(x=>x[0]==h.id));HOME.forEach((x,i)=>{if(!cur.some(h=>h.id==x[0])){const pi=cur.findIndex(h=>h.id==(HOME[i-1]||[])[0]);cur.splice(pi+1,0,{id:x[0],show:true})}});D.home=cur;
  try{if(LS.get('jp_ownset')!='1'){LS.set('jp_notrack','1');LS.set('jp_ownset','1')}}catch{}
- render();pages();go();chip('saved');try{if(!LS.get('jp_seen'))$('#helpm').hidden=false}catch{}}
+ render();pages();go();chip('saved');storageMeter();await recoverDraft();try{if(!LS.get('jp_seen'))$('#helpm').hidden=false}catch{}}
 const sizeOf=f=>f.del?0:f.text!=null?f.text.length:f.b64?f.b64.length*.75:(f.blob?f.blob.size:0),mb=n=>(n/1048576).toFixed(1)+' MB';
 async function commit(files,message){const H={...hd(),'Content-Type':'application/json'},J=async(u,o)=>{const r=await fetch(GIT+u,o?{...o,headers:H}:{headers:H});if(!r.ok)throw new Error('GitHub said '+r.status+'. Check your token has “Contents: Read and write”.');return r.json()};
  const ents=Object.entries(files),total=ents.reduce((s,[,v])=>s+sizeOf(v),0),tree=[],q=[...ents];let done=0;
@@ -408,13 +418,13 @@ async function save(fromOpt){if(!D||(!dirty&&!Object.keys(pend).length&&!fromOpt
   files['content.json']={text:JSON.stringify(D,null,2)};Object.assign(files,gs,stale);
   if(shareDirty){pStep('prep','run','Updating link previews…');Object.assign(files,await ogFiles())}
   if(!fromOpt){const pics=Object.keys(files).filter(k=>/^images\/(?!t\/|hi\/|og\/)/.test(k)).length,gl=Object.keys(gs).length;pStep('prep','done',`Page content${pics?` + ${pics} new picture${pics>1?'s':''}`:''}${gl?` + ${gl} gallery link preview${gl>1?'s':''}`:''}`)}
-  const sha=await commit(files,fromOpt?'Optimize pictures':'Update site content');pend={};dirty=false;shareDirty=false;forceStubs=false;chip('saved');
+  const sha=await commit(files,fromOpt?'Optimize pictures':'Update site content');pend={};dirty=false;shareDirty=false;forceStubs=false;await clearDraft();chip('saved');storageMeter();
   const r=await waitLive(sha);clearInterval(P.iv);pDraw();$('#ps').className='';$('#ps').textContent=r=='error'?'Saved, but the build had a problem.':'All done in '+fmt(Date.now()-P.t0)+'.';
   $('#pfoot').innerHTML=`<a href="https://github.com/${REPO}/commit/${sha}" target="_blank" rel="noopener">View this version ↗</a><a href="https://github.com/${REPO}/actions" target="_blank" rel="noopener">GitHub Actions ↗</a><button class="pri" id="pcl">Close</button>`;$('#pcl').onclick=()=>pClose();render()}
  catch(x){toast(x.message,1);$('#save').disabled=false;chip('dirty');pFail(x.message)}}
 $('#save').onclick=()=>save();
 $('#go').onclick=()=>{tok=$('#tk').value.trim();LS.set('jp_tok',tok);load()};
-addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+addEventListener('pagehide',()=>{if(dirty)writeDraft()});addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&dirty)writeDraft()});addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
 if(!/\/admin(\/|\/index\.html)?$/.test(location.pathname))$('#le').textContent='Open this page at your own website, at its /admin address (for example jp.sakkhi.co.in/admin). Inside a preview window it cannot connect to your site.';
 tok?load():$('#login').hidden=false;
 </script></body></html>
