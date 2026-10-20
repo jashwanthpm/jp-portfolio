@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /g/divya/
+Disallow: /g/personal/
+
+Sitemap: https://jp.sakkhi.co.in/sitemap.xml
