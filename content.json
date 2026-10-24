@@ -44,9 +44,6 @@
   ],
   "brands": [
     {
-      "name": "Forever"
-    },
-    {
       "name": "Vijayeesam"
     },
     {
@@ -72,6 +69,48 @@
     },
     {
       "name": "It Takes Two.co.in"
+    },
+    {
+      "name": "Blueberry"
+    },
+    {
+      "name": "Forever by Gayathri"
+    },
+    {
+      "name": "Stories by RG"
+    },
+    {
+      "name": "Millions Photography"
+    },
+    {
+      "name": "Thy Weddings"
+    },
+    {
+      "name": "Weddings by Sham"
+    },
+    {
+      "name": "TARA Weddings"
+    },
+    {
+      "name": "SAKKHI"
+    },
+    {
+      "name": "coffeeandcinnamon.in"
+    },
+    {
+      "name": "With_love.in"
+    },
+    {
+      "name": "High on Love"
+    },
+    {
+      "name": "Stories by Black and White"
+    },
+    {
+      "name": "Heaven Under The Stars"
+    },
+    {
+      "name": "Irishow"
     }
   ],
   "clients": [
@@ -184,7 +223,11 @@
       "lay": {
         "gap": 10
       },
-      "coverSize": "tall"
+      "coverSize": "tall",
+      "ogImg": "/images/og/abhay-sanjivani.jpg",
+      "ogv": 1792835842264,
+      "ogs": "/images/1791541442558-8ulx.jpg|41% 15%",
+      "stubSig": "[\"Abhay & Sanjivani\",\"\",false,false,true,\"/images/1791541442558-8ulx.jpg\",\"41% 15%\",\"/share.jpg\",1792136406810,\"Jashwanth JP\"]"
     },
     {
       "name": "Happy 40♡",
@@ -234,7 +277,11 @@
       "lay": {
         "gap": 10
       },
-      "coverSize": "tall"
+      "coverSize": "tall",
+      "ogImg": "/images/og/happy-40.jpg",
+      "ogv": 1792835843498,
+      "ogs": "/images/1791288495765-23w9.jpg|32% 17%",
+      "stubSig": "[\"Happy 40♡\",\"\",false,false,true,\"/images/1791288495765-23w9.jpg\",\"32% 17%\",\"/share.jpg\",1792136406810,\"Jashwanth JP\"]"
     },
     {
       "name": "Pranav & Nishitha",
@@ -284,7 +331,11 @@
       "lay": {
         "gap": 10
       },
-      "coverSize": "tall"
+      "coverSize": "tall",
+      "ogImg": "/images/og/pranav-nishitha.jpg",
+      "ogv": 1792835844096,
+      "ogs": "/images/1791289788872-ry1t.jpg|19% 19%",
+      "stubSig": "[\"Pranav & Nishitha\",\"\",false,false,true,\"/images/1791289788872-ry1t.jpg\",\"19% 19%\",\"/share.jpg\",1792136406810,\"Jashwanth JP\"]"
     },
     {
       "name": "Prashanth & Nance",
@@ -376,7 +427,11 @@
       "lay": {
         "gap": 10
       },
-      "coverSize": "tall"
+      "coverSize": "tall",
+      "ogImg": "/images/og/prashanth-nance.jpg",
+      "ogv": 1792835844679,
+      "ogs": "/images/1791272321262-xmf3.jpg|46% 36%",
+      "stubSig": "[\"Prashanth & Nance\",\"\",false,false,true,\"/images/1791272321262-xmf3.jpg\",\"46% 36%\",\"/share.jpg\",1792136406810,\"Jashwanth JP\"]"
     },
     {
       "name": "Virupa & Samarth",
@@ -411,7 +466,11 @@
       "lay": {
         "gap": 10
       },
-      "coverSize": "tall"
+      "coverSize": "tall",
+      "ogImg": "/images/og/virupa-samarth.jpg",
+      "ogv": 1792835845118,
+      "ogs": "/images/1791544925286-73zu.jpg|70% 97%",
+      "stubSig": "[\"Virupa & Samarth\",\"\",false,false,true,\"/images/1791544925286-73zu.jpg\",\"70% 97%\",\"/share.jpg\",1792136406810,\"Jashwanth JP\"]"
     },
     {
       "name": "Divya ",
@@ -439,7 +498,11 @@
         "round": "0",
         "gap": 10
       },
-      "coverSize": "tall"
+      "coverSize": "tall",
+      "ogImg": "/images/og/divya.jpg",
+      "ogv": 1792835845956,
+      "ogs": "/images/1791570376509-8v37.jpg|38% 30%",
+      "stubSig": "[\"Divya \",\"\",true,true,true,\"/images/1791570376509-8v37.jpg\",\"38% 30%\",\"/share.jpg\",1792136406810,\"Jashwanth JP\"]"
     },
     {
       "name": "Personal",
@@ -453,7 +516,11 @@
         "/images/1791739469931-ky8d.jpg"
       ],
       "download": "orig",
-      "lay": {}
+      "lay": {},
+      "ogImg": "/images/og/personal.jpg",
+      "ogv": 1792835846561,
+      "ogs": "/images/1791739469410-2em5.jpg|38% 18%",
+      "stubSig": "[\"Personal\",\"\",true,false,true,\"/images/1791739469410-2em5.jpg\",\"38% 18%\",\"/share.jpg\",1792136406810,\"Jashwanth JP\"]"
     }
   ],
   "faq": [],
