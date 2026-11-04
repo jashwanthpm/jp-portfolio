@@ -4,6 +4,8 @@ const shuf=a=>{a=[...a];for(let i=a.length;i>1;){const j=Math.random()*i--|0;[a[
 const NAV=[['/','Home','home'],['/portfolio','Portfolio','portfolio'],['/clients','Galleries','clients'],['/about','About','about'],['/contact','Contact','contact']];
 const NV=()=>NAV.filter(n=>n[2]=='home'||!((C.vis||{})['nav_'+n[2]]===false));
 const P=document.body.dataset.p;let C={},LB=[],LI=0;
+const waNumber=()=>String(C.phone||'').replace(/\D/g,'');
+const waHref=(message='')=>{const n=waNumber();return n?`https://wa.me/${n}${message?'?text='+encodeURIComponent(message):''}`:''};
 const DFL={story:"I didn't pick up a camera to make perfect pictures. I picked it up to keep real moments from slipping away.\n\nOn a wedding day I stay close but quiet, watching for the glances, the nervous laughs, the blessings of elders and the tears nobody planned. Those are the frames families return to years later.\n\nMy style is natural, candid and unhurried. I work with the light and the moment as they are, and I edit honestly, so your gallery feels like your day, nothing more and nothing less.",services:[{"t": "Weddings", "d": "Full-day coverage of rituals, family and the small in-between moments."}, {"t": "Pre-wedding & engagement", "d": "Relaxed, story-led shoots in places that mean something to you."}, {"t": "Haldi, Mehendi & Sangeet", "d": "Colour, music and energy, captured as it happens."}, {"t": "Portraits", "d": "Honest portraits for brides, grooms, families and brands."}],note:"Tell me about your day: date, venue and what matters most. I reply personally."};
 const wk=()=>(C.portfolio||[]).length?C.portfolio.map(s=>({src:s})):pics();
 const ME=[['.hero h1','b:name'],['.logo','lg:logoText'],['#portrait','b:portrait'],['#mq','r'],['#igsec','i'],['#feat','pf'],['#gal','c'],['#apics','a']];
@@ -80,7 +82,7 @@ function bind(root,list){root.onclick=e=>{if(e.target.closest('.dli'))return;con
 function show(){const l=$('#lb');l.classList.add('o');$('img',l).src=LB[LI];$('small',l).textContent=`${LI+1} / ${LB.length}`;const dl=$('.dl',l);if(dl){if(window.__dlon){dl.hidden=false;dl.href=dlSrc(LB[LI]);dl.setAttribute('download',dlName(LB[LI]))}else dl.hidden=true}}
 function footerHtml(){const F=C.ftr||{},s=F.style||'classic',yr=new Date().getFullYear(),cp=(F.copy||'© {year} {name}').replace(/\{year\}/g,yr).replace(/\{name\}/g,C.name||''),tg=F.tagline||'';
  const menu=F.menu!==false?NV().map(n=>`<a href="${n[0]}">${n[1]}</a>`):[],
-  con=[F.email!==false&&C.email?`<a href="mailto:${C.email}">${C.email}</a>`:'',F.insta!==false&&C.instagram?`<a href="${C.instagram}" target="_blank" rel="noopener">Instagram</a>`:'',F.wa&&C.phone?`<a href="https://wa.me/${C.phone}" target="_blank" rel="noopener">WhatsApp</a>`:''].filter(Boolean),
+  con=[F.email!==false&&C.email?`<a href="mailto:${C.email}">${C.email}</a>`:'',F.insta!==false&&C.instagram?`<a href="${C.instagram}" target="_blank" rel="noopener">Instagram</a>`:'',F.wa&&waNumber()?`<a href="${waHref()}" target="_blank" rel="noopener">WhatsApp</a>`:''].filter(Boolean),
   lg=`<a class="logo" href="/">${logoHtml()}</a>`;let h;
  if(s=='centered')h=`<div class="wrap fc">${lg}${tg?`<p class="tg">${tg}</p>`:''}${menu.length?`<div class="fl">${menu.join('')}</div>`:''}${con.length?`<div class="fl">${con.join('')}</div>`:''}<div class="cp">${cp}</div></div>`;
  else if(s=='columns')h=`<div class="wrap"><div class="cols"><div>${lg}${tg?`<p class="tg">${tg}</p>`:''}</div>${menu.length?`<div><h4>Menu</h4>${menu.join('')}</div>`:'<div></div>'}${con.length?`<div><h4>Contact</h4>${con.join('')}</div>`:'<div></div>'}</div><div class="bt">${cp}</div></div>`;
@@ -104,7 +106,7 @@ function common(){
  const mq=$('#mq');if(mq){const h=(C.brands||[]).map(b=>`<span>${b.name}</span><b>✦</b>`).join('');mq.innerHTML=h+h+h+h}
  const pr=$('#portrait');if(pr)pr.innerHTML=imgp(C.portrait);
  const em=$('#em');if(em){em.href='mailto:'+C.email;txt('emt',C.email)}const ig=$('#ig');if(ig){ig.href=C.instagram;txt('igt','@'+(C.instagram||'').replace(/\/$/,'').split('/').pop())}
- const wa=$('#wa');if(wa&&C.phone){wa.hidden=false;wa.href='https://wa.me/'+C.phone;txt('wat','+'+C.phone)}
+ const wa=$('#wa');if(wa&&waNumber()){wa.hidden=false;wa.href=waHref();txt('wat','+'+C.phone)}
 }
 const cards=(list)=>list.map(c=>`<a class="cd rv" href="/g/${encodeURIComponent(c.slug)}/"><span class="cv">${imgt(c.cover||(c.photos||[])[0],c.name.length%5)}</span><div class="cd-info">${c.date?`<small>${c.date}</small>`:''}<h3>${c.pinHash?LOCK:''}${c.name}</h3></div></a>`).join('');
 function igInit(){const sec=$('#igsec');if(!sec)return;const it=(C.igItems||[]).flatMap((x,k)=>(PV||!x.hide?(x.covers||(x.cover?[x.cover]:[])):[]).map(s=>({src:s,url:x.url,k,h:x.hide})));
@@ -216,7 +218,7 @@ contact(){
   if(q.e)fd.set('email',q.e);
   try{if(!C.formEndpoint)throw 0;const r=await fetch(C.formEndpoint,{method:'POST',body:fd,headers:{Accept:'application/json'}});if(!r.ok)throw 0;
    f.hidden=true;$('.ew-top').hidden=true;$('.ew-tiny').hidden=true;$('#ewok').hidden=false;$('#ewokn').innerHTML='Thank <em>you'+(q.n?', '+q.n.split(' ')[0].replace(/[<>&"]/g,''):'')+'</em>';
-   const a=$('#ewokw');if(C.phone){a.href=`https://wa.me/${C.phone}?text=`+encodeURIComponent(`Hi ${C.name||''}, I just filled the enquiry form.`);a.style.display='inline-flex'}
+   const a=$('#ewokw');if(waNumber()){a.href=waHref(`Hi ${C.name||''}, I just filled the enquiry form.`);a.style.display='inline-flex'}
    window.scrollTo({top:0,behavior:'smooth'})}
   catch{err.textContent='Could not send. Please try again, or email '+(C.email||'me')+' directly.';next.disabled=false;next.textContent='Send enquiry';busy=false}};
  next.onclick=()=>{const m=check();if(m){err.textContent=m;return}if(i==N-1)submit();else go(i+1)};
@@ -236,7 +238,7 @@ contact(){
    today=(d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'))(new Date()),exp=/^\d{4}-\d{2}-\d{2}$/.test(q.x||'')&&q.x<today,
    title=q.t||'Photography',wm=`Hi ${C.name||''}, I'd like to confirm quotation ${q.n||''} (${title}) for ${inr(tot)}. Please share the next steps.`,
    qm=`Hi ${C.name||''}, I have a question about quotation ${q.n||''} (${title}).`,
-   link=m=>C.phone?`https://wa.me/${C.phone}?text=${encodeURIComponent(m)}`:`mailto:${C.email||''}?subject=${encodeURIComponent('Quotation '+(q.n||''))}&body=${encodeURIComponent(m)}`;
+   link=m=>waHref(m)||`mailto:${C.email||''}?subject=${encodeURIComponent('Quotation '+(q.n||''))}&body=${encodeURIComponent(m)}`;
   document.title=`Quotation ${q.n||''} \u2014 ${C.name||''}`.trim();
   root.innerHTML=`<span class="eb">Quotation${exp?'<span class="qpill x">Expired</span>':''}</span>
   <div class="qh"><h1>${q.c?`For <em>${esc(q.c)}</em>`:'Your <em>quotation</em>'}</h1><div class="qm">${q.n?`No. <b>${esc(q.n)}</b><br>`:''}${fd(q.d)?`Issued <b>${fd(q.d)}</b><br>`:''}${fd(q.x)?`Valid until <b>${fd(q.x)}</b>`:''}</div></div>
