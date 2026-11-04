@@ -231,7 +231,16 @@ contact(){
   fd=iso=>{const d=/^\d{4}-\d{2}-\d{2}$/.test(iso||'')?new Date(iso+'T00:00:00'):null;return d&&!isNaN(d)?d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):''},
   num=v=>{v=+v;return isFinite(v)&&v>0?v:0};
  const draw=async()=>{let q;
-  try{q=await QCODEC.dec(location.hash);if(!q||!Array.isArray(q.i))throw 0}
+  try{
+    const shortId=new URLSearchParams(location.search).get('c');
+    if(shortId){
+     if(!/^[A-Za-z0-9]{12}$/.test(shortId))throw 0;
+     const r=await fetch('https://q.sakkhi.co.in/api/'+encodeURIComponent(shortId),{headers:{Accept:'application/json'}});
+     if(!r.ok)throw 0;
+     const data=await r.json();q=data.quote;
+    }else q=await QCODEC.dec(location.hash);
+    if(!q||!Array.isArray(q.i))throw 0
+   }
   catch{root.innerHTML='<div class="qbad"><h1>Quotation not <em>found</em></h1><p style="margin-top:18px">This link looks incomplete. Please ask for a fresh link.</p></div>';return}
   const items=q.i.slice(0,40).map(r=>({d:r[0],n:r[1],q:num(r[2])||1,r:num(r[3])})),
    sub=items.reduce((s,x)=>s+x.q*x.r,0),dis=Math.min(num(q.ds),sub),tx=sub-dis,gp=num(q.g),gs=tx*gp/100,tot=tx+gs,ap=Math.min(100,num(q.a)),adv=Math.round(tot*ap/100),bal=tot-adv,
