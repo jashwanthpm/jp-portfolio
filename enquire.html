@@ -11,7 +11,25 @@
 <!--/og-->
 <link rel="canonical" href="https://jp.sakkhi.co.in/enquire">
 <meta name="robots" content="noindex,nofollow">
-<meta name="author" content="Jashwanth JP"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/site.css?v=20261104-studio"><link rel="icon" type="image/png" sizes="256x256" href="/images/favicon-1791284648615.png"><link rel="apple-touch-icon" href="/images/favicon-1791284648615.png"></head><body data-p="enquire">
+<meta name="author" content="Jashwanth JP"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/site.css?v=20261104-studio"><link rel="icon" type="image/png" sizes="256x256" href="/images/favicon-1791284648615.png"><link rel="apple-touch-icon" href="/images/favicon-1791284648615.png"><style>
+.ew-req{margin-top:34px;padding-top:26px;border-top:1px solid var(--line)}
+.ew-reqh{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.ew-eyebrow{font:400 .68rem Inter,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--acc)}
+.ew-tag{font:500 .64rem Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);border:1px solid rgba(201,164,106,.45);border-radius:99px;padding:4px 11px}
+.ew-ta{position:relative}
+.ew-req textarea{display:block;min-height:140px;max-height:320px;resize:none;overflow-y:auto;line-height:1.55;padding:16px 16px 34px;font-size:16px}
+.ew-req textarea::placeholder{font-size:15px;color:#7d7367}
+.ew-cnt{position:absolute;right:14px;bottom:11px;font:400 .68rem Inter,sans-serif;letter-spacing:.06em;color:var(--mute);pointer-events:none}
+.ew-req.bad textarea{border-color:#e08a78;box-shadow:0 0 0 3px rgba(224,138,120,.12)}
+.ew-fe{color:#ff9b8a;font-size:.86rem;margin:10px 0 0}
+.ew-hint{color:var(--mute);font-size:.8rem;margin:14px 0 10px}
+.ew-ideas{display:flex;flex-wrap:wrap;gap:8px}
+.ew-idea{min-height:40px;padding:0 15px;border-radius:99px;border:1px dashed #4a4137;background:none;color:#cfc6ba;font:400 13.5px Inter,sans-serif;cursor:pointer;transition:.2s;-webkit-tap-highlight-color:transparent}
+.ew-idea:active{transform:scale(.97)}
+.ew-idea.used{border-style:solid;border-color:var(--acc);background:rgba(201,164,106,.12);color:var(--acc)}
+.ew-req [hidden]{display:none!important}
+</style>
+</head><body data-p="enquire">
 <main class="ew-wrap"><div class="ew" id="ew">
 <div class="ew-top"><div class="ew-prog"><i id="ewb"></i></div><span id="ewl">Step 1 of 5</span></div>
 <form id="ef" novalidate>
@@ -35,7 +53,14 @@
 <label class="ew-l" for="ewi">Instagram <span>(optional)</span></label><input id="ewi" name="instagram" autocapitalize="none" autocomplete="off" placeholder="@yourhandle">
 <label class="ew-l">How did you find me? <span>(optional)</span></label><div class="ew-chips" data-g="found"><button type="button" class="ew-opt" data-v="Instagram">Instagram</button><button type="button" class="ew-opt" data-v="Friend / referral">Friend / referral</button><button type="button" class="ew-opt" data-v="Google">Google</button><button type="button" class="ew-opt" data-v="Other">Other</button></div>
 <div class="ew-other" data-for="found" hidden><input name="found_other" placeholder="Where did you hear about me?" autocomplete="off" enterkeyhint="done"></div>
-<label class="ew-l" for="ewm">A little about your plans</label><textarea id="ewm" name="message" rows="4" required aria-required="true" placeholder="Anything you'd like me to know about the day or the moments you have in mind."></textarea>
+<div class="ew-req" id="ewreq">
+<div class="ew-reqh"><span class="ew-eyebrow">Your requirements</span><span class="ew-tag">Required</span></div>
+<label class="ew-l" for="ewm" style="margin:0 0 10px">Tell me about your plans</label>
+<div class="ew-ta"><textarea id="ewm" name="message" rows="4" required aria-required="true" aria-describedby="ewmh ewfe" maxlength="1200" placeholder="Dates, ideas, moments you want captured…"></textarea><span class="ew-cnt" id="ewcnt" aria-hidden="true">0 / 1200</span></div>
+<p class="ew-fe" id="ewfe" role="alert" hidden>Please tell me a little about your plans.</p>
+<p class="ew-hint" id="ewmh">A few lines is plenty. Tap to add:</p>
+<div class="ew-ideas" id="ewideas"><button type="button" class="ew-idea" data-add="Candid moments">Candid moments</button><button type="button" class="ew-idea" data-add="Traditional rituals">Traditional rituals</button><button type="button" class="ew-idea" data-add="Couple portraits">Couple portraits</button><button type="button" class="ew-idea" data-add="Family photos">Family photos</button><button type="button" class="ew-idea" data-add="Reels / teaser">Reels / teaser</button></div>
+</div>
 <input class="ew-hp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"></section>
 <p class="ew-err" id="ewerr" role="alert"></p>
 <div class="ew-bar"><button type="button" class="ew-back" id="ewback" hidden>Back</button><button type="button" class="btn f ew-next" id="ewnext">Continue</button></div>
@@ -43,4 +68,20 @@
 <div class="ew-ok" id="ewok" hidden><div class="ew-tick"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h1 id="ewokn">Thank <em>you</em></h1><p>I've got your details and will send your quotation shortly.</p><a class="btn f" id="ewokw" target="_blank" rel="noopener" style="display:none">Message me on WhatsApp</a></div>
 <p class="ew-tiny">Your details are only used to reply to your enquiry.</p>
 </div></main>
-<script src="assets/quote.js?v=20261104-studio"></script><script src="assets/site.js?v=20261104-whatsapp-copy"></script></body></html>
+<script src="assets/quote.js?v=20261104-studio"></script><script src="assets/site.js?v=20261104-whatsapp-copy"></script><script>
+(()=>{const ta=document.getElementById('ewm'),cnt=document.getElementById('ewcnt'),box=document.getElementById('ewreq'),fe=document.getElementById('ewfe'),next=document.getElementById('ewnext'),f=document.getElementById('ef');if(!ta||!next)return;
+const fit=()=>{ta.style.height='auto';ta.style.height=Math.min(Math.max(ta.scrollHeight+2,140),320)+'px'},
+ clear=()=>{box.classList.remove('bad');fe.hidden=true},
+ sync=()=>{cnt.textContent=ta.value.length+' / '+ta.maxLength;fit();[...document.querySelectorAll('.ew-idea')].forEach(b=>b.classList.toggle('used',ta.value.toLowerCase().includes(b.dataset.add.toLowerCase())))};
+ta.addEventListener('input',()=>{clear();sync()});
+document.getElementById('ewideas').addEventListener('click',e=>{const b=e.target.closest('.ew-idea');if(!b)return;const t=b.dataset.add,low=ta.value.toLowerCase();
+ if(low.includes(t.toLowerCase())){ta.value=ta.value.split('\n').filter(l=>l.trim().toLowerCase()!==t.toLowerCase()).join('\n').trim()}
+ else{ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+t}
+ clear();sync()});
+const ok=n=>(f.elements[n]&&f.elements[n].value||'').trim();
+next.addEventListener('click',e=>{const last=document.querySelector('.ew-step[data-s="4"]');if(!last||last.hidden)return;
+ if(!ok('name')||ok('phone').replace(/\D/g,'').length<10)return;
+ if(!ta.value.trim()){e.preventDefault();e.stopImmediatePropagation();box.classList.add('bad');fe.hidden=false;document.getElementById('ewerr').textContent='';ta.scrollIntoView({behavior:'smooth',block:'center'});ta.focus({preventScroll:true})}},true);
+sync()})();
+</script>
+</body></html>
