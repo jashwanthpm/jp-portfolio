@@ -221,7 +221,8 @@
         "/images/1791541114393-u3qq.jpg"
       ],
       "lay": {
-        "gap": 10
+        "gap": 10,
+        "style": "masonry"
       },
       "coverSize": "tall",
       "ogImg": "/images/og/abhay-sanjivani.jpg",
@@ -2365,7 +2366,9 @@
     "provider": "off",
     "id": ""
   },
-  "pfLay": {},
+  "pfLay": {
+    "gap": 12
+  },
   "share": {
     "desc": "Honest, heartfelt, timeless frames.",
     "v": 1792136406810,
