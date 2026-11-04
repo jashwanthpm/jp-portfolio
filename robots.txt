@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /q
 
 Sitemap: https://jp.sakkhi.co.in/sitemap.xml

@@ -1,0 +1,89 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Quotation maker</title>
+<style>
+:root{--bg:#0d0c0b;--p:#161412;--p3:#201c19;--l:#2e2924;--fg:#efe9df;--m:#9b9185;--a:#c9a46a}
+*{box-sizing:border-box;margin:0}body{font:14px/1.5 -apple-system,Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);height:100vh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:14px;padding:0 18px;height:56px;border-bottom:1px solid var(--l);background:var(--p)}.top b{font:400 22px Georgia,serif}.top span{color:var(--m);font-size:12px}.sp{flex:1}.top a{color:var(--a);text-decoration:none;font-size:13px}
+.main{flex:1;display:grid;grid-template-columns:460px 1fr;min-height:0}
+.side{overflow:auto;padding:16px 18px 80px;border-right:1px solid var(--l)}
+.view{padding:14px;min-width:0}iframe{width:100%;height:100%;border:1px solid var(--l);border-radius:12px;background:#0d0c0b}
+h3{font:600 11px Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--a);margin:22px 0 8px}h3:first-child{margin-top:0}
+label{display:block;font-size:12px;color:#cfc6ba;margin:10px 0 4px}
+input,select,textarea,button{font:inherit;color:var(--fg);background:var(--p3);border:1px solid var(--l);border-radius:9px;padding:8px 10px;width:100%}
+textarea{resize:vertical}button{cursor:pointer;width:auto;display:inline-flex;gap:6px;align-items:center;justify-content:center}button:hover{border-color:var(--a)}
+button.pri{background:var(--a);color:#16110b;border-color:var(--a);font-weight:600}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.it{border:1px solid var(--l);border-radius:12px;padding:10px;margin-bottom:8px;background:var(--p)}
+.it .r{display:grid;grid-template-columns:64px 1fr 36px;gap:8px;margin-top:6px;align-items:center}.it .r .t{color:var(--m);font-size:12px;text-align:right}
+.it .x{padding:6px 0;width:36px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.chips button{font-size:12px;padding:5px 10px;border-radius:99px}
+.tot{margin:12px 0;padding:12px;border:1px solid var(--l);border-radius:12px;background:var(--p)}.tot div{display:flex;justify-content:space-between;padding:2px 0;color:var(--m)}.tot .g{color:var(--fg);font-size:17px;font-weight:600;border-top:1px solid var(--l);margin-top:6px;padding-top:8px}
+.out{position:sticky;bottom:-80px;background:var(--bg);padding:12px 0 90px;border-top:1px solid var(--l);margin-top:18px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.row input{flex:1;min-width:0}
+.hist{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:7px 10px;border:1px solid var(--l);border-radius:9px;margin-bottom:6px;font-size:13px}.hist small{color:var(--m)}.hist button{padding:4px 10px}
+small.h{color:var(--m);font-size:11.5px;display:block;margin-top:3px}
+@media(max-width:900px){.main{grid-template-columns:1fr}.view{height:70vh}body{height:auto}}
+</style></head><body>
+<div class="top"><b>Quotation maker</b><span>Fill in, copy the link, send</span><div class="sp"></div><a href="/admin/">← Site editor</a></div>
+<div class="main"><div class="side" id="side">
+<h3>Client &amp; shoot</h3>
+<div class="g2"><div><label>Client name</label><input id="c" placeholder="Priya &amp; Rahul"></div><div><label>Client WhatsApp (to send)</label><input id="ph" placeholder="91 98xxxxxxxx" inputmode="tel"></div></div>
+<label>Shoot</label><input id="t" list="tl" placeholder="Pre-wedding shoot"><datalist id="tl"><option>Wedding photography</option><option>Pre-wedding shoot</option><option>Engagement shoot</option><option>Haldi / Mehendi / Sangeet</option><option>Collab / brand shoot</option><option>Portrait session</option></datalist>
+<div class="g2"><div><label>Date</label><input id="e" placeholder="14 Feb 2027"></div><div><label>Venue / city</label><input id="l" placeholder="Bengaluru"></div></div>
+<div class="g3"><div><label>Quote no.</label><input id="n"></div><div><label>Issued</label><input id="d" type="date"></div><div><label>Valid for (days)</label><input id="vd" type="number" min="1" value="7"></div></div>
+<h3>Items</h3><div id="items"></div>
+<div class="chips" id="quick"></div><button id="add" type="button">+ Add item</button>
+<small class="h">Rates you type are remembered on this device, so next time the same item fills itself in.</small>
+<div class="g3"><div><label>Discount (₹)</label><input id="ds" type="number" min="0" value="0"></div><div><label>GST</label><select id="g"><option value="0">None</option><option value="18">18%</option><option value="12">12%</option><option value="5">5%</option></select></div><div><label>Advance %</label><input id="a" type="number" min="0" max="100" value="50"></div></div>
+<div class="tot" id="tot"></div>
+<h3>Details</h3>
+<label>What's included</label><textarea id="nt" rows="4" placeholder="One point per line"></textarea>
+<label>Payment details</label><textarea id="pb" rows="3" placeholder="UPI ID / bank account"></textarea>
+<label>Terms</label><textarea id="tm" rows="5"></textarea>
+<small class="h">Payment details and terms are remembered for next time. Check the starting terms and change them to match your policy.</small>
+<h3>Recent quotes</h3><div id="hist"></div>
+<div class="out"><label>Quotation link</label><div class="row"><input id="lnk" readonly><button id="cp" class="pri" type="button">Copy link</button></div>
+<div class="row"><button id="wa" type="button">Send on WhatsApp</button><button id="cm" type="button">Copy message</button><button id="op" type="button">Open ↗</button><button id="nw" type="button">New quote</button></div></div>
+</div><div class="view"><iframe id="fr" title="Preview"></iframe></div></div>
+<script src="/assets/quote.js"></script>
+<script>
+const $=s=>document.querySelector(s),LS={get:k=>{try{return localStorage.getItem(k)}catch{return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}}};
+const J=(k,d)=>{try{return JSON.parse(LS.get(k))||d}catch{return d}};
+const QUICK=['Wedding day coverage','Pre-wedding shoot','Engagement shoot','Candid photography','Traditional photography','Album','Reels / teaser','Edited photos','Travel & stay'];
+const DT="Booking is confirmed once the advance is received.\nBalance is due on or before the shoot date.\nThis quotation is valid until the date shown above.\nTravel and stay outside the city are charged extra unless mentioned.";
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const today=()=>iso(new Date()),addD=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const num=v=>{v=+v;return isFinite(v)&&v>0?v:0},inr=n=>'₹'+new Intl.NumberFormat('en-IN',{maximumFractionDigits:2}).format(n);
+let items=[],rates=J('q_rates',{});
+const F=['c','ph','t','e','l','n','d','vd','ds','g','a','nt','pb','tm'];
+const newNo=()=>{const d=new Date(),h=J('q_hist',[]);return 'JP-'+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+'-'+String(h.length+1).padStart(2,'0')};
+function blank(){F.forEach(k=>$('#'+k).value='');$('#d').value=today();$('#vd').value=7;$('#ds').value=0;$('#g').value='0';$('#a').value=50;$('#n').value=newNo();$('#pb').value=LS.get('q_pb')||'';$('#tm').value=LS.get('q_tm')||DT;items=[['','',1,0]];drawItems();upd()}
+function drawItems(){$('#items').innerHTML=items.map((x,i)=>`<div class="it"><input data-i="${i}" data-k="0" value="${esc(x[0])}" placeholder="Item, e.g. Wedding day coverage"><input data-i="${i}" data-k="1" value="${esc(x[1])}" placeholder="Note (optional)" style="margin-top:6px"><div class="r"><input data-i="${i}" data-k="2" type="number" min="1" value="${x[2]}" title="Qty"><input data-i="${i}" data-k="3" type="number" min="0" value="${x[3]||''}" placeholder="Rate ₹"><button class="x" data-del="${i}" type="button">✕</button></div><div class="r" style="grid-template-columns:1fr"><span class="t">${inr(num(x[2])*num(x[3]))}</span></div></div>`).join('')}
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function calc(){const sub=items.reduce((s,x)=>s+num(x[2])*num(x[3]),0),dis=Math.min(num($('#ds').value),sub),tx=sub-dis,gp=num($('#g').value),gs=tx*gp/100,tot=tx+gs,ap=Math.min(100,num($('#a').value)),adv=Math.round(tot*ap/100);return{sub,dis,gs,tot,adv,gp,ap}}
+function payload(){const v=$('#d').value||today();return{v:1,n:$('#n').value.trim(),d:v,x:addD(v,Math.max(1,num($('#vd').value)||7)),c:$('#c').value.trim(),t:$('#t').value.trim(),e:$('#e').value.trim(),l:$('#l').value.trim(),i:items.filter(x=>x[0].trim()).map(x=>[x[0].trim(),(x[1]||'').trim(),num(x[2])||1,num(x[3])]),ds:num($('#ds').value),g:num($('#g').value),a:num($('#a').value),nt:$('#nt').value.trim(),pb:$('#pb').value.trim(),tm:$('#tm').value.trim()}}
+let tmr,cur='';
+async function upd(){const c=calc();$('#tot').innerHTML=`<div><span>Subtotal</span><span>${inr(c.sub)}</span></div>${c.dis?`<div><span>Discount</span><span>− ${inr(c.dis)}</span></div>`:''}${c.gp?`<div><span>GST ${c.gp}%</span><span>${inr(c.gs)}</span></div>`:''}<div class="g"><span>Total</span><span>${inr(c.tot)}</span></div><div><span>Advance (${c.ap}%)</span><span>${inr(c.adv)}</span></div>`;
+ cur=await QCODEC.enc(payload());const url=location.origin+'/q#'+cur;$('#lnk').value=url;
+ const fr=$('#fr');try{if(fr.dataset.on){fr.contentWindow.location.hash=cur}else{fr.dataset.on=1;fr.src='/q.html#'+cur}}catch{fr.src='/q.html#'+cur}
+ LS.set('q_draft',JSON.stringify({f:Object.fromEntries(F.map(k=>[k,$('#'+k).value])),items}));LS.set('q_pb',$('#pb').value);LS.set('q_tm',$('#tm').value)}
+const sched=()=>{clearTimeout(tmr);tmr=setTimeout(upd,250)};
+$('#side').addEventListener('input',e=>{const t=e.target;if(t.dataset.i!=null){const x=items[+t.dataset.i],k=+t.dataset.k;x[k]=t.value;
+  if(k==0&&rates[t.value]!=null&&!num(x[3])){x[3]=rates[t.value];drawItems()}
+  if(k==3&&x[0].trim()&&num(t.value)){rates[x[0].trim()]=num(t.value);LS.set('q_rates',JSON.stringify(rates))}
+  if(k==2||k==3){const s=t.closest('.it').querySelector('.t');s.textContent=inr(num(x[2])*num(x[3]))}}sched()});
+$('#side').addEventListener('change',e=>{if(e.target.dataset.i!=null&&+e.target.dataset.k==0){const x=items[+e.target.dataset.i];if(rates[x[0]]!=null&&!num(x[3])){x[3]=rates[x[0]];drawItems();sched()}}});
+$('#side').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.del!=null){items.splice(+b.dataset.del,1);if(!items.length)items=[['','',1,0]];drawItems();sched()}
+ if(b.dataset.q){const last=items[items.length-1];const r=rates[b.dataset.q]||0;if(last&&!last[0].trim()){last[0]=b.dataset.q;last[3]=r}else items.push([b.dataset.q,'',1,r]);drawItems();sched()}});
+$('#quick').innerHTML=QUICK.map(q=>`<button type="button" data-q="${esc(q)}">+ ${esc(q)}</button>`).join('');
+$('#add').onclick=()=>{items.push(['','',1,0]);drawItems()};
+const msg=()=>{const c=$('#c').value.trim(),t=$('#t').value.trim()||'your shoot';return `Hi ${c||'there'}, here is your quotation for ${t} (${inr(calc().tot)}):\n${$('#lnk').value}`};
+$('#cp').onclick=async()=>{await navigator.clipboard.writeText($('#lnk').value);toast($('#cp'),'Copied')};
+$('#cm').onclick=async()=>{await navigator.clipboard.writeText(msg());toast($('#cm'),'Copied')};
+$('#op').onclick=()=>window.open($('#lnk').value,'_blank');
+$('#wa').onclick=()=>{const p=$('#ph').value.replace(/\D/g,'');window.open((p?'https://wa.me/'+p:'https://wa.me/')+'?text='+encodeURIComponent(msg()),'_blank');save()};
+function toast(b,t){const o=b.textContent;b.textContent=t;setTimeout(()=>b.textContent=o,1200);save()}
+function save(){const h=J('q_hist',[]).filter(x=>x.n!=$('#n').value);h.unshift({n:$('#n').value,c:$('#c').value,t:calc().tot,at:today(),f:Object.fromEntries(F.map(k=>[k,$('#'+k).value])),items});LS.set('q_hist',JSON.stringify(h.slice(0,30)));hist()}
+function hist(){const h=J('q_hist',[]);$('#hist').innerHTML=h.length?h.map((x,i)=>`<div class="hist"><div>${esc(x.c||'(no name)')} <small>${esc(x.n)} · ${inr(x.t)} · ${esc(x.at)}</small></div><button data-h="${i}" type="button">Open</button></div>`).join(''):'<small class="h">Quotes you copy or send appear here (saved on this device only).</small>'}
+$('#hist').onclick=e=>{const b=e.target.closest('[data-h]');if(!b)return;const x=J('q_hist',[])[+b.dataset.h];Object.entries(x.f).forEach(([k,v])=>$('#'+k).value=v);items=x.items;drawItems();upd()};
+$('#nw').onclick=()=>{blank()};
+const dr=J('q_draft',null);if(dr&&dr.f){Object.entries(dr.f).forEach(([k,v])=>$('#'+k).value=v);items=dr.items&&dr.items.length?dr.items:[['','',1,0]];drawItems();upd()}else blank();hist();
+</script></body></html>

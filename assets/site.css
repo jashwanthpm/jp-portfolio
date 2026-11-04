@@ -200,3 +200,63 @@ footer.f-minimal{padding:34px 0}footer.f-minimal .fm{display:flex;justify-conten
 .nfc h1{font-size:calc(clamp(1.8rem,5vw,3rem)*var(--ds,1));margin:6px 0 16px}.nfc p{color:var(--mute);max-width:440px;margin:0 auto}
 .nfa{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:32px}.nfl{display:flex;gap:26px;justify-content:center;margin-top:30px;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}.nfl a{color:var(--mute);transition:.3s}.nfl a:hover{color:var(--acc)}
 @media(max-width:600px){.nfc{padding:46px 20px}.nfa .btn{width:100%}}
+
+/* ---- extra gallery layouts: story (left/right), portrait only ---- */
+.mas.storyl{display:flex;flex-direction:column;align-items:stretch;gap:calc(var(--g,14px)*3)}
+.storyl .t{width:var(--w,60%);flex:none}
+.storyl .t:nth-child(odd){align-self:flex-start}
+.storyl .t:nth-child(even){align-self:flex-end}
+.mas.portl{display:grid;grid-template-columns:repeat(var(--n,3),1fr);align-items:stretch}
+.portl .t{aspect-ratio:2/3!important}
+.portl .t img{object-fit:cover}
+
+/* ---- enquiry form (/enquire) ---- */
+.enq{max-width:820px;margin:0 auto}
+.enq .fc{display:grid;gap:6px}
+.enq h4{font:400 .7rem Inter;letter-spacing:.3em;text-transform:uppercase;color:var(--acc);margin:30px 0 4px;padding-top:26px;border-top:1px solid var(--line)}
+.enq h4:first-of-type{margin-top:6px;padding-top:0;border:0}
+.enq label.q{display:block;color:var(--mute);font-size:12px;margin:14px 0 4px}
+.enq select{appearance:none;background:none;color:var(--fg)}
+.enq select option{background:#161412;color:#efe9df}
+.enq .chips{margin:6px 0 2px}
+.enq .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.enq .okbox{display:none;text-align:center;padding:50px 10px}
+.enq .okbox h3{font-size:2.4rem;margin-bottom:12px}
+.enq .okbox p{color:var(--mute);margin:0 auto 26px;max-width:420px}
+.enq .err{color:#ff9b8a;font-size:.9rem}
+.enq .tiny{color:var(--mute);font-size:.78rem;margin-top:12px}
+
+/* ---- quotation page (/q) ---- */
+.qte{max-width:880px;margin:0 auto}
+.qte .qh{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:flex-end;margin:22px 0 38px;padding-bottom:26px;border-bottom:1px solid var(--line)}
+.qte .qh h1{font-size:clamp(2.6rem,8vw,5rem)}
+.qte .qm{font-size:.82rem;color:var(--mute);line-height:1.9;text-align:right}
+.qte .qm b{color:var(--fg);font-weight:400}
+.qte .qpill{display:inline-block;padding:3px 12px;border:1px solid var(--acc);color:var(--acc);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;margin-left:8px;vertical-align:middle}
+.qte .qpill.x{border-color:#c46a5a;color:#e59080}
+.qte .qi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:18px;margin-bottom:38px}
+.qte .qi small{display:block;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--acc);margin-bottom:5px}
+.qte table{width:100%;border-collapse:collapse;font-size:.95rem}
+.qte th{font:400 .62rem Inter;letter-spacing:.26em;text-transform:uppercase;color:var(--mute);text-align:left;padding:0 0 12px;border-bottom:1px solid var(--line)}
+.qte td{padding:18px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.qte .qr{text-align:right;white-space:nowrap;padding-left:14px}
+.qte td small{display:block;color:var(--mute);font-size:.8rem;margin-top:3px}
+.qte .qtot{margin:26px 0 0 auto;max-width:360px}
+.qte .qtot div{display:flex;justify-content:space-between;gap:20px;padding:7px 0;color:var(--mute)}
+.qte .qtot .qg{color:var(--fg);font:400 2rem var(--d);border-top:1px solid var(--acc);margin-top:8px;padding-top:16px}
+.qte .qtot .qa{color:var(--acc)}
+.qte .qbx{margin-top:44px}
+.qte .qbx h4{font:400 .66rem Inter;letter-spacing:.3em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+.qte .qbx p{color:var(--mute);font-size:.92rem;margin-bottom:5px}
+.qte .qacts{display:flex;gap:12px;flex-wrap:wrap;margin-top:52px}
+.qte .qbad{padding:60px 0;text-align:center;color:var(--mute)}
+@media(max-width:600px){.qte .qm{text-align:left}.qte .qacts .btn{width:100%;justify-content:center}.qte th.qhq,.qte td.qhq{display:none}}
+@media print{
+ body[data-p=quote]{background:#fff;color:#111}
+ body[data-p=quote] #hd,body[data-p=quote] #ft,body[data-p=quote] #lb,body[data-p=quote] .qacts{display:none!important}
+ body[data-p=quote] .pg{padding-top:20px}
+ .qte .qm,.qte td small,.qte .qbx p,.qte .qtot div,.qte th{color:#444}
+ .qte .qh,.qte th,.qte td{border-color:#ccc}
+ .qte .qtot .qg{color:#111;border-color:#111}
+ .qte .qi small,.qte .qbx h4,.qte .qtot .qa,.qte .qpill,h1 em{color:#7a5a24}
+}
