@@ -150,7 +150,7 @@ async function upd(){const c=calc();$('#tot').textContent=inr(c.tot);$('#advl').
  cur=await QCODEC.enc(payload());$('#lnk').value=st.linkId?'https://q.sakkhi.co.in/'+st.linkId:'';
  const fr=$('#fr');try{if(fr.dataset.on)fr.contentWindow.location.hash=cur;else{fr.dataset.on=1;fr.src='/q.html#'+cur}}catch{fr.src='/q.html#'+cur}
  LS.set('q_cur',JSON.stringify(st));LS.set('q_pb',st.f.pb);LS.set('q_tm',st.f.tm);upsert();$('#svt').textContent='Saved'}
-const sched=()=>{$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
+const sched=()=>{st.linkId='';$('#lnk').value='';$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
 function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const lib=J('q_lib',[]).filter(x=>x.id!=st.id);lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length,60)}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),1600)}
 function markSent(){if(!st.sent){st.sent=true;pill();upd()}}
@@ -173,18 +173,9 @@ $('#add').onclick=()=>addRow();
 const msg=(link=$('#lnk').value)=>`Hi ${String(st.f.c).trim()||'there'}, here is your quotation for ${String(st.f.t).trim()||'your shoot'} (${inr(calc().tot)}):\n${link}`;
 const copy=async t=>{try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove();return true}};
 async function shortLink(){
- const body=JSON.stringify(payload());
- let id=st.linkId||'';
- if(id){
-  const r=await fetch('https://q.sakkhi.co.in/api/'+encodeURIComponent(id),{method:'PUT',headers:{'Content-Type':'application/json'},body});
-  if(r.status===404)id='';
-  else if(!r.ok)throw new Error('Could not update the short link.');
- }
- if(!id){
-  const r=await fetch('https://q.sakkhi.co.in/api',{method:'POST',headers:{'Content-Type':'application/json'},body});
-  if(!r.ok)throw new Error('Could not create the short link.');
-  const data=await r.json();id=data.id||'';
- }
+ const r=await fetch('https://q.sakkhi.co.in/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload())});
+ if(!r.ok)throw new Error('Could not create the short link.');
+ const data=await r.json(),id=data.id||'';
  if(!/^[A-Za-z0-9]{12}$/.test(id))throw new Error('The short-link service returned an invalid ID.');
  st.linkId=id;
  const link='https://q.sakkhi.co.in/'+id;
