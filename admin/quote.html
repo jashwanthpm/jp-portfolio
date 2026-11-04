@@ -173,6 +173,11 @@ $('#add').onclick=()=>addRow();
 const msg=(link=$('#lnk').value)=>`Hi ${String(st.f.c).trim()||'there'}, here is your quotation for ${String(st.f.t).trim()||'your shoot'} (${inr(calc().tot)}):\n${link}`;
 const copy=async t=>{try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove();return true}};
 async function shortLink(){
+ if(st.linkId){
+  const existing='https://q.sakkhi.co.in/'+st.linkId;
+  $('#lnk').value=existing;
+  return existing;
+ }
  const r=await fetch('https://q.sakkhi.co.in/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload())});
  if(!r.ok)throw new Error('Could not create the short link.');
  const data=await r.json(),id=data.id||'';
