@@ -11,26 +11,36 @@
 <!--/og-->
 <link rel="canonical" href="https://jp.sakkhi.co.in/enquire">
 <meta name="robots" content="noindex,nofollow">
-<meta name="author" content="Jashwanth JP"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/site.css?v=20261103-layouts"><link rel="icon" type="image/png" sizes="256x256" href="/images/favicon-1791284648615.png"><link rel="apple-touch-icon" href="/images/favicon-1791284648615.png"></head><body data-p="enquire"><section class="pg"><div class="wrap"><span class="eb">Enquiry form</span><h1>Tell me about <em>your shoot</em></h1><p class="lead" style="margin-top:26px">A few quick details and I'll send you a quotation personally.</p></div></section>
-<section class="sec" style="padding-top:60px"><div class="wrap enq rv">
-<form id="ef" class="fc">
-<h4>The shoot</h4>
-<label class="q">What do you need?</label><div class="chips" id="et"><button type="button" class="on">Wedding</button><button type="button">Pre-wedding</button><button type="button">Engagement</button><button type="button">Haldi / Mehendi / Sangeet</button><button type="button">Collab / brand shoot</button><button type="button">Portraits</button><button type="button">Other</button></div><input type="hidden" name="type" value="Wedding">
-<label class="q">What would you like included? (pick any)</label><div class="chips" id="es"><button type="button">Candid photography</button><button type="button">Traditional photography</button><button type="button">Album</button><button type="button">Reels / teaser</button><button type="button">Not sure yet</button></div><input type="hidden" name="wants" value="">
-<div class="row2"><input name="date" type="date" aria-label="Event date"><input name="days" placeholder="Number of days / events"></div>
-<input name="venue" placeholder="Venue / city">
-<h4>About you</h4>
-<div class="row2"><input name="name" placeholder="Your name" required><input name="phone" placeholder="Phone / WhatsApp" required></div>
-<div class="row2"><input name="email" type="email" placeholder="Email" required><input name="instagram" placeholder="Instagram handle (optional)"></div>
-<input name="company" placeholder="Brand / company (for collab shoots)">
-<h4>Budget &amp; notes</h4>
-<select name="budget" aria-label="Budget"><option value="">Approximate budget (optional)</option><option>Under ₹25,000</option><option>₹25,000 – ₹50,000</option><option>₹50,000 – ₹1,00,000</option><option>₹1,00,000+</option><option>Not sure, send me a quote</option></select>
-<select name="found" aria-label="How did you find me"><option value="">How did you find me? (optional)</option><option>Instagram</option><option>Friend / referral</option><option>Google</option><option>Saw your work at an event</option><option>Other</option></select>
-<textarea name="message" rows="4" placeholder="Anything else I should know?"></textarea>
-<input class="hp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-<button class="btn f" style="justify-self:start;margin-top:22px">Send enquiry →</button>
-<div id="eo" aria-live="polite"></div>
-<p class="tiny">Your details are only used to reply to your enquiry.</p>
+<meta name="author" content="Jashwanth JP"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/site.css?v=20261104-studio"><link rel="icon" type="image/png" sizes="256x256" href="/images/favicon-1791284648615.png"><link rel="apple-touch-icon" href="/images/favicon-1791284648615.png"></head><body data-p="enquire">
+<main class="ew-wrap"><div class="ew" id="ew">
+<div class="ew-top"><div class="ew-prog"><i id="ewb"></i></div><span id="ewl">Step 1 of 5</span></div>
+<form id="ef" novalidate>
+<section class="ew-step" data-s="0"><h1>What are we <em>shooting?</em></h1><p class="ew-sub">Tap the one that fits best.</p>
+<div class="ew-grid" data-g="occasion"><button type="button" class="ew-opt" data-v="Wedding">Wedding</button><button type="button" class="ew-opt" data-v="Pre-wedding">Pre-wedding</button><button type="button" class="ew-opt" data-v="Engagement">Engagement</button><button type="button" class="ew-opt" data-v="Haldi / Mehendi / Sangeet">Haldi / Mehendi / Sangeet</button><button type="button" class="ew-opt" data-v="Collab / brand shoot">Collab / brand shoot</button><button type="button" class="ew-opt" data-v="Portraits">Portraits</button><button type="button" class="ew-opt" data-v="Other">Other</button></div>
+<div class="ew-other" data-for="occasion" hidden><input name="occasion_other" placeholder="Tell me what you have in mind" autocomplete="off" enterkeyhint="done"></div></section>
+<section class="ew-step" data-s="1" hidden><h1>When &amp; <em>where?</em></h1><p class="ew-sub">Rough details are fine. We can sort the rest later.</p>
+<label class="ew-l" for="ewd">Date</label><input id="ewd" name="date" type="date"><div class="ew-chips" id="ewt" style="margin-top:10px"><button type="button" class="ew-opt" id="ewtbd">Date not fixed yet</button></div>
+<label class="ew-l" for="ewv">City / venue</label><input id="ewv" name="venue" placeholder="e.g. Bengaluru, or the venue name" autocomplete="off">
+<label class="ew-l">How many days?</label><div class="ew-chips" data-g="days"><button type="button" class="ew-opt" data-v="1 day">1 day</button><button type="button" class="ew-opt" data-v="2 days">2 days</button><button type="button" class="ew-opt" data-v="3+ days">3+ days</button><button type="button" class="ew-opt" data-v="Not sure">Not sure</button></div></section>
+<section class="ew-step" data-s="2" hidden><h1>What do you <em>need?</em></h1><p class="ew-sub">Pick as many as you like.</p>
+<div class="ew-chips" data-g="wants" data-multi><button type="button" class="ew-opt" data-v="Candid photography">Candid photography</button><button type="button" class="ew-opt" data-v="Traditional photography">Traditional photography</button><button type="button" class="ew-opt" data-v="Album">Album</button><button type="button" class="ew-opt" data-v="Reels / teaser">Reels / teaser</button><button type="button" class="ew-opt" data-v="Not sure yet">Not sure yet</button><button type="button" class="ew-opt" data-v="Other">Other</button></div>
+<div class="ew-other" data-for="wants" hidden><input name="wants_other" placeholder="What else do you need?" autocomplete="off" enterkeyhint="done"></div></section>
+<section class="ew-step" data-s="3" hidden><h1>Your <em>budget</em></h1><p class="ew-sub">An approximate range helps me suggest the right package.</p>
+<div class="ew-grid" data-g="budget"><button type="button" class="ew-opt" data-v="Under ₹25,000">Under ₹25,000</button><button type="button" class="ew-opt" data-v="₹25,000 – ₹50,000">₹25,000 – ₹50,000</button><button type="button" class="ew-opt" data-v="₹50,000 – ₹1,00,000">₹50,000 – ₹1,00,000</button><button type="button" class="ew-opt" data-v="₹1,00,000+">₹1,00,000+</button><button type="button" class="ew-opt" data-v="Not sure, send me a quote">Not sure, send me a quote</button></div></section>
+<section class="ew-step" data-s="4" hidden><h1>Where do I <em>send it?</em></h1><p class="ew-sub">I'll reply with your quotation on WhatsApp or email.</p>
+<label class="ew-l" for="ewn">Your name</label><input id="ewn" name="name" autocomplete="name" placeholder="Name" enterkeyhint="next">
+<label class="ew-l" for="ewp">WhatsApp number</label><input id="ewp" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="98xxxxxxxx" enterkeyhint="next">
+<label class="ew-l" for="ewe">Email <span>(optional)</span></label><input id="ewe" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" enterkeyhint="next">
+<div id="ewbrandw" hidden><label class="ew-l" for="ewbr">Brand / company</label><input id="ewbr" name="brand" autocomplete="organization" placeholder="Brand name"></div>
+<label class="ew-l" for="ewi">Instagram <span>(optional)</span></label><input id="ewi" name="instagram" autocapitalize="none" autocomplete="off" placeholder="@yourhandle">
+<label class="ew-l">How did you find me? <span>(optional)</span></label><div class="ew-chips" data-g="found"><button type="button" class="ew-opt" data-v="Instagram">Instagram</button><button type="button" class="ew-opt" data-v="Friend / referral">Friend / referral</button><button type="button" class="ew-opt" data-v="Google">Google</button><button type="button" class="ew-opt" data-v="Other">Other</button></div>
+<div class="ew-other" data-for="found" hidden><input name="found_other" placeholder="Where did you hear about me?" autocomplete="off" enterkeyhint="done"></div>
+<label class="ew-l" for="ewm">Anything else? <span>(optional)</span></label><textarea id="ewm" name="message" rows="3" placeholder="Ideas, references, special requests"></textarea>
+<input class="ew-hp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"></section>
+<p class="ew-err" id="ewerr" role="alert"></p>
+<div class="ew-bar"><button type="button" class="ew-back" id="ewback" hidden>Back</button><button type="button" class="btn f ew-next" id="ewnext">Continue</button></div>
 </form>
-<div class="fc okbox" id="ok2"><h3 id="okn">Thank you</h3><p>I've received your details and will send your quotation shortly.</p><a class="btn" id="okw" target="_blank" rel="noopener" hidden>Message me on WhatsApp</a></div>
-</div></section><div style="height:100px"></div><script src="assets/site.js?v=20261103-layouts"></script></body></html>
+<div class="ew-ok" id="ewok" hidden><div class="ew-tick"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h1 id="ewokn">Thank <em>you</em></h1><p>I've got your details and will send your quotation shortly.</p><a class="btn f" id="ewokw" target="_blank" rel="noopener" style="display:none">Message me on WhatsApp</a></div>
+<p class="ew-tiny">Your details are only used to reply to your enquiry.</p>
+</div></main>
+<script src="assets/quote.js?v=20261104-studio"></script><script src="assets/site.js?v=20261104-studio"></script></body></html>

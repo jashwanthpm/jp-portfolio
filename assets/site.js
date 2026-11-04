@@ -180,21 +180,47 @@ contact(){
  $('#f').onsubmit=async e=>{e.preventDefault();txt('ok','Sending…');
  try{const r=await fetch(C.formEndpoint,{method:'POST',body:new FormData(e.target),headers:{Accept:'application/json'}});if(!r.ok)throw 0;e.target.reset();txt('ok',"Thank you — I'll reply to you personally, soon.")}catch{txt('ok','Could not send. Please email me directly.')}}}
 ,enquire(){
- const f=$('#ef');if(!f)return;
- const wa=C.phone?`https://wa.me/${C.phone}`:'';
- const d=f.elements.date;if(d)d.min=new Date().toISOString().slice(0,10);
- $('#et').onclick=e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();$$('#et button').forEach(x=>x.classList.remove('on'));b.classList.add('on');f.elements.type.value=b.textContent};
- $('#es').onclick=e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();b.classList.toggle('on');f.elements.wants.value=$$('#es button.on').map(x=>x.textContent).join(', ')};
- f.onsubmit=async e=>{e.preventDefault();if(f.elements._gotcha.value)return;
-  const msg=$('#eo'),btn=$('button.f',f);msg.className='';msg.textContent='Sending…';btn.disabled=true;
-  const fd=new FormData(f);fd.delete('_gotcha');fd.set('_subject',`New enquiry: ${f.elements.type.value} - ${f.elements.name.value}`);
-  fd.set('source',new URLSearchParams(location.search).get('ref')||'direct link');
+ const root=$('#ew');if(!root)return;
+ const S={occasion:'',days:'',wants:[],budget:'',found:''},N=5,steps=$$('.ew-step',root),bar=$('#ewb'),lab=$('#ewl'),back=$('#ewback'),next=$('#ewnext'),err=$('#ewerr'),f=$('#ef'),
+  val=n=>(f.elements[n]&&f.elements[n].value||'').trim();
+ let i=0,busy=false;
+ const go=(n,quiet)=>{i=Math.max(0,Math.min(N-1,n));steps.forEach((s,k)=>s.hidden=k!=i);bar.style.width=(i+1)/N*100+'%';lab.textContent=`Step ${i+1} of ${N}`;back.hidden=i==0;
+  next.textContent=i==N-1?'Send enquiry':'Continue';err.textContent='';$('#ewbrandw').hidden=S.occasion!='Collab / brand shoot';
+  if(!quiet)$('.ew-top').scrollIntoView({behavior:'smooth',block:'start'});
+  if(i==4)setTimeout(()=>f.elements.name.focus({preventScroll:true}),350)};
+ const other=g=>{const w=root.querySelector(`.ew-other[data-for=${g}]`);if(!w)return;const on=[].concat(S[g]).includes('Other');w.hidden=!on;return on?w.querySelector('input'):null};
+ root.addEventListener('click',e=>{const o=e.target.closest('.ew-opt');if(!o||!o.parentElement.dataset.g)return;
+  const box=o.parentElement,g=box.dataset.g,v=o.dataset.v;
+  if(box.hasAttribute('data-multi')){o.classList.toggle('on');S[g]=$$('.ew-opt.on',box).map(x=>x.dataset.v)}
+  else{const was=o.classList.contains('on');$$('.ew-opt',box).forEach(x=>x.classList.remove('on'));if(was&&g!='occasion'){S[g]=''}else{o.classList.add('on');S[g]=v}}
+  const oi=other(g);if(oi&&v=='Other')oi.focus();
+  err.textContent='';
+  if(g=='occasion'&&v!='Other'&&S[g])setTimeout(()=>go(1),240)});
+ const tbd=$('#ewtbd'),dt=f.elements.date;dt.min=new Date().toISOString().slice(0,10);
+ tbd.onclick=()=>{tbd.classList.toggle('on');dt.disabled=tbd.classList.contains('on');if(dt.disabled)dt.value=''};
+ const check=()=>{
+  if(i==0){if(!S.occasion)return'Please pick one to continue.';if(S.occasion=='Other'&&!val('occasion_other'))return'Please tell me what you have in mind.'}
+  if(i==2&&S.wants.includes('Other')&&!val('wants_other'))return'Please tell me what else you need.';
+  if(i==4){if(!val('name'))return'Please add your name.';if(val('phone').replace(/\D/g,'').length<10)return'Please add a valid WhatsApp number.';if(val('email')&&!/^\S+@\S+\.\S+$/.test(val('email')))return'That email does not look right.';
+   if(S.found=='Other'&&!val('found_other'))return'Please tell me where you heard about me.'}
+  return''};
+ back.onclick=()=>go(i-1);
+ f.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.tagName=='INPUT'){e.preventDefault();next.click()}});
+ const submit=async()=>{if(busy||val('_gotcha'))return;busy=true;next.disabled=true;next.textContent='Sending…';
+  const occ=S.occasion=='Other'?val('occasion_other'):S.occasion,wants=S.wants.map(w=>w=='Other'?val('wants_other'):w).filter(Boolean),found=S.found=='Other'?val('found_other'):S.found,
+   date=tbd.classList.contains('on')?'Not fixed yet':val('date'),
+   q={o:occ,w:wants,d:date,y:S.days,v:val('venue'),n:val('name'),p:val('phone'),e:val('email'),i:val('instagram'),b:S.budget,br:val('brand'),f:found,m:val('message')};
+  let link='';try{link=location.origin+'/admin/quote.html#e='+(await QCODEC.enc(q))}catch{}
+  const fd=new FormData();fd.set('_subject',`New enquiry: ${occ} - ${q.n}`);if(link)fd.set('create_quote_link',link);
+  [['name',q.n],['phone',q.p],['occasion',occ],['looking_for',wants.join(', ')],['date',date],['days',q.y],['venue',q.v],['brand',q.br],['budget',q.b],['instagram',q.i],['found_via',found],['message',q.m],['source',new URLSearchParams(location.search).get('ref')||'direct link']].forEach(([k,v])=>{if(v)fd.set(k,v)});
+  if(q.e)fd.set('email',q.e);
   try{if(!C.formEndpoint)throw 0;const r=await fetch(C.formEndpoint,{method:'POST',body:fd,headers:{Accept:'application/json'}});if(!r.ok)throw 0;
-   const nm=(f.elements.name.value||'').trim().split(' ')[0];f.style.display='none';
-   const ok=$('#ok2');ok.style.display='block';$('#okn').textContent=nm?`Thank you, ${nm}`:'Thank you';
-   const a=$('#okw');if(wa){a.href=wa+'?text='+encodeURIComponent(`Hi ${C.name||''}, I just filled the enquiry form.`);a.hidden=false}
+   f.hidden=true;$('.ew-top').hidden=true;$('.ew-tiny').hidden=true;$('#ewok').hidden=false;$('#ewokn').innerHTML='Thank <em>you'+(q.n?', '+q.n.split(' ')[0].replace(/[<>&"]/g,''):'')+'</em>';
+   const a=$('#ewokw');if(C.phone){a.href=`https://wa.me/${C.phone}?text=`+encodeURIComponent(`Hi ${C.name||''}, I just filled the enquiry form.`);a.style.display='inline-flex'}
    window.scrollTo({top:0,behavior:'smooth'})}
-  catch{msg.className='err';msg.textContent='Could not send. Please try again, or email '+(C.email||'me')+' directly.';btn.disabled=false}}
+  catch{err.textContent='Could not send. Please try again, or email '+(C.email||'me')+' directly.';next.disabled=false;next.textContent='Send enquiry';busy=false}};
+ next.onclick=()=>{const m=check();if(m){err.textContent=m;return}if(i==N-1)submit();else go(i+1)};
+ go(0,1);
 }
 ,quote(){
  const root=$('#qt'),esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
