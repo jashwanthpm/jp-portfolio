@@ -201,7 +201,7 @@ contact(){
  const check=()=>{
   if(i==0){if(!S.occasion)return'Please pick one to continue.';if(S.occasion=='Other'&&!val('occasion_other'))return'Please tell me what you have in mind.'}
   if(i==2&&S.wants.includes('Other')&&!val('wants_other'))return'Please tell me what else you need.';
-  if(i==4){if(!val('name'))return'Please add your name.';if(val('phone').replace(/\D/g,'').length<10)return'Please add a valid WhatsApp number.';if(val('email')&&!/^\S+@\S+\.\S+$/.test(val('email')))return'That email does not look right.';
+  if(i==4){if(!val('name'))return'Please add your name.';if(val('phone').replace(/\D/g,'').length<10)return'Please add a valid WhatsApp number.';if(val('email')&&!/^\S+@\S+\.\S+$/.test(val('email')))return'That email does not look right.';if(!val('message'))return'Please describe your requirements so I can understand what you need.';
    if(S.found=='Other'&&!val('found_other'))return'Please tell me where you heard about me.'}
   return''};
  back.onclick=()=>go(i-1);
