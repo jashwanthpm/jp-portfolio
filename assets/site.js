@@ -18,18 +18,21 @@ function lprog(el){let bar=$('#lp');if(!bar){document.body.insertAdjacentHTML('b
  const imgs=$$('img',el),t=Math.min(12,imgs.length);let n=0;const upd=()=>{bar.firstChild.style.width=(t?n/t*100:100)+'%';bar.lastChild.textContent=n<t?`Loading pictures ${n} / ${t}`:'';bar.classList.toggle('done',n>=t)};
  imgs.forEach((im,k)=>{const d=()=>{im.classList.add('l');if(im._c)return;im._c=1;if(k<12){n++;upd()}};im.complete&&im.naturalWidth?d():(im.addEventListener('load',d),im.addEventListener('error',d))});upd()}
 const LAY=l=>{l=l||{};return{s:l.style||'masonry',g:(l.gap===undefined||l.gap==='')?14:+l.gap,c:+l.cols||3,m:+l.mcols||2,r:+l.round||0}};
-async function mason(el,items,lay){const gen=el._g=(el._g||0)+1;el._items=items;el._lay=lay;const L=LAY(lay);
+async function mason(el,all,lay){const gen=el._g=(el._g||0)+1;el._items=all;el._lay=lay;const L=LAY(lay);let items=all;
  await Promise.all(items.map(async p=>{if(p.r==null)p.r=p.src?await getR(p.src):.8}));if(el._g!=gen)return;
- const n=innerWidth<700?L.m:L.c;el.className='mas '+({grid:'gridl',rows:'rowsl',stack:'stackl',strip:'stripl'}[L.s]||'');el.style.setProperty('--g',L.g+'px');el.style.setProperty('--rd',L.r+'px');el.style.setProperty('--n',n);
- const tile=(p,i,sq)=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="aspect-ratio:${sq?1:p.r};--d:${Math.min(i,10)}">${p.src?thimg(p.src,i<8?'':' loading="lazy"'):`<span class="ph"></span>`}${window.__dlon&&p.src?`<a class="dli" href="${dlSrc(p.src)}" download="${dlName(p.src)}" title="Download" aria-label="Download">${DLI}</a>`:''}</figure>`;let html;
+ if(L.s=='portrait'){const f=items.filter(p=>p.r<=.92);if(f.length)items=f}
+ const n=L.s=='pair'?2:(innerWidth<700?L.m:L.c);el.className='mas '+({grid:'gridl',rows:'rowsl',pair:'rowsl',stack:'stackl',strip:'stripl',story:'storyl',portrait:'portl'}[L.s]||'');el.style.setProperty('--g',L.g+'px');el.style.setProperty('--rd',L.r+'px');el.style.setProperty('--n',n);
+ const tile=(p,i,sq)=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="aspect-ratio:${sq||p.r};--d:${Math.min(i,10)}">${p.src?thimg(p.src,i<8?'':' loading="lazy"'):`<span class="ph"></span>`}${window.__dlon&&p.src?`<a class="dli" href="${dlSrc(p.src)}" download="${dlName(p.src)}" title="Download" aria-label="Download">${DLI}</a>`:''}</figure>`;let html;
  if(L.s=='grid')html=items.map((p,i)=>tile(p,i,1)).join('');
+ else if(L.s=='portrait')html=items.map((p,i)=>tile(p,i,'2/3')).join('');
+ else if(L.s=='story'){const m=innerWidth<700;html=items.map((p,i)=>tile(p,i).replace('style="','style="--w:'+(p.r>1?(m?92:68):(m?68:42))+'%;')).join('')}
  else if(L.s=='stack'||L.s=='strip')html=items.map((p,i)=>tile(p,i)).join('');
- else if(L.s=='rows'){const W=el.clientWidth||1000,avg=items.reduce((s,p)=>s+p.r,0)/(items.length||1)||1,th=W/(n*avg),rows=[];let cur=[],sum=0;
+ else if(L.s=='rows'||L.s=='pair'){const W=el.clientWidth||1000,avg=items.reduce((s,p)=>s+p.r,0)/(items.length||1)||1,th=W/(n*avg),rows=[];let cur=[],sum=0;
   items.forEach((p,i)=>{cur.push([p,i]);sum+=p.r;if(sum*th+L.g*(cur.length-1)>=W){rows.push({a:cur,s:sum,last:0});cur=[];sum=0}});if(cur.length)rows.push({a:cur,s:sum,last:1});
   html=rows.map(r=>{const w=Math.round(r.s*th+L.g*(r.a.length-1)),full=!r.last||w>=W*.7;return `<div class="fr2"${full?'':` style="max-width:${w}px"`}>${r.a.map(([p,i])=>tile(p,i).replace('style="','style="flex:'+p.r+' 1 0;')).join('')}</div>`}).join('')}
  else{const H=Array(n).fill(0),cols=Array.from({length:n},()=>[]);items.forEach((p,i)=>{const k=H.indexOf(Math.min(...H));cols[k].push([p,i]);H[k]+=1/p.r});html=cols.map(c=>`<div class="mc">${c.map(([p,i])=>tile(p,i)).join('')}</div>`).join('')}
  el.innerHTML=html;el._n=n;bind(el,items);lprog(el);
- if(!window.__mr){window.__mr=1;let tt;addEventListener('resize',()=>{clearTimeout(tt);tt=setTimeout(()=>{const m=$('.mas');if(m&&m._items){const l=LAY(m._lay),k=innerWidth<700?l.m:l.c;if(l.s=='rows'||k!=m._n)mason(m,m._items,m._lay)}},150)})}}
+ if(!window.__mr){window.__mr=1;let tt;addEventListener('resize',()=>{clearTimeout(tt);tt=setTimeout(()=>{const m=$('.mas');if(m&&m._items){const l=LAY(m._lay),k=innerWidth<700?l.m:l.c;if(l.s=='rows'||l.s=='pair'||l.s=='story'||k!=m._n)mason(m,m._items,m._lay)}},150)})}}
 const DLI='<svg class="dlsv" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>';
 const LOCK='<svg class="lk" viewBox="0 0 24 24" role="img" aria-label="PIN protected"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 const dlSrc=p=>(C.hi||{})[p]||p;
@@ -176,6 +179,50 @@ contact(){
  if((C.faq||[]).length)$('#faq').innerHTML=shown(C.faq).map(([x])=>`<details><summary>${x.q}</summary><p>${x.a}</p></details>`).join('');
  $('#f').onsubmit=async e=>{e.preventDefault();txt('ok','Sending…');
  try{const r=await fetch(C.formEndpoint,{method:'POST',body:new FormData(e.target),headers:{Accept:'application/json'}});if(!r.ok)throw 0;e.target.reset();txt('ok',"Thank you — I'll reply to you personally, soon.")}catch{txt('ok','Could not send. Please email me directly.')}}}
+,enquire(){
+ const f=$('#ef');if(!f)return;
+ const wa=C.phone?`https://wa.me/${C.phone}`:'';
+ const d=f.elements.date;if(d)d.min=new Date().toISOString().slice(0,10);
+ $('#et').onclick=e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();$$('#et button').forEach(x=>x.classList.remove('on'));b.classList.add('on');f.elements.type.value=b.textContent};
+ $('#es').onclick=e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();b.classList.toggle('on');f.elements.wants.value=$$('#es button.on').map(x=>x.textContent).join(', ')};
+ f.onsubmit=async e=>{e.preventDefault();if(f.elements._gotcha.value)return;
+  const msg=$('#eo'),btn=$('button.f',f);msg.className='';msg.textContent='Sending…';btn.disabled=true;
+  const fd=new FormData(f);fd.delete('_gotcha');fd.set('_subject',`New enquiry: ${f.elements.type.value} - ${f.elements.name.value}`);
+  fd.set('source',new URLSearchParams(location.search).get('ref')||'direct link');
+  try{if(!C.formEndpoint)throw 0;const r=await fetch(C.formEndpoint,{method:'POST',body:fd,headers:{Accept:'application/json'}});if(!r.ok)throw 0;
+   const nm=(f.elements.name.value||'').trim().split(' ')[0];f.style.display='none';
+   const ok=$('#ok2');ok.style.display='block';$('#okn').textContent=nm?`Thank you, ${nm}`:'Thank you';
+   const a=$('#okw');if(wa){a.href=wa+'?text='+encodeURIComponent(`Hi ${C.name||''}, I just filled the enquiry form.`);a.hidden=false}
+   window.scrollTo({top:0,behavior:'smooth'})}
+  catch{msg.className='err';msg.textContent='Could not send. Please try again, or email '+(C.email||'me')+' directly.';btn.disabled=false}}
+}
+,quote(){
+ const root=$('#qt'),esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
+  paras=s=>esc(s).split(/\n+/).map(x=>x.trim()).filter(Boolean).map(x=>`<p>${x}</p>`).join(''),
+  inr=n=>'\u20b9'+new Intl.NumberFormat('en-IN',{maximumFractionDigits:2}).format(Math.round(n*100)/100),
+  fd=iso=>{const d=/^\d{4}-\d{2}-\d{2}$/.test(iso||'')?new Date(iso+'T00:00:00'):null;return d&&!isNaN(d)?d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):''},
+  num=v=>{v=+v;return isFinite(v)&&v>0?v:0};
+ const draw=async()=>{let q;
+  try{q=await QCODEC.dec(location.hash);if(!q||!Array.isArray(q.i))throw 0}
+  catch{root.innerHTML='<div class="qbad"><h1>Quotation not <em>found</em></h1><p style="margin-top:18px">This link looks incomplete. Please ask for a fresh link.</p></div>';return}
+  const items=q.i.slice(0,40).map(r=>({d:r[0],n:r[1],q:num(r[2])||1,r:num(r[3])})),
+   sub=items.reduce((s,x)=>s+x.q*x.r,0),dis=Math.min(num(q.ds),sub),tx=sub-dis,gp=num(q.g),gs=tx*gp/100,tot=tx+gs,ap=Math.min(100,num(q.a)),adv=Math.round(tot*ap/100),bal=tot-adv,
+   today=(d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'))(new Date()),exp=/^\d{4}-\d{2}-\d{2}$/.test(q.x||'')&&q.x<today,
+   title=q.t||'Photography',wm=`Hi ${C.name||''}, I'd like to confirm quotation ${q.n||''} (${title}) for ${inr(tot)}. Please share the next steps.`,
+   qm=`Hi ${C.name||''}, I have a question about quotation ${q.n||''} (${title}).`,
+   link=m=>C.phone?`https://wa.me/${C.phone}?text=${encodeURIComponent(m)}`:`mailto:${C.email||''}?subject=${encodeURIComponent('Quotation '+(q.n||''))}&body=${encodeURIComponent(m)}`;
+  document.title=`Quotation ${q.n||''} \u2014 ${C.name||''}`.trim();
+  root.innerHTML=`<span class="eb">Quotation${exp?'<span class="qpill x">Expired</span>':''}</span>
+  <div class="qh"><h1>${q.c?`For <em>${esc(q.c)}</em>`:'Your <em>quotation</em>'}</h1><div class="qm">${q.n?`No. <b>${esc(q.n)}</b><br>`:''}${fd(q.d)?`Issued <b>${fd(q.d)}</b><br>`:''}${fd(q.x)?`Valid until <b>${fd(q.x)}</b>`:''}</div></div>
+  <div class="qi"><div><small>Shoot</small>${esc(title)}</div>${q.e?`<div><small>Date</small>${esc(q.e)}</div>`:''}${q.l?`<div><small>Venue / city</small>${esc(q.l)}</div>`:''}</div>
+  <table><thead><tr><th>Description</th><th class="qr qhq">Qty</th><th class="qr qhq">Rate</th><th class="qr">Amount</th></tr></thead><tbody>${items.map(x=>`<tr><td>${esc(x.d)}${x.n?`<small>${esc(x.n)}</small>`:''}</td><td class="qr qhq">${x.q}</td><td class="qr qhq">${inr(x.r)}</td><td class="qr">${inr(x.q*x.r)}</td></tr>`).join('')}</tbody></table>
+  <div class="qtot"><div><span>Subtotal</span><span>${inr(sub)}</span></div>${dis?`<div><span>Discount</span><span>\u2212 ${inr(dis)}</span></div>`:''}${gp?`<div><span>GST (${gp}%)</span><span>${inr(gs)}</span></div>`:''}<div class="qg"><span>Total</span><span>${inr(tot)}</span></div>${ap&&ap<100?`<div class="qa"><span>Advance to confirm (${ap}%)</span><span>${inr(adv)}</span></div><div><span>Balance</span><span>${inr(bal)}</span></div>`:ap==100?`<div class="qa"><span>Payable to confirm</span><span>${inr(tot)}</span></div>`:''}</div>
+  ${q.nt?`<div class="qbx"><h4>What's included</h4>${paras(q.nt)}</div>`:''}${q.pb?`<div class="qbx"><h4>Payment details</h4>${paras(q.pb)}</div>`:''}${q.tm?`<div class="qbx"><h4>Terms</h4>${paras(q.tm)}</div>`:''}
+  <div class="qacts"><a class="btn f" href="${esc(link(wm))}" target="_blank" rel="noopener">Accept &amp; confirm</a><a class="btn" href="${esc(link(qm))}" target="_blank" rel="noopener">Ask a question</a><button class="btn" id="qp" type="button">Save as PDF</button></div>`;
+  $('#qp').onclick=()=>window.print()};
+ addEventListener('hashchange',draw);draw();
+}
+
 };
 const PV=new URLSearchParams(location.search).has('preview'),NOSITE=/^\/admin(\/|$)/.test(location.pathname);
 const obs=()=>{const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('on'),io.unobserve(e.target))),{threshold:.1});$$('.rv').forEach(x=>io.observe(x))};
