@@ -111,7 +111,7 @@ iframe{width:100%;height:100%;border:0;background:#0d0c0b}
    <div class="fl"><label for="f_tm">Terms</label><textarea id="f_tm" data-k="tm" rows="5"></textarea><p class="hint">Payment details and terms are remembered for your next quote. Check the starting terms match your policy.</p></div></div>
  </div>
  <div class="dock"><div class="tt"><div><small>Total</small><div class="big" id="tot">₹0</div></div><div class="adv"><small id="advl">Advance</small><span id="adv">₹0</span></div></div><div class="bud2" id="bud"></div>
-  <div class="lk"><input id="lnk" readonly aria-label="Quotation link"><button class="btn sm" id="cp2">Copy</button></div></div></section>
+  <div class="lk"><input id="lnk" readonly aria-label="Quotation link" placeholder="Create a short link with Copy link"><button class="btn sm" id="cp2">Copy</button></div></div></section>
  <section class="pv"><div class="pt"><div class="seg"><button class="on" data-d="d"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Desktop</button><button data-d="m"><svg class="i" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg>Mobile</button></div><span class="lab">Live preview, what your client sees</span><div class="sp"></div><button class="btn sm" id="op">Open<svg class="i" viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg></button></div>
   <div class="stage"><div class="dev" id="dev"><iframe id="fr" title="Preview"></iframe></div></div></section>
 </div>
@@ -134,7 +134,7 @@ const FK=['c','ph','t','e','l','n','d','vd','ds','g','a','nt','pb','tm'];
 let rates=J('q_rates',{}),st,tmr,cur='';
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const newNo=()=>{const d=new Date(),p='JP-'+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+'-',mx=J('q_lib',[]).reduce((m,x)=>{const s=String(x.n||'');return s.startsWith(p)?Math.max(m,+s.slice(p.length)||0):m},0);return p+String(mx+1).padStart(2,'0')};
-const blank=()=>({id:uid(),sent:false,enq:null,items:[['','',1,0]],f:{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:7,ds:0,g:'0',a:50,nt:'',pb:LS.get('q_pb')||'',tm:LS.get('q_tm')||DT}});
+const blank=()=>({id:uid(),linkId:'',sent:false,enq:null,items:[['','',1,0]],f:{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:7,ds:0,g:'0',a:50,nt:'',pb:LS.get('q_pb')||'',tm:LS.get('q_tm')||DT}});
 const phone=v=>{v=String(v||'').replace(/\D/g,'');return v.length==10?'91'+v:v};
 const fdate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):(s||'');
 function load(){FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');drawItems();drawEnq();$('#dn').textContent=st.f.n;pill()}
@@ -147,7 +147,7 @@ function drawEnq(){const e=st.enq,box=$('#enqc');if(!e){box.innerHTML='';$('#bud
 function calc(){const it=st.items,sub=it.reduce((s,x)=>s+num(x[2])*num(x[3]),0),dis=Math.min(num(st.f.ds),sub),tx=sub-dis,gp=num(st.f.g),tot=tx+tx*gp/100,ap=Math.min(100,num(st.f.a));return{tot,ap,adv:Math.round(tot*ap/100)}}
 function payload(){const f=st.f,v=f.d||today();return{v:1,n:String(f.n||'').trim(),d:v,x:addD(v,Math.max(1,num(f.vd)||7)),c:String(f.c).trim(),t:String(f.t).trim(),e:String(f.e).trim(),l:String(f.l).trim(),i:st.items.filter(x=>String(x[0]).trim()).map(x=>[String(x[0]).trim(),String(x[1]||'').trim(),num(x[2])||1,num(x[3])]),ds:num(f.ds),g:num(f.g),a:num(f.a),nt:String(f.nt).trim(),pb:String(f.pb).trim(),tm:String(f.tm).trim()}}
 async function upd(){const c=calc();$('#tot').textContent=inr(c.tot);$('#advl').textContent=`Advance (${c.ap}%)`;$('#adv').textContent=inr(c.adv);$('#dn').textContent=st.f.n;
- cur=await QCODEC.enc(payload());$('#lnk').value=location.origin+'/q#'+cur;
+ cur=await QCODEC.enc(payload());$('#lnk').value=st.linkId?'https://q.sakkhi.co.in/'+st.linkId:'';
  const fr=$('#fr');try{if(fr.dataset.on)fr.contentWindow.location.hash=cur;else{fr.dataset.on=1;fr.src='/q.html#'+cur}}catch{fr.src='/q.html#'+cur}
  LS.set('q_cur',JSON.stringify(st));LS.set('q_pb',st.f.pb);LS.set('q_tm',st.f.tm);upsert();$('#svt').textContent='Saved'}
 const sched=()=>{$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
@@ -170,12 +170,39 @@ $('#scroll').addEventListener('click',e=>{const b=e.target.closest('button');if(
 $('#quick').innerHTML=QUICK.map(q=>`<button type="button" data-q="${esc(q)}">+ ${esc(q)}</button>`).join('');
 $('#add').onclick=()=>addRow();
 /* actions */
-const msg=()=>`Hi ${String(st.f.c).trim()||'there'}, here is your quotation for ${String(st.f.t).trim()||'your shoot'} (${inr(calc().tot)}):\n${$('#lnk').value}`;
+const msg=(link=$('#lnk').value)=>`Hi ${String(st.f.c).trim()||'there'}, here is your quotation for ${String(st.f.t).trim()||'your shoot'} (${inr(calc().tot)}):\n${link}`;
 const copy=async t=>{try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove();return true}};
-const cpl=async()=>{await copy($('#lnk').value);markSent();toast('Link copied')};
+async function shortLink(){
+ const body=JSON.stringify(payload());
+ let id=st.linkId||'';
+ if(id){
+  const r=await fetch('https://q.sakkhi.co.in/api/'+encodeURIComponent(id),{method:'PUT',headers:{'Content-Type':'application/json'},body});
+  if(r.status===404)id='';
+  else if(!r.ok)throw new Error('Could not update the short link.');
+ }
+ if(!id){
+  const r=await fetch('https://q.sakkhi.co.in/api',{method:'POST',headers:{'Content-Type':'application/json'},body});
+  if(!r.ok)throw new Error('Could not create the short link.');
+  const data=await r.json();id=data.id||'';
+ }
+ if(!/^[A-Za-z0-9]{12}$/.test(id))throw new Error('The short-link service returned an invalid ID.');
+ st.linkId=id;
+ const link='https://q.sakkhi.co.in/'+id;
+ $('#lnk').value=link;
+ LS.set('q_cur',JSON.stringify(st));upsert();
+ return link;
+}
+const cpl=async()=>{try{const link=await shortLink();await copy(link);markSent();toast('Short link copied')}catch(e){toast('Could not create a short link. Please try again.')}};
 $('#cp').onclick=cpl;$('#cp2').onclick=cpl;
-$('#wa').onclick=()=>{const p=phone(st.f.ph);window.open((p?'https://wa.me/'+p:'https://wa.me/')+'?text='+encodeURIComponent(msg()),'_blank');markSent()};
-$('#op').onclick=()=>window.open($('#lnk').value,'_blank');
+$('#wa').onclick=async()=>{
+ const win=window.open('about:blank','_blank');
+ try{
+  const link=await shortLink(),p=phone(st.f.ph),href=(p?'https://wa.me/'+p:'https://wa.me/')+'?text='+encodeURIComponent(msg(link));
+  if(win)win.location.href=href;else toast('Allow pop-ups to open WhatsApp.');
+  markSent();
+ }catch(e){if(win)win.close();toast('Could not create a short link. Please try again.')}
+};
+$('#op').onclick=()=>window.open('/q.html#'+cur,'_blank');
 $('#nw').onclick=()=>{st=blank();load();upd();$('#f_c').focus()};
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key=='s'){e.preventDefault();upd();toast('Saved')}});
 $$('.seg button').forEach(b=>b.onclick=()=>{$$('.seg button').forEach(x=>x.classList.toggle('on',x==b));$('#dev').classList.toggle('m',b.dataset.d=='m')});
@@ -188,7 +215,7 @@ function drawLib(){const q=$('#sq').value.toLowerCase(),lib=J('q_lib',[]).filter
  $('#ll').innerHTML=lib.length?lib.map(x=>`<div class="li${x.id==st.id?' cur':''}"><div class="r1"><b>${esc(x.c||'(no name)')}</b><b>${inr(x.total)}</b></div><small>${esc(x.n)} · ${esc(x.t||'Quote')} · ${esc(fdate(x.at))}</small><div class="r2"><span class="pill${x.sent?' sent':''}">${x.sent?'Sent':'Draft'}</span><div class="sp"></div><button class="btn sm" data-o="${x.id}">Open</button><button class="btn sm" data-dup="${x.id}">Duplicate</button><button class="btn sm ghost" data-rm="${x.id}">Delete</button></div></div>`).join(''):'<div class="empty">No quotes yet. They save here automatically as you type.</div>'}
 $('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J('q_lib',[]);
  if(b.dataset.o){const x=lib.find(y=>y.id==b.dataset.o);if(x){st=JSON.parse(JSON.stringify(x.st));load();upd();open(false)}}
- else if(b.dataset.dup){const x=lib.find(y=>y.id==b.dataset.dup);if(x){st=JSON.parse(JSON.stringify(x.st));st.id=uid();st.sent=false;st.f.n=newNo();st.f.d=today();load();upd();open(false);toast('Duplicated')}}
+ else if(b.dataset.dup){const x=lib.find(y=>y.id==b.dataset.dup);if(x){st=JSON.parse(JSON.stringify(x.st));st.id=uid();st.linkId='';st.sent=false;st.f.n=newNo();st.f.d=today();load();upd();open(false);toast('Duplicated')}}
  else if(b.dataset.rm){if(confirm('Delete this quote?')){LS.set('q_lib',JSON.stringify(lib.filter(y=>y.id!=b.dataset.rm)));$('#lc').textContent=J('q_lib',[]).length;drawLib()}}};
 /* enquiry import */
 async function fromEnquiry(code){let e;try{e=await QCODEC.dec(code);if(!e||typeof e!='object')throw 0}catch{toast('That enquiry link is not valid');return false}
@@ -202,6 +229,6 @@ $('#impb').onclick=async()=>{const t=$('#imp').value.trim(),m=t.match(/#e=([A-Za
 /* boot */
 addEventListener('hashchange',()=>{const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)/);if(m){history.replaceState(null,'',location.pathname);fromEnquiry(m[1])}});
 (async()=>{$('#lc').textContent=J('q_lib',[]).length;const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)/);
- const sv=J('q_cur',null);st=sv&&sv.f?sv:blank();st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];
+ const sv=J('q_cur',null);st=sv&&sv.f?sv:blank();st.linkId=st.linkId||'';st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];
  if(m){history.replaceState(null,'',location.pathname);load();await fromEnquiry(m[1])}else{load();upd()}})();
 </script></body></html>
