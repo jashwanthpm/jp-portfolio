@@ -22,11 +22,6 @@
 .ew-cnt{position:absolute;right:14px;bottom:11px;font:400 .68rem Inter,sans-serif;letter-spacing:.06em;color:var(--mute);pointer-events:none}
 .ew-req.bad textarea{border-color:#e08a78;box-shadow:0 0 0 3px rgba(224,138,120,.12)}
 .ew-fe{color:#ff9b8a;font-size:.86rem;margin:10px 0 0}
-.ew-hint{color:var(--mute);font-size:.8rem;margin:14px 0 10px}
-.ew-ideas{display:flex;flex-wrap:wrap;gap:8px}
-.ew-idea{min-height:40px;padding:0 15px;border-radius:99px;border:1px dashed #4a4137;background:none;color:#cfc6ba;font:400 13.5px Inter,sans-serif;cursor:pointer;transition:.2s;-webkit-tap-highlight-color:transparent}
-.ew-idea:active{transform:scale(.97)}
-.ew-idea.used{border-style:solid;border-color:var(--acc);background:rgba(201,164,106,.12);color:var(--acc)}
 .ew-req [hidden]{display:none!important}
 </style>
 </head><body data-p="enquire">
@@ -58,8 +53,6 @@
 <label class="ew-l" for="ewm" style="margin:0 0 10px">Tell me about your plans</label>
 <div class="ew-ta"><textarea id="ewm" name="message" rows="4" required aria-required="true" aria-describedby="ewmh ewfe" maxlength="1200" placeholder="Dates, ideas, moments you want captured…"></textarea><span class="ew-cnt" id="ewcnt" aria-hidden="true">0 / 1200</span></div>
 <p class="ew-fe" id="ewfe" role="alert" hidden>Please tell me a little about your plans.</p>
-<p class="ew-hint" id="ewmh">A few lines is plenty. Tap to add:</p>
-<div class="ew-ideas" id="ewideas"><button type="button" class="ew-idea" data-add="Candid moments">Candid moments</button><button type="button" class="ew-idea" data-add="Traditional rituals">Traditional rituals</button><button type="button" class="ew-idea" data-add="Couple portraits">Couple portraits</button><button type="button" class="ew-idea" data-add="Family photos">Family photos</button><button type="button" class="ew-idea" data-add="Reels / teaser">Reels / teaser</button></div>
 </div>
 <input class="ew-hp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"></section>
 <p class="ew-err" id="ewerr" role="alert"></p>
@@ -76,7 +69,6 @@ function apply(D){const E=D.enq||{},txt=(sel,v,html)=>{const e=$(sel);if(e&&type
 opts('occasion',D.eqOcc,E.occOther!==false);opts('days',D.eqDays,false);opts('wants',D.eqWants,E.wantsOther!==false);opts('budget',D.eqBudget,false);opts('found',D.eqFound,E.foundOther!==false);
 txt('label[for="ewm"]',E.reqLabel);const ta=$('#ewm');if(ta&&E.reqPh)ta.placeholder=E.reqPh;window.__ewReq=E.reqOn!==false;
 if(window.__ewReq){ta.setAttribute('required','');ta.setAttribute('aria-required','true');$('#ewtag').textContent='Required'}else{ta.removeAttribute('required');ta.removeAttribute('aria-required');$('#ewtag').textContent='Optional'}
-const ideas=list(D.eqIdeas),box=$('#ewideas');if(box&&Array.isArray(D.eqIdeas)){if(ideas.length){box.hidden=false;$('#ewmh').hidden=false;box.innerHTML=ideas.map(t=>'<button type="button" class="ew-idea" data-add="'+esc(t)+'">'+esc(t)+'</button>').join('')}else{box.hidden=true;$('#ewmh').hidden=true}}
 txt('#ewok p',E.okt);const h=$('#ewokn');if(mo){mo.disconnect();mo=null}if(PV)txt('#ewokn',(E.okh||'Thank *you*').replace(/\{name\}/g,'Name'),1);else if(typeof E.okh==='string'&&E.okh.trim()&&E.okh.trim()!=='Thank *you*'){mo=new MutationObserver(()=>{const n=(($('#ewn')||{}).value||'').trim().split(' ')[0];mo.disconnect();h.innerHTML=em(E.okh.replace(/\{name\}/g,n));mo.observe(h,{childList:true})});mo.observe(h,{childList:true})}}
 if(PV){const st=document.createElement('style');st.textContent='.ew .ew-step[hidden],.ew #ewok[hidden]{display:block!important}.ew .ew-step{padding-bottom:34px;margin-bottom:34px;border-bottom:1px dashed #3a332c}.ew-bar,.ew-top,.ew-tiny{display:none!important}.ew-ok{padding-top:10px!important}';document.head.appendChild(st);addEventListener('message',e=>{if(e.origin!==location.origin||!e.data||e.data.type!=='content'||!e.data.data)return;try{live=true;apply(e.data.data)}catch(x){}})}
 (async()=>{try{const r=await fetch('content.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(!live)apply(d)}}catch(x){}const s=document.createElement('script');s.src='assets/site.js?v=20261104-whatsapp-copy';document.body.appendChild(s)})();
@@ -85,12 +77,8 @@ if(PV){const st=document.createElement('style');st.textContent='.ew .ew-step[hid
 (()=>{const ta=document.getElementById('ewm'),cnt=document.getElementById('ewcnt'),box=document.getElementById('ewreq'),fe=document.getElementById('ewfe'),next=document.getElementById('ewnext'),f=document.getElementById('ef');if(!ta||!next)return;
 const fit=()=>{ta.style.height='auto';ta.style.height=Math.min(Math.max(ta.scrollHeight+2,140),320)+'px'},
  clear=()=>{box.classList.remove('bad');fe.hidden=true},
- sync=()=>{cnt.textContent=ta.value.length+' / '+ta.maxLength;fit();[...document.querySelectorAll('.ew-idea')].forEach(b=>b.classList.toggle('used',ta.value.toLowerCase().includes(b.dataset.add.toLowerCase())))};
+ sync=()=>{cnt.textContent=ta.value.length+' / '+ta.maxLength;fit()};
 ta.addEventListener('input',()=>{clear();sync()});
-document.getElementById('ewideas').addEventListener('click',e=>{const b=e.target.closest('.ew-idea');if(!b)return;const t=b.dataset.add,low=ta.value.toLowerCase();
- if(low.includes(t.toLowerCase())){ta.value=ta.value.split('\n').filter(l=>l.trim().toLowerCase()!==t.toLowerCase()).join('\n').trim()}
- else{ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+t}
- clear();sync()});
 const ok=n=>(f.elements[n]&&f.elements[n].value||'').trim();
 next.addEventListener('click',e=>{const last=document.querySelector('.ew-step[data-s="4"]');if(!last||last.hidden||window.__ewReq===false)return;
  if(!ok('name')||ok('phone').replace(/\D/g,'').length<10)return;
