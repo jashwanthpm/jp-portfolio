@@ -99,6 +99,7 @@ iframe{width:100%;height:100%;border:0;background:#0d0c0b}
   <div class="card"><div class="ch"><span class="num">2</span><h3>Shoot</h3></div>
    <div class="fl"><label for="f_t">Shoot</label><input id="f_t" data-k="t" list="tl" placeholder="Pre-wedding shoot" autocomplete="off"><datalist id="tl"><option>Wedding photography</option><option>Pre-wedding shoot</option><option>Engagement shoot</option><option>Haldi / Mehendi / Sangeet</option><option>Collab / brand shoot</option><option>Portrait session</option></datalist></div>
    <div class="g2 fl"><div><label for="f_e">Date</label><input id="f_e" data-k="e" placeholder="14 Feb 2027"></div><div><label for="f_l">Venue / city</label><input id="f_l" data-k="l" placeholder="Bengaluru"></div></div>
+   <div class="fl"><label for="f_th">Look of this quote</label><select id="f_th" data-k="th"><option value="">Site default</option><option value="noir">Noir (dark &amp; gold)</option><option value="ivory">Ivory (warm paper)</option><option value="blush">Blush (soft rose)</option><option value="editorial">Editorial (clean white)</option></select></div>
    <div class="g3"><div><label for="f_n">Quote no.</label><input id="f_n" data-k="n"></div><div><label for="f_d">Issued</label><input id="f_d" data-k="d" type="date"></div><div><label for="f_vd">Valid (days)</label><input id="f_vd" data-k="vd" type="number" min="1"></div></div></div>
   <div class="card"><div class="ch"><span class="num">3</span><h3>Items</h3><small>Rates are remembered</small></div>
    <div class="ih"><span>Description</span><span>Qty</span><span>Rate</span><span>Amount</span><span></span></div><div id="items"></div>
@@ -111,7 +112,7 @@ iframe{width:100%;height:100%;border:0;background:#0d0c0b}
    <div class="fl"><label for="f_tm">Terms</label><textarea id="f_tm" data-k="tm" rows="5"></textarea><p class="hint">Payment details and terms are remembered for your next quote. Check the starting terms match your policy.</p></div></div>
  </div>
  <div class="dock"><div class="tt"><div><small>Total</small><div class="big" id="tot">₹0</div></div><div class="adv"><small id="advl">Advance</small><span id="adv">₹0</span></div></div><div class="bud2" id="bud"></div>
-  <div class="lk"><input id="lnk" readonly aria-label="Quotation link" placeholder="Create a short link with Copy link"><button class="btn sm" id="cp2">Copy</button></div></div></section>
+  <div class="lk"><input id="lnk" readonly aria-label="Quotation link"><button class="btn sm" id="cp2">Copy</button></div></div></section>
  <section class="pv"><div class="pt"><div class="seg"><button class="on" data-d="d"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Desktop</button><button data-d="m"><svg class="i" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg>Mobile</button></div><span class="lab">Live preview, what your client sees</span><div class="sp"></div><button class="btn sm" id="op">Open<svg class="i" viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg></button></div>
   <div class="stage"><div class="dev" id="dev"><iframe id="fr" title="Preview"></iframe></div></div></section>
 </div>
@@ -127,14 +128,15 @@ const LS={get:k=>{try{return localStorage.getItem(k)}catch{return null}},set:(k,
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),today=()=>iso(new Date()),addD=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return iso(d)};
 const num=v=>{v=+v;return isFinite(v)&&v>0?v:0},inr=n=>'₹'+new Intl.NumberFormat('en-IN',{maximumFractionDigits:2}).format(Math.round(n*100)/100);
+let QC={};const quickList=()=>{const a=(QC.qRates||[]).map(x=>String(x&&x.t||'').trim()).filter(Boolean);return a.length?a:QUICK},rateFor=n=>{const e=(QC.qRates||[]).find(x=>x&&String(x.t).trim()===n),er=e?+String(e.r).replace(/[^\d.]/g,''):0;return er>0?er:(rates&&rates[n])||0};
 const QUICK=['Wedding day coverage','Pre-wedding shoot','Engagement shoot','Candid photography','Traditional photography','Album','Reels / teaser','Edited photos','Travel & stay'];
 const OCC={'Wedding':'Wedding day coverage','Pre-wedding':'Pre-wedding shoot','Engagement':'Engagement shoot','Haldi / Mehendi / Sangeet':'Haldi / Mehendi / Sangeet coverage','Collab / brand shoot':'Collab / brand shoot','Portraits':'Portrait session'};
 const DT="Booking is confirmed once the advance is received.\nBalance is due on or before the shoot date.\nThis quotation is valid until the date shown above.\nTravel and stay outside the city are charged extra unless mentioned.";
-const FK=['c','ph','t','e','l','n','d','vd','ds','g','a','nt','pb','tm'];
+const FK=['c','ph','t','e','l','n','d','vd','ds','g','a','nt','pb','tm','th'];
 let rates=J('q_rates',{}),st,tmr,cur='';
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-const newNo=()=>{const d=new Date(),p='JP-'+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+'-',mx=J('q_lib',[]).reduce((m,x)=>{const s=String(x.n||'');return s.startsWith(p)?Math.max(m,+s.slice(p.length)||0):m},0);return p+String(mx+1).padStart(2,'0')};
-const blank=()=>({id:uid(),linkId:'',sent:false,enq:null,items:[['','',1,0]],f:{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:7,ds:0,g:'0',a:50,nt:'',pb:LS.get('q_pb')||'',tm:LS.get('q_tm')||DT}});
+const newNo=()=>{const d=new Date(),p=(String((QC.quote||{}).prefix||'JP').trim()||'JP')+'-'+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+'-',mx=J('q_lib',[]).reduce((m,x)=>{const s=String(x.n||'');return s.startsWith(p)?Math.max(m,+s.slice(p.length)||0):m},0);return p+String(mx+1).padStart(2,'0')};
+const blank=()=>({id:uid(),sent:false,enq:null,items:[['','',1,0]],f:(()=>{const Q=QC.quote||{},pick=(a,b,c)=>String(a||'').trim()?a:(b||c);return{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:num(Q.validDays)||7,ds:0,g:String(Q.gst||'0'),a:Q.advance!==undefined&&String(Q.advance).trim()!==''?num(Q.advance):50,nt:String(Q.included||''),pb:pick(Q.payment,LS.get('q_pb'),''),tm:pick(Q.terms,LS.get('q_tm'),DT),th:''}})()});
 const phone=v=>{v=String(v||'').replace(/\D/g,'');return v.length==10?'91'+v:v};
 const fdate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):(s||'');
 function load(){FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');drawItems();drawEnq();$('#dn').textContent=st.f.n;pill()}
@@ -145,19 +147,19 @@ function drawEnq(){const e=st.enq,box=$('#enqc');if(!e){box.innerHTML='';$('#bud
  box.innerHTML=`<div class="card enq"><div class="ch"><svg class="i" viewBox="0 0 24 24" style="color:var(--a)"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><h3>Enquiry</h3><small>${esc(e.n||'')}</small></div><dl>${rows}</dl><div class="acts">${p?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/${esc(p)}">WhatsApp</a><a class="btn sm" href="tel:+${esc(p)}">Call</a>`:''}${e.e?`<a class="btn sm" href="mailto:${esc(e.e)}">Email</a>`:''}</div></div>`;
  $('#bud').innerHTML=e.b?`Client budget: <b>${esc(e.b)}</b>`:''}
 function calc(){const it=st.items,sub=it.reduce((s,x)=>s+num(x[2])*num(x[3]),0),dis=Math.min(num(st.f.ds),sub),tx=sub-dis,gp=num(st.f.g),tot=tx+tx*gp/100,ap=Math.min(100,num(st.f.a));return{tot,ap,adv:Math.round(tot*ap/100)}}
-function payload(){const f=st.f,v=f.d||today();return{v:1,n:String(f.n||'').trim(),d:v,x:addD(v,Math.max(1,num(f.vd)||7)),c:String(f.c).trim(),t:String(f.t).trim(),e:String(f.e).trim(),l:String(f.l).trim(),i:st.items.filter(x=>String(x[0]).trim()).map(x=>[String(x[0]).trim(),String(x[1]||'').trim(),num(x[2])||1,num(x[3])]),ds:num(f.ds),g:num(f.g),a:num(f.a),nt:String(f.nt).trim(),pb:String(f.pb).trim(),tm:String(f.tm).trim()}}
+function payload(){const f=st.f,v=f.d||today();return{v:1,n:String(f.n||'').trim(),d:v,x:addD(v,Math.max(1,num(f.vd)||7)),c:String(f.c).trim(),t:String(f.t).trim(),e:String(f.e).trim(),l:String(f.l).trim(),i:st.items.filter(x=>String(x[0]).trim()).map(x=>[String(x[0]).trim(),String(x[1]||'').trim(),num(x[2])||1,num(x[3])]),ds:num(f.ds),g:num(f.g),a:num(f.a),nt:String(f.nt).trim(),pb:String(f.pb).trim(),tm:String(f.tm).trim(),th:['noir','ivory','blush','editorial'].includes(f.th)?f.th:undefined}}
 async function upd(){const c=calc();$('#tot').textContent=inr(c.tot);$('#advl').textContent=`Advance (${c.ap}%)`;$('#adv').textContent=inr(c.adv);$('#dn').textContent=st.f.n;
- cur=await QCODEC.enc(payload());$('#lnk').value=st.linkId?'https://q.sakkhi.co.in/'+st.linkId:'';
+ cur=await QCODEC.enc(payload());$('#lnk').value=location.origin+'/q#'+cur;
  const fr=$('#fr');try{if(fr.dataset.on)fr.contentWindow.location.hash=cur;else{fr.dataset.on=1;fr.src='/q.html#'+cur}}catch{fr.src='/q.html#'+cur}
  LS.set('q_cur',JSON.stringify(st));LS.set('q_pb',st.f.pb);LS.set('q_tm',st.f.tm);upsert();$('#svt').textContent='Saved'}
-const sched=()=>{st.linkId='';$('#lnk').value='';$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
+const sched=()=>{$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
 function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const lib=J('q_lib',[]).filter(x=>x.id!=st.id);lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length,60)}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),1600)}
 function markSent(){if(!st.sent){st.sent=true;pill();upd()}}
 /* inputs */
 $('#scroll').addEventListener('input',e=>{const t=e.target;
  if(t.dataset.i!=null){const x=st.items[+t.dataset.i],k=+t.dataset.k;x[k]=t.value;
-  if(k==0&&rates[t.value]!=null&&!num(x[3])){x[3]=rates[t.value];drawItems();const n=$(`[data-i="${t.dataset.i}"][data-k="0"]`);n.focus();n.setSelectionRange(99,99)}
+  if(k==0&&rateFor(t.value)&&!num(x[3])){x[3]=rateFor(t.value);drawItems();const n=$(`[data-i="${t.dataset.i}"][data-k="0"]`);n.focus();n.setSelectionRange(99,99)}
   if(k==3&&String(x[0]).trim()&&num(t.value)){rates[String(x[0]).trim()]=num(t.value);LS.set('q_rates',JSON.stringify(rates))}
   if(k==2||k==3)t.closest('.ir').querySelector('.am').textContent=inr(num(x[2])*num(x[3]))}
  else if(t.dataset.k)st.f[t.dataset.k]=t.value;
@@ -166,39 +168,16 @@ $('#scroll').addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.dataset.
 function addRow(v,r){st.items.push([v||'','',1,r||0]);drawItems();const n=$(`[data-i="${st.items.length-1}"][data-k="${v?3:0}"]`);n&&n.focus();sched()}
 $('#scroll').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
  if(b.dataset.del!=null){st.items.splice(+b.dataset.del,1);if(!st.items.length)st.items=[['','',1,0]];drawItems();sched()}
- else if(b.dataset.q){const last=st.items[st.items.length-1],r=rates[b.dataset.q]||0;if(last&&!String(last[0]).trim()){last[0]=b.dataset.q;last[3]=r;drawItems();sched()}else addRow(b.dataset.q,r)}});
-$('#quick').innerHTML=QUICK.map(q=>`<button type="button" data-q="${esc(q)}">+ ${esc(q)}</button>`).join('');
+ else if(b.dataset.q){const last=st.items[st.items.length-1],r=rateFor(b.dataset.q);if(last&&!String(last[0]).trim()){last[0]=b.dataset.q;last[3]=r;drawItems();sched()}else addRow(b.dataset.q,r)}});
+const drawQuick=()=>{$('#quick').innerHTML=quickList().map(q=>`<button type="button" data-q="${esc(q)}">+ ${esc(q)}</button>`).join('')};drawQuick();
 $('#add').onclick=()=>addRow();
 /* actions */
-const msg=(link=$('#lnk').value)=>`Hi ${String(st.f.c).trim()||'there'}, here is your quotation for ${String(st.f.t).trim()||'your shoot'} (${inr(calc().tot)}):\n${link}`;
+const msg=()=>`Hi ${String(st.f.c).trim()||'there'}, here is your quotation for ${String(st.f.t).trim()||'your shoot'} (${inr(calc().tot)}):\n${$('#lnk').value}`;
 const copy=async t=>{try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove();return true}};
-async function shortLink(){
- if(st.linkId){
-  const existing='https://q.sakkhi.co.in/'+st.linkId;
-  $('#lnk').value=existing;
-  return existing;
- }
- const r=await fetch('https://q.sakkhi.co.in/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload())});
- if(!r.ok)throw new Error('Could not create the short link.');
- const data=await r.json(),id=data.id||'';
- if(!/^[A-Za-z0-9]{12}$/.test(id))throw new Error('The short-link service returned an invalid ID.');
- st.linkId=id;
- const link='https://q.sakkhi.co.in/'+id;
- $('#lnk').value=link;
- LS.set('q_cur',JSON.stringify(st));upsert();
- return link;
-}
-const cpl=async()=>{try{const link=await shortLink();await copy(link);markSent();toast('Short link copied')}catch(e){toast('Could not create a short link. Please try again.')}};
+const cpl=async()=>{await copy($('#lnk').value);markSent();toast('Link copied')};
 $('#cp').onclick=cpl;$('#cp2').onclick=cpl;
-$('#wa').onclick=async()=>{
- const win=window.open('about:blank','_blank');
- try{
-  const link=await shortLink(),p=phone(st.f.ph),href=(p?'https://wa.me/'+p:'https://wa.me/')+'?text='+encodeURIComponent(msg(link));
-  if(win)win.location.href=href;else toast('Allow pop-ups to open WhatsApp.');
-  markSent();
- }catch(e){if(win)win.close();toast('Could not create a short link. Please try again.')}
-};
-$('#op').onclick=()=>window.open('/q.html#'+cur,'_blank');
+$('#wa').onclick=()=>{const p=phone(st.f.ph);window.open((p?'https://wa.me/'+p:'https://wa.me/')+'?text='+encodeURIComponent(msg()),'_blank');markSent()};
+$('#op').onclick=()=>window.open($('#lnk').value,'_blank');
 $('#nw').onclick=()=>{st=blank();load();upd();$('#f_c').focus()};
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key=='s'){e.preventDefault();upd();toast('Saved')}});
 $$('.seg button').forEach(b=>b.onclick=()=>{$$('.seg button').forEach(x=>x.classList.toggle('on',x==b));$('#dev').classList.toggle('m',b.dataset.d=='m')});
@@ -211,7 +190,7 @@ function drawLib(){const q=$('#sq').value.toLowerCase(),lib=J('q_lib',[]).filter
  $('#ll').innerHTML=lib.length?lib.map(x=>`<div class="li${x.id==st.id?' cur':''}"><div class="r1"><b>${esc(x.c||'(no name)')}</b><b>${inr(x.total)}</b></div><small>${esc(x.n)} · ${esc(x.t||'Quote')} · ${esc(fdate(x.at))}</small><div class="r2"><span class="pill${x.sent?' sent':''}">${x.sent?'Sent':'Draft'}</span><div class="sp"></div><button class="btn sm" data-o="${x.id}">Open</button><button class="btn sm" data-dup="${x.id}">Duplicate</button><button class="btn sm ghost" data-rm="${x.id}">Delete</button></div></div>`).join(''):'<div class="empty">No quotes yet. They save here automatically as you type.</div>'}
 $('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J('q_lib',[]);
  if(b.dataset.o){const x=lib.find(y=>y.id==b.dataset.o);if(x){st=JSON.parse(JSON.stringify(x.st));load();upd();open(false)}}
- else if(b.dataset.dup){const x=lib.find(y=>y.id==b.dataset.dup);if(x){st=JSON.parse(JSON.stringify(x.st));st.id=uid();st.linkId='';st.sent=false;st.f.n=newNo();st.f.d=today();load();upd();open(false);toast('Duplicated')}}
+ else if(b.dataset.dup){const x=lib.find(y=>y.id==b.dataset.dup);if(x){st=JSON.parse(JSON.stringify(x.st));st.id=uid();st.sent=false;st.f.n=newNo();st.f.d=today();load();upd();open(false);toast('Duplicated')}}
  else if(b.dataset.rm){if(confirm('Delete this quote?')){LS.set('q_lib',JSON.stringify(lib.filter(y=>y.id!=b.dataset.rm)));$('#lc').textContent=J('q_lib',[]).length;drawLib()}}};
 /* enquiry import */
 async function fromEnquiry(code){let e;try{e=await QCODEC.dec(code);if(!e||typeof e!='object')throw 0}catch{toast('That enquiry link is not valid');return false}
@@ -219,12 +198,13 @@ async function fromEnquiry(code){let e;try{e=await QCODEC.dec(code);if(!e||typeo
  st=blank();const f=st.f;st.enq={o:e.o||'',w:Array.isArray(e.w)?e.w.map(String):[],d:e.d||'',y:e.y||'',v:e.v||'',n:e.n||'',p:e.p||'',e:e.e||'',i:e.i||'',b:e.b||'',br:e.br||'',f:e.f||'',m:e.m||''};
  f.c=st.enq.n;f.ph=phone(st.enq.p);f.t=st.enq.o;f.e=/^\d{4}-/.test(st.enq.d)?fdate(st.enq.d):(st.enq.d==='Not fixed yet'?'Date to be confirmed':'');f.l=st.enq.v;
  const names=[OCC[st.enq.o]||st.enq.o].concat(st.enq.w.filter(w=>!['Not sure yet'].includes(w))).filter(Boolean);
- st.items=names.length?names.map(n=>[n,'',1,rates[n]||0]):[['','',1,0]];
+ st.items=names.length?names.map(n=>[n,'',1,rateFor(n)]):[['','',1,0]];
  imp[code]=st.id;LS.set('q_imp',JSON.stringify(imp));load();upd();toast('Quote started from the enquiry');return true}
 $('#impb').onclick=async()=>{const t=$('#imp').value.trim(),m=t.match(/#e=([A-Za-z0-9_-]+)/)||t.match(/^e=([A-Za-z0-9_-]+)$/)||t.match(/^([zj][A-Za-z0-9_-]{8,})$/);if(!m){toast('Paste the full enquiry link');return}if(await fromEnquiry(m[1])){$('#imp').value='';open(false)}};
 /* boot */
 addEventListener('hashchange',()=>{const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)/);if(m){history.replaceState(null,'',location.pathname);fromEnquiry(m[1])}});
-(async()=>{$('#lc').textContent=J('q_lib',[]).length;const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)/);
- const sv=J('q_cur',null);st=sv&&sv.f?sv:blank();st.linkId=st.linkId||'';st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];
+(async()=>{try{const c=new AbortController();setTimeout(()=>c.abort(),2500);const r=await fetch('/content.json?t='+Date.now(),{cache:'no-store',signal:c.signal});if(r.ok){const d=await r.json();QC={quote:d.quote||{},qRates:Array.isArray(d.qRates)?d.qRates:[]};drawQuick()}}catch(e){}
+ $('#lc').textContent=J('q_lib',[]).length;const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)/);
+ const sv=J('q_cur',null);st=sv&&sv.f?sv:blank();st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];
  if(m){history.replaceState(null,'',location.pathname);load();await fromEnquiry(m[1])}else{load();upd()}})();
 </script></body></html>
