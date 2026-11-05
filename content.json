@@ -2350,6 +2350,10 @@
     "/images/1791911477217-rcu9.jpg": [
       1080,
       1920
+    ],
+    "/images/1793881905255-gbn9.jpg": [
+      1500,
+      2000
     ]
   },
   "hi": {},
@@ -2482,6 +2486,65 @@
     },
     {
       "t": "Reels / teaser"
+    }
+  ],
+  "quote": {
+    "theme": "ivory",
+    "cover": "",
+    "eyebrow": "Photography quotation",
+    "intro": "Thank you for thinking of me for your story. Here is everything I have put together for you, with clear pricing and no surprises.",
+    "signName": "",
+    "signRole": "Photographer",
+    "closing": "Thank you for considering me. I would love to be part of your story.",
+    "acceptLabel": "Accept & confirm",
+    "showSign": true,
+    "showIncluded": true,
+    "showUpi": true,
+    "showPdf": true,
+    "prefix": "JP",
+    "validDays": "7",
+    "gst": "0",
+    "advance": "50",
+    "included": "",
+    "payment": "",
+    "terms": "Booking is confirmed once the advance is received.\nBalance is due on or before the shoot date.\nThis quotation is valid until the date shown above.\nTravel and stay outside the city are charged extra unless mentioned."
+  },
+  "qRates": [
+    {
+      "t": "Wedding day coverage",
+      "r": ""
+    },
+    {
+      "t": "Pre-wedding shoot",
+      "r": ""
+    },
+    {
+      "t": "Engagement shoot",
+      "r": ""
+    },
+    {
+      "t": "Candid photography",
+      "r": ""
+    },
+    {
+      "t": "Traditional photography",
+      "r": ""
+    },
+    {
+      "t": "Album",
+      "r": ""
+    },
+    {
+      "t": "Reels / teaser",
+      "r": ""
+    },
+    {
+      "t": "Edited photos",
+      "r": ""
+    },
+    {
+      "t": "Travel & stay",
+      "r": ""
     }
   ]
 }
