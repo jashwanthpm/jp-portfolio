@@ -2373,5 +2373,115 @@
     "desc": "Honest, heartfelt, timeless frames.",
     "v": 1792136406810,
     "image": "/share.jpg"
-  }
+  },
+  "enq": {
+    "s1h": "What are we *shooting?*",
+    "s1s": "Tap the one that fits best.",
+    "occOther": true,
+    "s2h": "When & *where?*",
+    "s2s": "Rough details are fine. We can sort the rest later.",
+    "s3h": "What do you *need?*",
+    "s3s": "Pick as many as you like.",
+    "wantsOther": true,
+    "s4h": "Your *budget*",
+    "s4s": "An approximate range helps me suggest the right package.",
+    "s5h": "Where do I *send it?*",
+    "s5s": "I'll reply with your quotation on WhatsApp or email.",
+    "foundOther": true,
+    "reqLabel": "Tell me about your plans",
+    "reqPh": "Dates, ideas, moments you want captured…",
+    "reqOn": true,
+    "okh": "Thank *you*",
+    "okt": "I've got your details and will  get back to you shortly."
+  },
+  "eqOcc": [
+    {
+      "t": "Wedding"
+    },
+    {
+      "t": "Pre-wedding"
+    },
+    {
+      "t": "Engagement"
+    },
+    {
+      "t": "Collab / brand shoot"
+    },
+    {
+      "t": "Portraits"
+    }
+  ],
+  "eqDays": [
+    {
+      "t": "1 day"
+    },
+    {
+      "t": "2 days"
+    },
+    {
+      "t": "3+ days"
+    },
+    {
+      "t": "Not sure"
+    }
+  ],
+  "eqWants": [
+    {
+      "t": "Photography"
+    },
+    {
+      "t": "Videography"
+    },
+    {
+      "t": "Reels"
+    },
+    {
+      "t": "Not sure yet"
+    }
+  ],
+  "eqBudget": [
+    {
+      "t": "Under ₹25,000"
+    },
+    {
+      "t": "₹25,000 – ₹50,000"
+    },
+    {
+      "t": "₹50,000 – ₹1,00,000"
+    },
+    {
+      "t": "₹1,00,000+"
+    },
+    {
+      "t": "Not sure, send me a quote"
+    }
+  ],
+  "eqFound": [
+    {
+      "t": "Instagram"
+    },
+    {
+      "t": "Friend / referral"
+    },
+    {
+      "t": "Google"
+    }
+  ],
+  "eqIdeas": [
+    {
+      "t": "Candid moments"
+    },
+    {
+      "t": "Traditional rituals"
+    },
+    {
+      "t": "Couple portraits"
+    },
+    {
+      "t": "Family photos"
+    },
+    {
+      "t": "Reels / teaser"
+    }
+  ]
 }
