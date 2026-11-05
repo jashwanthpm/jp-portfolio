@@ -54,7 +54,7 @@
 <label class="ew-l">How did you find me? <span>(optional)</span></label><div class="ew-chips" data-g="found"><button type="button" class="ew-opt" data-v="Instagram">Instagram</button><button type="button" class="ew-opt" data-v="Friend / referral">Friend / referral</button><button type="button" class="ew-opt" data-v="Google">Google</button><button type="button" class="ew-opt" data-v="Other">Other</button></div>
 <div class="ew-other" data-for="found" hidden><input name="found_other" placeholder="Where did you hear about me?" autocomplete="off" enterkeyhint="done"></div>
 <div class="ew-req" id="ewreq">
-<div class="ew-reqh"><span class="ew-eyebrow">Your requirements</span><span class="ew-tag">Required</span></div>
+<div class="ew-reqh"><span class="ew-eyebrow">Your requirements</span><span class="ew-tag" id="ewtag">Required</span></div>
 <label class="ew-l" for="ewm" style="margin:0 0 10px">Tell me about your plans</label>
 <div class="ew-ta"><textarea id="ewm" name="message" rows="4" required aria-required="true" aria-describedby="ewmh ewfe" maxlength="1200" placeholder="Dates, ideas, moments you want captured…"></textarea><span class="ew-cnt" id="ewcnt" aria-hidden="true">0 / 1200</span></div>
 <p class="ew-fe" id="ewfe" role="alert" hidden>Please tell me a little about your plans.</p>
@@ -68,7 +68,20 @@
 <div class="ew-ok" id="ewok" hidden><div class="ew-tick"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h1 id="ewokn">Thank <em>you</em></h1><p>I've got your details and will send your quotation shortly.</p><a class="btn f" id="ewokw" target="_blank" rel="noopener" style="display:none">Message me on WhatsApp</a></div>
 <p class="ew-tiny">Your details are only used to reply to your enquiry.</p>
 </div></main>
-<script src="assets/quote.js?v=20261104-studio"></script><script src="assets/site.js?v=20261104-whatsapp-copy"></script><script>
+<script src="assets/quote.js?v=20261104-studio"></script><script>
+/* Pull editable enquiry wording and choices from the site's content.json. */
+(()=>{const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),em=s=>esc(s).replace(/\*([^*]+)\*/g,'<em>$1</em>'),list=a=>Array.isArray(a)?a.map(x=>String(x&&x.t||'').trim()).filter(Boolean):[],btn=t=>'<button type="button" class="ew-opt" data-v="'+esc(t)+'">'+esc(t)+'</button>', $=s=>document.querySelector(s),PV=/[?&]preview\b/.test(location.search);let mo=null,live=false;
+function apply(D){const E=D.enq||{},txt=(sel,v,html)=>{const e=$(sel);if(e&&typeof v==='string'&&v.trim())html?e.innerHTML=em(v):e.textContent=v},opts=(g,l,other)=>{const b=$('[data-g="'+g+'"]'),a=list(l);if(!b)return;if(!a.length){if(!other){const o=b.querySelector('[data-v="Other"]');o&&o.remove()}return}b.innerHTML=a.map(btn).join('')+(other?btn('Other'):'')};
+[['0','s1h','s1s'],['1','s2h','s2s'],['2','s3h','s3s'],['3','s4h','s4s'],['4','s5h','s5s']].forEach(([n,h,s])=>{txt('[data-s="'+n+'"] h1',E[h],1);txt('[data-s="'+n+'"] .ew-sub',E[s])});
+opts('occasion',D.eqOcc,E.occOther!==false);opts('days',D.eqDays,false);opts('wants',D.eqWants,E.wantsOther!==false);opts('budget',D.eqBudget,false);opts('found',D.eqFound,E.foundOther!==false);
+txt('label[for="ewm"]',E.reqLabel);const ta=$('#ewm');if(ta&&E.reqPh)ta.placeholder=E.reqPh;window.__ewReq=E.reqOn!==false;
+if(window.__ewReq){ta.setAttribute('required','');ta.setAttribute('aria-required','true');$('#ewtag').textContent='Required'}else{ta.removeAttribute('required');ta.removeAttribute('aria-required');$('#ewtag').textContent='Optional'}
+const ideas=list(D.eqIdeas),box=$('#ewideas');if(box&&Array.isArray(D.eqIdeas)){if(ideas.length){box.hidden=false;$('#ewmh').hidden=false;box.innerHTML=ideas.map(t=>'<button type="button" class="ew-idea" data-add="'+esc(t)+'">'+esc(t)+'</button>').join('')}else{box.hidden=true;$('#ewmh').hidden=true}}
+txt('#ewok p',E.okt);const h=$('#ewokn');if(mo){mo.disconnect();mo=null}if(PV)txt('#ewokn',(E.okh||'Thank *you*').replace(/\{name\}/g,'Name'),1);else if(typeof E.okh==='string'&&E.okh.trim()&&E.okh.trim()!=='Thank *you*'){mo=new MutationObserver(()=>{const n=(($('#ewn')||{}).value||'').trim().split(' ')[0];mo.disconnect();h.innerHTML=em(E.okh.replace(/\{name\}/g,n));mo.observe(h,{childList:true})});mo.observe(h,{childList:true})}}
+if(PV){const st=document.createElement('style');st.textContent='.ew .ew-step[hidden],.ew #ewok[hidden]{display:block!important}.ew .ew-step{padding-bottom:34px;margin-bottom:34px;border-bottom:1px dashed #3a332c}.ew-bar,.ew-top,.ew-tiny{display:none!important}.ew-ok{padding-top:10px!important}';document.head.appendChild(st);addEventListener('message',e=>{if(e.origin!==location.origin||!e.data||e.data.type!=='content'||!e.data.data)return;try{live=true;apply(e.data.data)}catch(x){}})}
+(async()=>{try{const r=await fetch('content.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(!live)apply(d)}}catch(x){}const s=document.createElement('script');s.src='assets/site.js?v=20261104-whatsapp-copy';document.body.appendChild(s)})();
+})();
+</script><script>
 (()=>{const ta=document.getElementById('ewm'),cnt=document.getElementById('ewcnt'),box=document.getElementById('ewreq'),fe=document.getElementById('ewfe'),next=document.getElementById('ewnext'),f=document.getElementById('ef');if(!ta||!next)return;
 const fit=()=>{ta.style.height='auto';ta.style.height=Math.min(Math.max(ta.scrollHeight+2,140),320)+'px'},
  clear=()=>{box.classList.remove('bad');fe.hidden=true},
@@ -79,7 +92,7 @@ document.getElementById('ewideas').addEventListener('click',e=>{const b=e.target
  else{ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+t}
  clear();sync()});
 const ok=n=>(f.elements[n]&&f.elements[n].value||'').trim();
-next.addEventListener('click',e=>{const last=document.querySelector('.ew-step[data-s="4"]');if(!last||last.hidden)return;
+next.addEventListener('click',e=>{const last=document.querySelector('.ew-step[data-s="4"]');if(!last||last.hidden||window.__ewReq===false)return;
  if(!ok('name')||ok('phone').replace(/\D/g,'').length<10)return;
  if(!ta.value.trim()){e.preventDefault();e.stopImmediatePropagation();box.classList.add('bad');fe.hidden=false;document.getElementById('ewerr').textContent='';ta.scrollIntoView({behavior:'smooth',block:'center'});ta.focus({preventScroll:true})}},true);
 sync()})();
