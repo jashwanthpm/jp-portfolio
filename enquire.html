@@ -3,11 +3,11 @@
 <meta name="description" content="Tell me about your shoot and I will send you a quotation.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Jashwanth JP">
-<meta property="og:title" content="Enquiry form | Jashwanth JP">
+<meta property="og:title" content="Tell me about your shoot | Jashwanth JP">
 <meta property="og:description" content="Tell me about your shoot and I will send you a quotation.">
 <meta property="og:url" content="https://jp.sakkhi.co.in/enquire">
-<meta property="og:image" content="https://jp.sakkhi.co.in/images/enquire-share-text.jpg?v=20261105"><meta property="og:image:secure_url" content="https://jp.sakkhi.co.in/images/enquire-share-text.jpg?v=20261105"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Jashwanth JP — Photography Enquiry">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://jp.sakkhi.co.in/images/enquire-share-text.jpg?v=20261105">
+<meta property="og:image" content="https://jp.sakkhi.co.in/images/enquire-share-text.jpg?v=2"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Tell me about your shoot - enquiry form by Jashwanth JP">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://jp.sakkhi.co.in/images/enquire-share-text.jpg?v=2">
 <!--/og-->
 <link rel="canonical" href="https://jp.sakkhi.co.in/enquire">
 <meta name="robots" content="noindex,nofollow">
@@ -22,9 +22,45 @@
 .ew-cnt{position:absolute;right:14px;bottom:11px;font:400 .68rem Inter,sans-serif;letter-spacing:.06em;color:var(--mute);pointer-events:none}
 .ew-req.bad textarea{border-color:#e08a78;box-shadow:0 0 0 3px rgba(224,138,120,.12)}
 .ew-fe{color:#ff9b8a;font-size:.86rem;margin:10px 0 0}
+.ew-hint{color:var(--mute);font-size:.8rem;margin:14px 0 10px}
+.ew-ideas{display:flex;flex-wrap:wrap;gap:8px}
+.ew-idea{min-height:40px;padding:0 15px;border-radius:99px;border:1px dashed #4a4137;background:none;color:#cfc6ba;font:400 13.5px Inter,sans-serif;cursor:pointer;transition:.2s;-webkit-tap-highlight-color:transparent}
+.ew-idea:active{transform:scale(.97)}
+.ew-idea.used{border-style:solid;border-color:var(--acc);background:rgba(201,164,106,.12);color:var(--acc)}
 .ew-req [hidden]{display:none!important}
 </style>
-</head><body data-p="enquire">
+<style id="ewthemes">
+/* Looks for the enquiry form. Picked in the site editor (Enquiry tab). */
+body{--ew-rad:14px;--ew-pill:99px;--ew-ink:#18120a;--ew-cs:dark;--ew-label:#cfc6ba;--ew-ph:#7d7367;--ew-dash:#4a4137}
+body[data-theme=ivory]{--bg:#ece4d6;--bg2:#fbf8f2;--fg:#27221b;--mute:#7b6f60;--line:#ddd2bf;--acc:#a67c3d;--ew-ink:#fff;--ew-cs:light;--ew-label:#5c5143;--ew-ph:#a39785;--ew-dash:#cdbfa6}
+body[data-theme=blush]{--bg:#f4e6e2;--bg2:#fffaf8;--fg:#3b2b2b;--mute:#8d6f6c;--line:#ecd3cd;--acc:#b05b5b;--ew-rad:22px;--ew-ink:#fff;--ew-cs:light;--ew-label:#6b4d4b;--ew-ph:#b39895;--ew-dash:#e3c3bd}
+body[data-theme=editorial]{--bg:#f3f3f1;--bg2:#ffffff;--fg:#111;--mute:#6c6c6c;--line:#dcdcd8;--acc:#111;--ew-rad:0px;--ew-pill:0px;--ew-ink:#fff;--ew-cs:light;--ew-label:#333;--ew-ph:#9a9a9a;--ew-dash:#bdbdb8}
+body[data-corners=sharp]{--ew-rad:0px;--ew-pill:0px}body[data-corners=soft]{--ew-rad:12px;--ew-pill:10px}body[data-corners=round]{--ew-rad:24px;--ew-pill:99px}
+body{background:var(--bg);color:var(--fg)}
+.ew-l{color:var(--ew-label)}.ew ::placeholder{color:var(--ew-ph)}.ew-req textarea::placeholder{color:var(--ew-ph)}
+.ew input,.ew textarea{color-scheme:var(--ew-cs);border-radius:max(calc(var(--ew-rad) - 2px),0px);color:var(--fg)}
+.ew-opt{border-radius:var(--ew-rad)}.ew-chips .ew-opt{border-radius:var(--ew-pill)}
+.ew-opt.on,.ew-idea.used{background:color-mix(in srgb,var(--acc) 13%,transparent)}
+.ew-grid .ew-opt.on::after{border-color:var(--acc)}
+.ew-tag{border-color:color-mix(in srgb,var(--acc) 45%,transparent)}
+.ew-idea{border-radius:var(--ew-pill);border-color:var(--ew-dash);color:var(--ew-label)}.ew-idea.used{color:var(--acc);border-color:var(--acc)}
+.ew .btn.f,.ew .ew-next{background:var(--acc);border-color:var(--acc);color:var(--ew-ink)}
+.ew-back{color:var(--fg);border-color:var(--line)}
+.ew-tick{color:var(--acc);border-color:var(--acc)}
+body[data-theme=ivory] #hd,body[data-theme=ivory] #hd.s{background:rgba(236,228,214,.94)!important}
+body[data-theme=blush] #hd,body[data-theme=blush] #hd.s{background:rgba(244,230,226,.94)!important}
+body[data-theme=editorial] #hd,body[data-theme=editorial] #hd.s{background:rgba(243,243,241,.95)!important}
+body[data-theme=ivory] #hd,body[data-theme=blush] #hd,body[data-theme=editorial] #hd{color:var(--fg)}
+body[data-theme=ivory] #hd a,body[data-theme=blush] #hd a,body[data-theme=editorial] #hd a,body[data-theme=ivory] #hd button,body[data-theme=blush] #hd button,body[data-theme=editorial] #hd button{color:var(--fg)}
+body[data-theme=editorial] .ew h1{font-family:Inter,system-ui,sans-serif;font-weight:600;letter-spacing:-.035em;line-height:1.02}
+body[data-theme=editorial] .ew h1 em{font-style:normal;box-shadow:inset 0 -.14em 0 var(--acc)}
+body[data-theme=editorial] .ew-eyebrow,body[data-theme=editorial] .ew-l{text-transform:uppercase;letter-spacing:.14em;font-size:.72rem}
+body[data-theme=editorial] .ew-sub{font-size:1.02rem}
+body[data-theme=ivory] nav{background:rgba(236,228,214,.98)}body[data-theme=blush] nav{background:rgba(244,230,226,.98)}body[data-theme=editorial] nav{background:rgba(243,243,241,.98)}
+body[data-theme=ivory] #hd nav a,body[data-theme=blush] #hd nav a,body[data-theme=editorial] #hd nav a{color:var(--fg)}
+body.ew-wait{opacity:0}body{transition:opacity .25s,background .3s}
+</style>
+</head><body data-p="enquire" data-theme="noir" class="ew-wait"><script>if(/[?&]preview\b/.test(location.search))document.body.classList.remove("ew-wait");else setTimeout(function(){document.body.classList.remove("ew-wait")},1400)</script>
 <main class="ew-wrap"><div class="ew" id="ew">
 <div class="ew-top"><div class="ew-prog"><i id="ewb"></i></div><span id="ewl">Step 1 of 5</span></div>
 <form id="ef" novalidate>
@@ -53,6 +89,8 @@
 <label class="ew-l" for="ewm" style="margin:0 0 10px">Tell me about your plans</label>
 <div class="ew-ta"><textarea id="ewm" name="message" rows="4" required aria-required="true" aria-describedby="ewmh ewfe" maxlength="1200" placeholder="Dates, ideas, moments you want captured…"></textarea><span class="ew-cnt" id="ewcnt" aria-hidden="true">0 / 1200</span></div>
 <p class="ew-fe" id="ewfe" role="alert" hidden>Please tell me a little about your plans.</p>
+<p class="ew-hint" id="ewmh">A few lines is plenty. Tap to add:</p>
+<div class="ew-ideas" id="ewideas"><button type="button" class="ew-idea" data-add="Candid moments">Candid moments</button><button type="button" class="ew-idea" data-add="Traditional rituals">Traditional rituals</button><button type="button" class="ew-idea" data-add="Couple portraits">Couple portraits</button><button type="button" class="ew-idea" data-add="Family photos">Family photos</button><button type="button" class="ew-idea" data-add="Reels / teaser">Reels / teaser</button></div>
 </div>
 <input class="ew-hp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"></section>
 <p class="ew-err" id="ewerr" role="alert"></p>
@@ -62,23 +100,46 @@
 <p class="ew-tiny">Your details are only used to reply to your enquiry.</p>
 </div></main>
 <script src="assets/quote.js?v=20261104-studio"></script><script>
-/* Pull editable enquiry wording and choices from the site's content.json. */
-(()=>{const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),em=s=>esc(s).replace(/\*([^*]+)\*/g,'<em>$1</em>'),list=a=>Array.isArray(a)?a.map(x=>String(x&&x.t||'').trim()).filter(Boolean):[],btn=t=>'<button type="button" class="ew-opt" data-v="'+esc(t)+'">'+esc(t)+'</button>', $=s=>document.querySelector(s),PV=/[?&]preview\b/.test(location.search);let mo=null,live=false;
-function apply(D){const E=D.enq||{},txt=(sel,v,html)=>{const e=$(sel);if(e&&typeof v==='string'&&v.trim())html?e.innerHTML=em(v):e.textContent=v},opts=(g,l,other)=>{const b=$('[data-g="'+g+'"]'),a=list(l);if(!b)return;if(!a.length){if(!other){const o=b.querySelector('[data-v="Other"]');o&&o.remove()}return}b.innerHTML=a.map(btn).join('')+(other?btn('Other'):'')};
-[['0','s1h','s1s'],['1','s2h','s2s'],['2','s3h','s3s'],['3','s4h','s4s'],['4','s5h','s5s']].forEach(([n,h,s])=>{txt('[data-s="'+n+'"] h1',E[h],1);txt('[data-s="'+n+'"] .ew-sub',E[s])});
-opts('occasion',D.eqOcc,E.occOther!==false);opts('days',D.eqDays,false);opts('wants',D.eqWants,E.wantsOther!==false);opts('budget',D.eqBudget,false);opts('found',D.eqFound,E.foundOther!==false);
-txt('label[for="ewm"]',E.reqLabel);const ta=$('#ewm');if(ta&&E.reqPh)ta.placeholder=E.reqPh;window.__ewReq=E.reqOn!==false;
-if(window.__ewReq){ta.setAttribute('required','');ta.setAttribute('aria-required','true');$('#ewtag').textContent='Required'}else{ta.removeAttribute('required');ta.removeAttribute('aria-required');$('#ewtag').textContent='Optional'}
-txt('#ewok p',E.okt);const h=$('#ewokn');if(mo){mo.disconnect();mo=null}if(PV)txt('#ewokn',(E.okh||'Thank *you*').replace(/\{name\}/g,'Name'),1);else if(typeof E.okh==='string'&&E.okh.trim()&&E.okh.trim()!=='Thank *you*'){mo=new MutationObserver(()=>{const n=(($('#ewn')||{}).value||'').trim().split(' ')[0];mo.disconnect();h.innerHTML=em(E.okh.replace(/\{name\}/g,n));mo.observe(h,{childList:true})});mo.observe(h,{childList:true})}}
-if(PV){const st=document.createElement('style');st.textContent='.ew .ew-step[hidden],.ew #ewok[hidden]{display:block!important}.ew .ew-step{padding-bottom:34px;margin-bottom:34px;border-bottom:1px dashed #3a332c}.ew-bar,.ew-top,.ew-tiny{display:none!important}.ew-ok{padding-top:10px!important}';document.head.appendChild(st);addEventListener('message',e=>{if(e.origin!==location.origin||!e.data||e.data.type!=='content'||!e.data.data)return;try{live=true;apply(e.data.data)}catch(x){}})}
-(async()=>{try{const r=await fetch('content.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(!live)apply(d)}}catch(x){}const s=document.createElement('script');s.src='assets/site.js?v=20261104-whatsapp-copy';document.body.appendChild(s)})();
+/* Reads your wording from the site editor (Enquiry tab). If anything fails, the built-in wording below stays. */
+(()=>{
+ const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
+  em=s=>esc(s).replace(/\*([^*]+)\*/g,'<em>$1</em>'),
+  list=a=>Array.isArray(a)?a.map(x=>String(x&&x.t||'').trim()).filter(Boolean):[],
+  btn=t=>`<button type="button" class="ew-opt" data-v="${esc(t)}">${esc(t)}</button>`,
+  $=s=>document.querySelector(s),PV=/[?&]preview\b/.test(location.search);
+ let mo=null,live=false;
+ function apply(D){document.body.classList.remove('ew-wait');
+  const E=D.enq||{};
+  document.body.dataset.theme=['noir','ivory','blush','editorial'].includes(E.theme)?E.theme:'noir';if(['sharp','soft','round'].includes(E.corners))document.body.dataset.corners=E.corners;else document.body.removeAttribute('data-corners');
+  const txt=(sel,v,html)=>{const e=$(sel);if(e&&typeof v==='string'&&v.trim())html?e.innerHTML=em(v):e.textContent=v};
+  const opts=(g,l,other)=>{const b=$('[data-g="'+g+'"]'),a=list(l);if(!b)return;if(!a.length){if(!other){const o=b.querySelector('[data-v="Other"]');o&&o.remove()}return}b.innerHTML=a.map(btn).join('')+(other?btn('Other'):'')};
+  [['0','s1h','s1s'],['1','s2h','s2s'],['2','s3h','s3s'],['3','s4h','s4s'],['4','s5h','s5s']].forEach(([n,h,s])=>{txt('[data-s="'+n+'"] h1',E[h],1);txt('[data-s="'+n+'"] .ew-sub',E[s])});
+  opts('occasion',D.eqOcc,E.occOther!==false);opts('days',D.eqDays,false);opts('wants',D.eqWants,E.wantsOther!==false);opts('budget',D.eqBudget,false);opts('found',D.eqFound,E.foundOther!==false);
+  txt('label[for="ewm"]',E.reqLabel);const ta=$('#ewm');if(ta&&E.reqPh)ta.placeholder=E.reqPh;
+  window.__ewReq=E.reqOn!==false;
+  if(window.__ewReq){ta.setAttribute('required','');ta.setAttribute('aria-required','true');$('#ewtag').textContent='Required'}else{ta.removeAttribute('required');ta.removeAttribute('aria-required');$('#ewtag').textContent='Optional'}
+  const ideas=list(D.eqIdeas),box=$('#ewideas');if(box&&Array.isArray(D.eqIdeas)){if(ideas.length){box.hidden=false;$('#ewmh').hidden=false;box.innerHTML=ideas.map(t=>`<button type="button" class="ew-idea" data-add="${esc(t)}">${esc(t)}</button>`).join('')}else{box.hidden=true;$('#ewmh').hidden=true}}
+  txt('#ewok p',E.okt);
+  const h=$('#ewokn');if(mo){mo.disconnect();mo=null}
+  if(PV)txt('#ewokn',(E.okh||'Thank *you*').replace(/\{name\}/g,'Name'),1);
+  else if(typeof E.okh==='string'&&E.okh.trim()&&E.okh.trim()!=='Thank *you*'){mo=new MutationObserver(()=>{const n=(($('#ewn')||{}).value||'').trim().split(' ')[0];mo.disconnect();h.innerHTML=em(E.okh.replace(/\{name\}/g,n));mo.observe(h,{childList:true})});mo.observe(h,{childList:true})}
+ }
+ if(PV){const st=document.createElement('style');st.textContent='.ew .ew-step[hidden],.ew #ewok[hidden]{display:block!important}.ew .ew-step{padding-bottom:34px;margin-bottom:34px;border-bottom:1px dashed var(--line)}.ew-bar,.ew-top,.ew-tiny{display:none!important}.ew-ok{padding-top:10px!important}';document.head.appendChild(st);
+  addEventListener('message',e=>{if(e.origin!==location.origin||!e.data||e.data.type!=='content'||!e.data.data)return;try{live=true;apply(e.data.data)}catch(x){}})}
+ (async()=>{try{const r=await fetch('content.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(!live)apply(d)}}catch(e){}document.body.classList.remove('ew-wait');
+  const s=document.createElement('script');s.src='assets/site.js?v=20261104-whatsapp-copy';document.body.appendChild(s)})();
 })();
-</script><script>
+</script>
+<script>
 (()=>{const ta=document.getElementById('ewm'),cnt=document.getElementById('ewcnt'),box=document.getElementById('ewreq'),fe=document.getElementById('ewfe'),next=document.getElementById('ewnext'),f=document.getElementById('ef');if(!ta||!next)return;
 const fit=()=>{ta.style.height='auto';ta.style.height=Math.min(Math.max(ta.scrollHeight+2,140),320)+'px'},
  clear=()=>{box.classList.remove('bad');fe.hidden=true},
- sync=()=>{cnt.textContent=ta.value.length+' / '+ta.maxLength;fit()};
+ sync=()=>{cnt.textContent=ta.value.length+' / '+ta.maxLength;fit();[...document.querySelectorAll('.ew-idea')].forEach(b=>b.classList.toggle('used',ta.value.toLowerCase().includes(b.dataset.add.toLowerCase())))};
 ta.addEventListener('input',()=>{clear();sync()});
+document.getElementById('ewideas').addEventListener('click',e=>{const b=e.target.closest('.ew-idea');if(!b)return;const t=b.dataset.add,low=ta.value.toLowerCase();
+ if(low.includes(t.toLowerCase())){ta.value=ta.value.split('\n').filter(l=>l.trim().toLowerCase()!==t.toLowerCase()).join('\n').trim()}
+ else{ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+t}
+ clear();sync()});
 const ok=n=>(f.elements[n]&&f.elements[n].value||'').trim();
 next.addEventListener('click',e=>{const last=document.querySelector('.ew-step[data-s="4"]');if(!last||last.hidden||window.__ewReq===false)return;
  if(!ok('name')||ok('phone').replace(/\D/g,'').length<10)return;
