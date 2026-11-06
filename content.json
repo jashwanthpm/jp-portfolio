@@ -2379,7 +2379,7 @@
     "image": "/share.jpg"
   },
   "enq": {
-    "theme": "ivory",
+    "theme": "noir",
     "corners": "",
     "s1h": "What are we *shooting?*",
     "s1s": "Tap the one that fits best.",
@@ -2474,7 +2474,7 @@
     }
   ],
   "quote": {
-    "theme": "ivory",
+    "theme": "noir",
     "cover": "",
     "eyebrow": "Photography quotation",
     "intro": "Thank you for thinking of me to capture your story. I've put together all the details just for you, keeping everything simple, clear, and transparent.",
@@ -2485,8 +2485,8 @@
     "showSign": true,
     "showIncluded": true,
     "showUpi": true,
-    "upi": "jashwanthjp@ybl",
     "showPdf": true,
+    "upi": "jashwanthjp@ybl",
     "prefix": "JP",
     "validDays": "7",
     "gst": "0",
