@@ -2485,6 +2485,7 @@
     "showSign": true,
     "showIncluded": true,
     "showUpi": true,
+    "upi": "jashwanthjp@ybl",
     "showPdf": true,
     "prefix": "JP",
     "validDays": "7",
