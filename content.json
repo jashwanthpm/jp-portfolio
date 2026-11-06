@@ -2491,8 +2491,8 @@
     "gst": "0",
     "advance": "50",
     "included": "",
-    "payment": "",
-    "terms": "Booking is confirmed once the advance is received.\nBalance is due on or before the shoot date.\nThis quotation is valid until the date shown above.\nTravel and stay outside the city are charged extra unless mentioned."
+    "payment": "UPI : jashwanthjp@ybl\nName: Jashwanth p m\nBank name: Bank of Baroda \nIFSC code: BARB0DBCHOL\nAccount number: 92030100010938",
+    "terms": "Booking is confirmed once the advance is received.\nBalance is due on or before the shoot date.\nThis quotation is valid until the date shown above.\nTravel, accommodation and other outstation expenses will be charged separately unless stated otherwise.\nThe photographer reserves the right to use selected images for portfolio, website, Instagram and other promotional purposes, unless otherwise agreed in advance.\nIn case of cancellation by the client, the advance payment is non-refundable. Any rescheduling is subject to the photographer’s availability."
   },
   "qRates": [
     {
@@ -2530,6 +2530,10 @@
     {
       "t": "Travel & stay",
       "r": ""
+    },
+    {
+      "t": "Portrait session",
+      "r": "5000"
     }
   ]
 }
