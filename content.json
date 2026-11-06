@@ -2379,6 +2379,8 @@
     "image": "/share.jpg"
   },
   "enq": {
+    "theme": "ivory",
+    "corners": "",
     "s1h": "What are we *shooting?*",
     "s1s": "Tap the one that fits best.",
     "occOther": true,
