@@ -116,7 +116,7 @@ function draw(){
   accept=`Hi ${name}, I'd like to confirm quotation ${q.n||''} (${title}) for ${inr(tot)}. Please share the next steps.`,
   ask=`Hi ${name}, I have a question about quotation ${q.n||''} (${title}).`,fresh=`Hi ${name}, quotation ${q.n||''} has expired. Could you please send me an updated one?`,
   logo=C.logoImg?`<img class="lgi" src="${esc(imgSrc(C.logoImg))}" alt="${esc(name)}">`:`<span class="lg">${esc(C.logoMark||name.slice(0,2))}<i>.</i>${C.logoText?`<span>${esc(C.logoText)}</span>`:''}</span>`,
-  cover=imgSrc(Q.cover),upi=String(q.upi||((String(q.pb||'').match(/([\w.\-]{2,})@([a-zA-Z][a-zA-Z0-9]{1,})(?![\w.])/)||[])[0])||'').trim(),
+  cover=imgSrc(Q.cover),upi=String(q.upi||((String(q.pb||'').match(/([\w.\-]{2,})@([a-zA-Z][a-zA-Z0-9]{1,})(?![\w.])/)||[])[0])||'').trim(),upiOk=/^[A-Za-z0-9._-]{2,256}@[A-Za-z0-9][A-Za-z0-9._-]{1,63}$/.test(upi),
   intro=(Q.intro||'Thank you for thinking of me for your story. Here is everything I have put together for you, with clear pricing and no surprises.').replace(/\{client\}/g,client.split(' ')[0]||'there'),
   inc=lines(q.nt),trm=lines(q.tm);
  document.title=`Quotation ${q.n||''} \u2014 ${name}`.trim();
@@ -133,7 +133,7 @@ function draw(){
  <section class="sec"><h2>Your investment</h2><div class="tb"><div class="row hd"><span>Description</span><span class="r q">Qty</span><span class="r rt">Rate</span><span class="r">Amount</span></div>
   ${items.map(x=>`<div class="row"><div class="d"><b>${esc(x.d)}</b>${x.n?`<small>${esc(x.n)}</small>`:''}<div class="calc">${x.q} \u00d7 ${inr(x.r)}</div></div><div class="r q">${x.q}</div><div class="r rt">${inr(x.r)}</div><div class="r">${inr(x.q*x.r)}</div></div>`).join('')}</div>
   <div class="tot"><div><span>Subtotal</span><span>${inr(sub)}</span></div>${dis?`<div><span>Discount</span><span>\u2212 ${inr(dis)}</span></div>`:''}${gp?`<div><span>GST (${gp}%)</span><span>${inr(gs)}</span></div>`:''}<div class="g"><span>Total</span><span>${inr(tot)}</span></div></div>
-  ${ap?`<div class="adv"><div><small>${ap<100?'To confirm your date':'Payable to confirm'}</small><b>${inr(ap<100?adv:tot)}</b><p>${ap<100?`Advance (${ap}%) \u00b7 Balance ${inr(bal)}`:'Full payment'}</p></div>${upi&&Q.showUpi!==false&&!exp?`<a class="btn f" href="upi://pay?pa=${encodeURIComponent(upi)}&pn=${encodeURIComponent(name)}&am=${ap<100?adv:Math.round(tot)}&cu=INR&tn=${encodeURIComponent('Quotation '+(q.n||''))}">Pay via UPI</a><button class="btn g" id="qupicopy" type="button">Copy UPI ID</button>`:''}</div>`:''}
+  ${ap?`<div class="adv"><div><small>${ap<100?'To confirm your date':'Payable to confirm'}</small><b>${inr(ap<100?adv:tot)}</b><p>${ap<100?`Advance (${ap}%) \u00b7 Balance ${inr(bal)}`:'Full payment'}</p></div>${upiOk&&Q.showUpi!==false&&!exp?`<a class="btn f" href="upi://pay?pa=${encodeURIComponent(upi)}&pn=${encodeURIComponent(name)}&am=${ap<100?adv:Math.round(tot)}&cu=INR&tn=${encodeURIComponent('Quotation '+(q.n||''))}">Pay via UPI</a><button class="btn g" id="qupicopy" type="button">Copy UPI ID</button>`:''}</div>`:''}
  </section>
  ${q.pb?`<section class="sec pay"><h2>Payment details</h2>${lines(q.pb).map(x=>`<p>${esc(x)}</p>`).join('')}</section>`:''}
  ${trm.length?`<section class="sec"><h2>Terms</h2><ol class="terms">${trm.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></section>`:''}
