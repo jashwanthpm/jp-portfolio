@@ -2394,14 +2394,14 @@
     "s5h": "Where do I *send it?*",
     "s5s": "I'll reply with your quotation on WhatsApp or email.",
     "foundOther": true,
+    "collabModelLabel": "Are you a model?",
+    "collabIgLabel": "Your Instagram handle",
+    "collabTypeLabel": "What kind of collaboration are you looking for?",
     "reqLabel": "Tell me about your plans",
     "reqPh": "Dates, ideas, moments you want captured…",
     "reqOn": true,
     "okh": "Thank *you*",
-    "okt": "I've got your details and will  get back to you shortly.",
-    "collabModelLabel": "Are you a model?",
-    "collabIgLabel": "Your Instagram handle",
-    "collabTypeLabel": "What kind of collaboration are you looking for?"
+    "okt": "I've got your details and will  get back to you shortly."
   },
   "eqOcc": [
     "Wedding",
