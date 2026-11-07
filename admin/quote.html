@@ -120,7 +120,7 @@ iframe{width:100%;height:100%;border:0;background:#0d0c0b}
 <div class="ov" id="ov"></div>
 <aside class="dr" id="dr"><div class="dh"><b>Library</b><div class="sp"></div><button class="btn sm ghost" id="dx">Close</button></div><div class="db">
  <input id="sq" placeholder="Search quotes" style="margin-bottom:12px"><div id="ll"></div>
- <div class="sec2"><h4>Import an enquiry</h4><p class="hint" style="margin:0 0 8px">Paste the “create_quote_link” from your enquiry email to fill a quote from it.</p><textarea id="imp" rows="3" placeholder="https://…/admin/quote.html#e=…"></textarea><button class="btn sm" id="impb" style="margin-top:8px">Import</button></div></div></aside>
+</div></aside>
 <div id="toast"></div>
 <script src="/assets/quote.js"></script><script src="/assets/enqdb.js?v=20261107-jp-only"></script>
 <script>
@@ -194,19 +194,11 @@ $('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J
  if(b.dataset.o){const x=lib.find(y=>y.id==b.dataset.o);if(x){st=JSON.parse(JSON.stringify(x.st));load();upd();open(false)}}
  else if(b.dataset.dup){const x=lib.find(y=>y.id==b.dataset.dup);if(x){st=JSON.parse(JSON.stringify(x.st));st.id=uid();st.sent=false;st.f.n=newNo();st.f.d=today();load();upd();open(false);toast('Duplicated')}}
  else if(b.dataset.rm){if(confirm('Delete this quote?')){LS.set('q_lib',JSON.stringify(lib.filter(y=>y.id!=b.dataset.rm)));$('#lc').textContent=J('q_lib',[]).length;drawLib()}}};
-/* enquiry import */
-async function fromEnquiry(code,eid){let e;try{e=await QCODEC.dec(code);if(!e||typeof e!='object')throw 0}catch{toast('That enquiry link is not valid');return false}
- const imp=J('q_imp',{});if(imp[code]){const x=J('q_lib',[]).find(y=>y.id==imp[code]);if(x){st=JSON.parse(JSON.stringify(x.st));if(eid)st.enqId=eid;load();upd();toast('Opened the quote you already made');return true}}
- st=blank();st.enqId=eid||null;const f=st.f;st.enq={o:e.o||'',w:Array.isArray(e.w)?e.w.map(String):[],d:e.d||'',y:e.y||'',v:e.v||'',n:e.n||'',p:e.p||'',e:e.e||'',i:e.i||'',b:e.b||'',br:e.br||'',f:e.f||'',m:e.m||''};
- f.c=st.enq.n;f.ph=phone(st.enq.p);f.t=st.enq.o;f.e=/^\d{4}-/.test(st.enq.d)?fdate(st.enq.d):(st.enq.d==='Not fixed yet'?'Date to be confirmed':'');f.l=st.enq.v;
- const names=[OCC[st.enq.o]||st.enq.o].concat(st.enq.w.filter(w=>!['Not sure yet'].includes(w))).filter(Boolean);
- st.items=names.length?names.map(n=>[n,'',1,rateFor(n)]):[['','',1,0]];
- imp[code]=st.id;LS.set('q_imp',JSON.stringify(imp));load();upd();toast('Quote started from the enquiry');return true}
-$('#impb').onclick=async()=>{const t=$('#imp').value.trim(),m=t.match(/#e=([A-Za-z0-9_-]+)(?:&id=([0-9a-fA-F-]{36}))?/)||t.match(/^e=([A-Za-z0-9_-]+)$/)||t.match(/^([zj][A-Za-z0-9_-]{8,})$/);if(!m){toast('Paste the full enquiry link');return}if(await fromEnquiry(m[1],m[2])){$('#imp').value='';open(false)}};
+
 /* boot */
-addEventListener('hashchange',()=>{const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)(?:&id=([0-9a-fA-F-]{36}))?/);if(m){history.replaceState(null,'',location.pathname);fromEnquiry(m[1],m[2])}});
+
 (async()=>{try{const c=new AbortController();setTimeout(()=>c.abort(),2500);const r=await fetch('/content.json?t='+Date.now(),{cache:'no-store',signal:c.signal});if(r.ok){const d=await r.json();QC={quote:d.quote||{},qRates:Array.isArray(d.qRates)?d.qRates:[]};drawQuick()}}catch(e){}
- $('#lc').textContent=J('q_lib',[]).length;const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)(?:&id=([0-9a-fA-F-]{36}))?/);
+ $('#lc').textContent=J('q_lib',[]).length;
  const sv=J('q_cur',null);st=sv&&sv.f?sv:blank();st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];
- if(m){history.replaceState(null,'',location.pathname);load();await fromEnquiry(m[1],m[2])}else{load();upd()}})();
+ load();upd()})();
 </script></body></html>
