@@ -2398,7 +2398,10 @@
     "reqPh": "Dates, ideas, moments you want captured…",
     "reqOn": true,
     "okh": "Thank *you*",
-    "okt": "I've got your details and will  get back to you shortly."
+    "okt": "I've got your details and will  get back to you shortly.",
+    "collabModelLabel": "Are you a model?",
+    "collabIgLabel": "Your Instagram handle",
+    "collabTypeLabel": "What kind of collaboration are you looking for?"
   },
   "eqOcc": [
     {
