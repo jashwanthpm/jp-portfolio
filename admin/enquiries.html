@@ -95,8 +95,11 @@ select option{background:#1a1714}
   <div class="pop" id="pop" hidden><a href="quote.html"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/></svg>Quotation studio</a><a href="./"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8"/></svg>Site editor</a><button id="csv"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Export to CSV</button><button id="out"><svg class="i" viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h9"/></svg>Studio Admin</button></div></div>
 </header>
 
-<main class="login" id="login" hidden><div class="lc"><img src="/images/favicon-1791284648615.png" alt=""><h1>Enquiries</h1><p>This dashboard uses the same private GitHub access as Studio Admin. No separate password is needed.</p>
- <div class="err" id="le" role="alert"></div><a class="btn pri" href="/admin/" style="width:100%;margin-top:12px;min-height:46px">Open Studio Admin</a></div></main>
+<main class="login" id="login" hidden><div class="lc"><img src="/images/favicon-1791284648615.png" alt=""><h1>Enquiries</h1><p>Connect using the same GitHub personal access token you use in Studio Admin.</p>
+ <div class="err" id="le" role="alert">Your Studio Admin token isn't available on this site address. Paste the same token below to connect.</div>
+ <input id="enqtok" type="password" autocomplete="off" placeholder="GitHub personal access token" style="width:100%;margin-top:12px">
+ <button class="btn pri" id="enqconnect" style="width:100%;margin-top:10px;min-height:46px">Connect to Enquiries</button>
+ <a class="btn" href="/admin/" style="width:100%;margin-top:8px;min-height:42px">Open Studio Admin</a></div></main>
 
 <div class="app" id="app" hidden>
  <div class="kpis" id="kpis"></div>
@@ -223,6 +226,7 @@ $('#csv').onclick=()=>{$('#pop').hidden=true;const cols=['created_at','status','
 function start(){$('#login').hidden=true;$('#app').hidden=false;setTop(true);first=true;load()}
 setInterval(()=>{if(document.visibilityState==='visible'&&!$('#app').hidden)load()},45000);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!$('#app').hidden)load()});
+$('#enqconnect').onclick=()=>{const token=$('#enqtok').value.trim();if(!token){$('#le').textContent='Paste your GitHub token to continue.';return}ENQDB.setToken(token);start()};
 (async()=>{try{const r=await fetch('/content.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const c=await r.json();ownerName=String(c.name||'').split(' ')[0]}}catch(e){}
  if(ENQDB.session())start();else showLogin('Open Studio Admin first. This dashboard reuses its GitHub access.')})();
 </script></body></html>
