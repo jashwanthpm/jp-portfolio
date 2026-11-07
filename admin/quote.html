@@ -154,7 +154,7 @@ async function upd(){const c=calc();$('#tot').textContent=inr(c.tot);$('#advl').
  const fr=$('#fr');try{if(fr.dataset.on)fr.contentWindow.location.hash=cur;else{fr.dataset.on=1;fr.src='/q.html#'+cur}}catch{fr.src='/q.html#'+cur}
  LS.set('q_cur',JSON.stringify(st));LS.set('q_upi',st.f.upi||'');LS.set('q_pb',st.f.pb);LS.set('q_tm',st.f.tm);upsert();$('#svt').textContent='Saved'}
 const sched=()=>{$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
-function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const lib=J('q_lib',[]).filter(x=>x.id!=st.id);lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length,60)}
+function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const lib=J('q_lib',[]).filter(x=>x.id!=st.id&&x.n!=st.f.n);lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length,60)}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),1600)}
 function markSent(){if(!st.sent){st.sent=true;pill();upd()}syncEnquiry()}
 async function syncEnquiry(){if(!st.enqId||!window.ENQDB||!ENQDB.session())return;try{await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(st.enqId)+'&status=in.(new,contacted,follow_up,quoted)',{status:'quoted',quote_ref:String(st.f.n||''),quote_amount:calc().tot});toast('Enquiry marked as quotation sent')}catch(e){}}
@@ -199,6 +199,11 @@ $('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J
 
 (async()=>{try{const c=new AbortController();setTimeout(()=>c.abort(),2500);const r=await fetch('/content.json?t='+Date.now(),{cache:'no-store',signal:c.signal});if(r.ok){const d=await r.json();QC={quote:d.quote||{},qRates:Array.isArray(d.qRates)?d.qRates:[]};drawQuick()}}catch(e){}
  $('#lc').textContent=J('q_lib',[]).length;
- const sv=J('q_cur',null);st=sv&&sv.f?sv:blank();st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];
+ const sv=J('q_cur',null);let incoming=null;
+ if(location.hash.length>2){try{incoming=await QCODEC.dec(location.hash.slice(1));if(!incoming||!incoming.f||!Array.isArray(incoming.items))incoming=null}catch(e){}}
+ st=incoming||((sv&&sv.f)?sv:blank());
+ if(incoming&&sv&&sv.f&&sv.f.n===incoming.f.n)st.id=sv.id;
+ st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];
+ if(incoming)history.replaceState(null,'',location.pathname+location.search);
  load();upd()})();
 </script></body></html>
