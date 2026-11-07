@@ -213,14 +213,12 @@ contact(){
    date=tbd.classList.contains('on')?'Not fixed yet':val('date'),
    q={o:occ,w:wants,d:date,y:S.days,v:val('venue'),n:val('name'),p:val('phone'),e:val('email'),i:val('instagram'),b:S.budget,br:val('brand'),f:found,m:val('message')};
   let link='';try{link=location.origin+'/admin/quote.html#e='+(await QCODEC.enc(q))}catch{}
-  const fd=new FormData();fd.set('_subject',`New enquiry: ${occ} - ${q.n}`);if(link)fd.set('create_quote_link',link);
-  [['name',q.n],['phone',q.p],['occasion',occ],['looking_for',wants.join(', ')],['date',date],['days',q.y],['venue',q.v],['brand',q.br],['budget',q.b],['instagram',q.i],['found_via',found],['message',q.m],['source',new URLSearchParams(location.search).get('ref')||'direct link']].forEach(([k,v])=>{if(v)fd.set(k,v)});
-  if(q.e)fd.set('email',q.e);
-  try{if(!C.formEndpoint)throw 0;const r=await fetch(C.formEndpoint,{method:'POST',body:fd,headers:{Accept:'application/json'}});if(!r.ok)throw 0;
+  const payload={name:q.n,phone:q.p,email:q.e||null,instagram:q.i||null,occasion:occ,looking_for:wants.join(', '),event_date:/^\\d{4}-\\d{2}-\\d{2}$/.test(date)?date:null,days:(parseInt(String(q.y).match(/\\d+/)?.[0]||'',10)||null),venue:q.v||null,brand:q.br||null,budget:q.b||null,found_via:found||null,message:q.m||null,source:new URLSearchParams(location.search).get('ref')||'direct link'};
+  try{if(!window.ENQDB||typeof ENQDB.submitPublic!=='function')throw new Error('Enquiry service is not available.');await ENQDB.submitPublic(payload);
    f.hidden=true;$('.ew-top').hidden=true;$('.ew-tiny').hidden=true;$('#ewok').hidden=false;$('#ewokn').innerHTML='Thank <em>you'+(q.n?', '+q.n.split(' ')[0].replace(/[<>&"]/g,''):'')+'</em>';
    const a=$('#ewokw');if(waNumber()){a.href=waHref(`Hi ${C.name||''}, I just filled the enquiry form.`);a.style.display='inline-flex'}
    window.scrollTo({top:0,behavior:'smooth'})}
-  catch{err.textContent='Could not send. Please try again, or email '+(C.email||'me')+' directly.';next.disabled=false;next.textContent='Send enquiry';busy=false}};
+  catch(e){err.textContent='Could not send. Please try again, or email '+(C.email||'me')+' directly.';next.disabled=false;next.textContent='Send enquiry';busy=false}};
  next.onclick=()=>{const m=check();if(m){err.textContent=m;return}if(i==N-1)submit();else go(i+1)};
  go(0,1);
 }
