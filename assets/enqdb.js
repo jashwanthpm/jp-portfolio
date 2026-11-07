@@ -31,6 +31,7 @@
   window.ENQDB={
     cfg:SB,
     session,
+    setToken:value=>{try{localStorage.setItem('jp_tok',String(value||'').trim())}catch(e){}},
     signOut:()=>{},
     rest:(method,path,body)=>request(method,path,body,false),
     submitPublic:async row=>{
