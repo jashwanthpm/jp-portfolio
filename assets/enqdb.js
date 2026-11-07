@@ -33,6 +33,15 @@
     session,
     signOut:()=>{},
     rest:(method,path,body)=>request(method,path,body,false),
+    submitPublic:async row=>{
+      const o={};
+      Object.keys(LIM).forEach(k=>{const v=row[k];if(v!==undefined&&v!==null&&String(v).trim())o[k]=String(v).trim().slice(0,LIM[k])});
+      if(row.event_date===null)o.event_date=null;
+      if(row.days===null)o.days=null;
+      if(row.client_ref)o.client_ref=String(row.client_ref).slice(0,160);
+      if(!o.name||!o.phone)throw new Error('Name and phone are required.');
+      return await request('POST','',o,true);
+    },
     insertPublic:row=>{
       try{
         const o={};
