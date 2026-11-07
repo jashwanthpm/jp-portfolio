@@ -1,0 +1,233 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0c0b0a"><title>Enquiries</title>
+<link rel="icon" type="image/png" sizes="256x256" href="/images/favicon-1791284648615.png"><link rel="apple-touch-icon" href="/images/favicon-1791284648615.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0b0a;--p:#141210;--p2:#1a1714;--p3:#221e1a;--l:#2a2521;--l2:#38312b;--fg:#f0eae0;--m:#9a8f82;--a:#c9a46a;--r:14px;--sa:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden;overscroll-behavior:none}
+button,input,select,textarea{font:inherit;color:inherit}
+svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+a{color:inherit;text-decoration:none}
+[hidden]{display:none!important}
+/* top bar */
+.top{display:flex;align-items:center;gap:12px;min-height:58px;padding:0 16px;padding-top:env(safe-area-inset-top,0px);border-bottom:1px solid var(--l);background:var(--p);flex:none}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}.brand img{width:30px;height:30px;border-radius:8px;object-fit:cover}
+.brand b{font:500 22px 'Cormorant Garamond',serif;white-space:nowrap}.brand small{display:block;color:var(--m);font-size:11px;margin-top:-4px}
+.sp{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--l2);background:var(--p2);cursor:pointer;font-weight:500;font-size:13px;white-space:nowrap;transition:.15s;touch-action:manipulation}
+.btn:hover{border-color:var(--a)}.btn.pri{background:var(--a);color:#18120a;border-color:var(--a)}.btn.ghost{background:none}.btn.sm{min-height:32px;padding:0 11px;font-size:12px;border-radius:8px}.btn.danger{color:#e59080}.btn.danger:hover{border-color:#e59080}
+.btn.ic{width:38px;padding:0}
+.menu{position:relative}.pop{position:absolute;right:0;top:44px;min-width:210px;background:var(--p2);border:1px solid var(--l2);border-radius:12px;padding:6px;z-index:30;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.pop a,.pop button{display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:0 12px;border:0;background:none;border-radius:8px;cursor:pointer;text-align:left}.pop a:hover,.pop button:hover{background:var(--p3)}
+/* login */
+.login{flex:1;display:grid;place-items:center;padding:20px}
+.lc{width:100%;max-width:400px;background:var(--p);border:1px solid var(--l);border-radius:20px;padding:30px 26px}
+.lc img{width:44px;height:44px;border-radius:11px;margin-bottom:16px}.lc h1{font:500 32px/1.1 'Cormorant Garamond',serif;margin-bottom:6px}.lc p{color:var(--m);margin-bottom:20px}
+label{display:block;font-size:12px;color:var(--m);margin:12px 0 5px;font-weight:500}
+input,select,textarea{width:100%;background:var(--p2);border:1px solid var(--l);border-radius:10px;padding:11px 12px;outline:0;font-size:16px;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--a)}textarea{resize:vertical;line-height:1.5}
+select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%239a8f82' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+select option{background:#1a1714}
+.err{color:#e59080;font-size:13px;margin-top:12px;min-height:1.2em}
+/* main */
+.app{flex:1;display:flex;flex-direction:column;min-height:0}
+.kpis{display:flex;gap:10px;padding:14px 16px 4px;overflow-x:auto;flex:none;scrollbar-width:none}.kpis::-webkit-scrollbar{display:none}
+.k{flex:1 0 128px;background:var(--p);border:1px solid var(--l);border-radius:var(--r);padding:12px 14px;cursor:pointer;text-align:left;transition:.15s}
+.k:hover{border-color:var(--l2)}.k.on{border-color:var(--a);background:color-mix(in srgb,var(--a) 8%,var(--p))}
+.k small{display:flex;align-items:center;gap:7px;color:var(--m);font-size:11.5px}.k small i{width:8px;height:8px;border-radius:50%;display:block}.k b{display:block;font:500 30px/1.1 'Cormorant Garamond',serif;margin-top:2px}
+.bar{display:flex;gap:10px;align-items:center;padding:10px 16px;flex:none;flex-wrap:wrap}
+.search{flex:1;min-width:180px;position:relative}.search input{padding-left:36px;min-height:40px}.search svg{position:absolute;left:12px;top:12px;color:var(--m)}
+.chips{display:flex;gap:7px;padding:0 16px 10px;overflow-x:auto;flex:none;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;min-height:34px;padding:0 13px;border-radius:99px;border:1px solid var(--l);background:none;color:var(--m);cursor:pointer;font-size:12.5px;display:inline-flex;align-items:center;gap:6px;touch-action:manipulation}
+.chip.on{background:var(--fg);color:#16110b;border-color:var(--fg)}.chip em{font-style:normal;opacity:.65;font-size:11.5px}
+.seg{display:flex;background:var(--p2);border:1px solid var(--l);border-radius:10px;padding:2px}.seg button{border:0;background:none;color:var(--m);min-height:34px;padding:0 12px;border-radius:8px;cursor:pointer;font-size:12.5px}.seg button.on{background:var(--p3);color:var(--fg)}
+.body{flex:1;min-height:0;overflow:auto;padding:4px 16px calc(24px + var(--sa));-webkit-overflow-scrolling:touch}
+.list{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.card{outline:0;background:var(--p);border:1px solid var(--l);border-radius:var(--r);padding:14px;cursor:pointer;transition:.15s;display:block;text-align:left;width:100%}
+.card:hover,.card:focus-visible{border-color:var(--l2);transform:translateY(-1px)}
+.card .r1{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card .nm{font-weight:600;font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:9px}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12.5px;font-weight:600;flex:none;background:var(--p3)}
+.sb{flex:none;display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:500;background:var(--p3)}.sb i{width:7px;height:7px;border-radius:50%;display:block}
+.card .ln{color:var(--m);font-size:12.5px;margin-top:8px;line-height:1.45}.card .ln b{color:var(--fg);font-weight:500}
+.card .ft{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center;color:var(--m);font-size:11.5px}
+.tag{padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500;background:var(--p3);color:var(--m)}.tag.due{background:rgba(229,162,74,.16);color:#e5a24a}.tag.late{background:rgba(216,107,91,.16);color:#e59080}.tag.amt{background:rgba(127,194,155,.14);color:#7fc29b}
+.empty{text-align:center;color:var(--m);padding:60px 20px}.empty b{display:block;font:500 26px 'Cormorant Garamond',serif;color:var(--fg);margin-bottom:6px}
+.board{display:grid;grid-template-columns:repeat(5,minmax(250px,1fr));gap:12px;align-items:start;min-width:1300px}
+.col{background:var(--p);border:1px solid var(--l);border-radius:16px;padding:10px;min-height:200px}.col.over{border-color:var(--a)}
+.col h3{display:flex;align-items:center;gap:8px;font:600 11px Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--m);padding:4px 6px 10px}.col h3 i{width:8px;height:8px;border-radius:50%}.col h3 em{margin-left:auto;font-style:normal}
+.col .card{margin-bottom:8px;background:var(--p2);cursor:grab}
+.col .card .sb{display:none}
+/* drawer */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.2s;z-index:40;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}.ov.on{opacity:1;pointer-events:auto}
+.dr{position:fixed;top:0;right:0;bottom:0;width:min(480px,100%);background:var(--p);border-left:1px solid var(--l);z-index:41;transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column}.dr.on{transform:none}
+.dh{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--l);padding-top:max(14px,env(safe-area-inset-top,0px))}.dh h2{font:500 26px/1.1 'Cormorant Garamond',serif;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.db{flex:1;overflow:auto;padding:16px 16px calc(24px + var(--sa));-webkit-overflow-scrolling:touch}
+.sec{margin-bottom:22px}.sec h4{font:600 10.5px Inter;letter-spacing:.2em;text-transform:uppercase;color:var(--a);margin-bottom:10px}
+.acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.stg{display:flex;flex-wrap:wrap;gap:7px}.stg button{min-height:38px;padding:0 13px;border-radius:99px;border:1px solid var(--l);background:none;cursor:pointer;display:inline-flex;gap:7px;align-items:center;font-size:13px;color:var(--m);touch-action:manipulation}.stg button i{width:8px;height:8px;border-radius:50%}.stg button.on{color:var(--fg);border-color:var(--fg);background:var(--p3)}
+.dl{display:grid;grid-template-columns:104px 1fr;gap:8px 12px;font-size:13.5px}.dl dt{color:var(--m)}.dl dd{word-break:break-word}
+.msg{background:var(--p2);border:1px solid var(--l);border-radius:12px;padding:12px 14px;white-space:pre-wrap;word-break:break-word;font-size:13.5px}
+.fu{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:10px}.fu input{width:auto;min-height:38px;padding:6px 10px;font-size:14px}
+.saved{color:var(--m);font-size:11.5px;float:right;font-weight:400;letter-spacing:0;text-transform:none}
+.dz{display:flex;gap:8px;flex-wrap:wrap}
+/* modal */
+.md{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(0,0,0,.6);padding:16px}.mb{width:100%;max-width:440px;max-height:92dvh;overflow:auto;background:var(--p);border:1px solid var(--l);border-radius:18px;padding:22px}.mb h3{font:500 26px 'Cormorant Garamond',serif;margin-bottom:4px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#toast{position:fixed;left:50%;bottom:calc(24px + var(--sa));transform:translate(-50%,20px);background:var(--fg);color:#18120a;padding:10px 18px;border-radius:99px;font-weight:500;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:80;max-width:90vw;text-align:center}#toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:800px){
+ .brand small,.hm{display:none}.top{padding-left:12px;padding-right:12px}.kpis{padding:12px 12px 2px}.bar,.chips{padding-left:12px;padding-right:12px}.body{padding-left:12px;padding-right:12px}
+ .list{grid-template-columns:1fr}.seg{display:none}
+ .dr{top:auto;width:100%;height:92dvh;border-left:0;border-top:1px solid var(--l2);border-radius:22px 22px 0 0;transform:translateY(100%)}.dr.on{transform:none}
+ .dh{padding-top:14px}.dh::before{content:"";position:absolute;left:50%;top:7px;width:38px;height:4px;border-radius:2px;background:var(--l2);transform:translateX(-50%)}
+ .dl{grid-template-columns:92px 1fr}.g2{grid-template-columns:1fr}.md{align-items:end;padding:0}.mb{max-width:none;border-radius:22px 22px 0 0;padding-bottom:calc(22px + var(--sa))}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header class="top">
+ <div class="brand"><img src="/images/favicon-1791284648615.png" alt=""><div><b>Enquiries</b><small>Track every lead to a booking</small></div></div>
+ <div class="sp"></div>
+ <span id="upd" class="hm" style="color:var(--m);font-size:12px"></span>
+ <button class="btn ic ghost" id="rf" aria-label="Refresh" title="Refresh"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.6-5.9M20 4v5h-5"/></svg></button>
+ <button class="btn pri" id="add"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="hm">Add enquiry</span></button>
+ <div class="menu"><button class="btn ic" id="mn" aria-label="More"><svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>
+  <div class="pop" id="pop" hidden><a href="quote.html"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/></svg>Quotation studio</a><a href="./"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8"/></svg>Site editor</a><button id="csv"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Export to CSV</button><button id="out"><svg class="i" viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h9"/></svg>Sign out</button></div></div>
+</header>
+
+<main class="login" id="login" hidden><div class="lc"><img src="/images/favicon-1791284648615.png" alt=""><h1>Enquiries</h1><p>Sign in to see who has reached out.</p>
+ <label for="em">Email</label><input id="em" type="email" inputmode="email" autocomplete="username" autocapitalize="none"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
+ <div class="err" id="le" role="alert"></div><button class="btn pri" id="go" style="width:100%;margin-top:6px;min-height:46px">Sign in</button></div></main>
+
+<div class="app" id="app" hidden>
+ <div class="kpis" id="kpis"></div>
+ <div class="bar"><div class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search name, phone, venue…" autocomplete="off" enterkeyhint="search"></div><div class="seg" id="vw"><button data-v="list" class="on">List</button><button data-v="board">Board</button></div></div>
+ <div class="chips" id="chips"></div>
+ <div class="body" id="body"></div>
+</div>
+
+<div class="ov" id="ov"></div><aside class="dr" id="dr" aria-label="Enquiry details"></aside>
+<div class="md" id="md" hidden><div class="mb" id="mb"></div></div>
+<div id="toast" role="status"></div>
+<script src="/assets/quote.js"></script><script src="/assets/enqdb.js"></script>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ST=[['new','New','#c9a46a'],['contacted','Contacted','#6aa8d6'],['quoted','Quotation sent','#b58be0'],['follow_up','Follow-up','#e5a24a'],['booked','Booked','#7fc29b'],['lost','Lost','#8d8479'],['blocked','Blocked','#d86b5b']];
+const SM=Object.fromEntries(ST.map(s=>[s[0],s])),BOARD=['new','contacted','quoted','follow_up','booked'],DONE=['booked','lost','blocked'];
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),today=()=>iso(new Date()),plus=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+const inr=n=>'₹'+new Intl.NumberFormat('en-IN',{maximumFractionDigits:0}).format(+n||0);
+const ago=t=>{const s=(Date.now()-new Date(t))/1000;if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+' min ago';if(s<86400)return Math.floor(s/3600)+' h ago';const d=Math.floor(s/86400);return d<7?d+(d==1?' day ago':' days ago'):new Date(t).toLocaleDateString('en-IN',{day:'numeric',month:'short'})};
+const fdt=t=>new Date(t).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+const fday=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}):'';
+const phone=v=>{v=String(v||'').replace(/\D/g,'');return v.length==10?'91'+v:v};
+let rows=[],flt='all',view=(()=>{try{return localStorage.getItem('jp_enq_view')||'list'}catch(e){return'list'}})(),cur=null,first=true,maxSeen='',ownerName='',busy=false,tmr;
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),2200)};
+const due=r=>!!r.follow_up_on&&!DONE.includes(r.status)&&r.follow_up_on<=today();
+const late=r=>!!r.follow_up_on&&!DONE.includes(r.status)&&r.follow_up_on<today();
+/* ---------- auth ---------- */
+function showLogin(msg){$('#login').hidden=false;$('#app').hidden=true;$('#le').textContent=msg||'';$('#em').value=$('#em').value||ENQDB.cfg.owner;closeDr();setTop(false)}
+function setTop(on){['#upd','#rf','#add','.menu'].forEach(s=>{const e=$(s);if(e)e.style.display=on?'':'none'})}
+$('#go').onclick=async()=>{const b=$('#go');b.disabled=true;b.textContent='Signing in…';$('#le').textContent='';
+ try{const e=$('#em').value.trim().toLowerCase();await ENQDB.signIn(e,$('#pw').value);$('#pw').value='';start()}catch(x){$('#le').textContent=x.message==='Invalid login credentials'?'That email or password is not right.':x.message}
+ b.disabled=false;b.textContent='Sign in'};
+$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('#go').click()});
+$('#out').onclick=()=>{ENQDB.signOut();$('#pop').hidden=true;rows=[];showLogin('')};
+/* ---------- data ---------- */
+async function load(manual){if(busy)return;busy=true;
+ try{const data=await ENQDB.rest('GET','?select=*&order=created_at.desc&limit=1000');
+  const newest=data.length?data[0].created_at:'';
+  if(!first&&maxSeen){const n=data.filter(r=>r.created_at>maxSeen&&r.status==='new').length;if(n)toast(n+(n==1?' new enquiry':' new enquiries'))}
+  maxSeen=newest||maxSeen;first=false;rows=data;$('#upd').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});render();if(cur){const r=rows.find(x=>x.id===cur);if(r&&$('#dr').classList.contains('on')&&!document.activeElement.closest('#dr'))drawer(r)}
+  if(manual)toast('Up to date')}
+ catch(e){if(e.auth){ENQDB.signOut();showLogin(e.message)}else toast(e.message||'Could not load')}
+ busy=false}
+async function patch(id,body){const r=await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(id),body,'return=representation');const u=r&&r[0];if(u){const i=rows.findIndex(x=>x.id===id);if(i>-1)rows[i]=u;render();if(cur===id&&$('#dr').classList.contains('on')){const keep=$('#nt')?$('#nt').value:null;drawer(u);if(keep!=null&&keep!==(u.notes||'')&&$('#nt'))$('#nt').value=keep}}return u}
+/* ---------- render ---------- */
+function counts(){const c={all:0};ST.forEach(s=>c[s[0]]=0);rows.forEach(r=>{c[r.status]=(c[r.status]||0)+1;if(r.status!=='blocked')c.all++});c.due=rows.filter(due).length;return c}
+function visible(){const q=$('#q').value.trim().toLowerCase();let a=rows.filter(r=>flt==='all'?r.status!=='blocked':flt==='due'?due(r):r.status===flt);
+ if(q)a=a.filter(r=>[r.name,r.phone,r.email,r.venue,r.occasion,r.instagram,r.brand,r.message,r.notes,r.looking_for].join(' ').toLowerCase().includes(q));
+ if(flt==='follow_up'||flt==='due')a.sort((x,y)=>String(x.follow_up_on||'9').localeCompare(String(y.follow_up_on||'9')));return a}
+function cardHtml(r){const s=SM[r.status]||SM.new,bits=[r.occasion,r.event_date&&(/^\d{4}-/.test(r.event_date)?fday(r.event_date):r.event_date),r.venue].filter(Boolean).map(esc).join(' · ');
+ return `<div class="card" role="button" tabindex="0" data-id="${esc(r.id)}" draggable="true"><div class="r1"><div class="nm"><span class="av" style="color:${s[2]}">${esc((r.name||'?').trim().charAt(0).toUpperCase())}</span><span style="overflow:hidden;text-overflow:ellipsis">${esc(r.name)}</span></div><span class="sb"><i style="background:${s[2]}"></i>${s[1]}</span></div>
+ ${bits?`<div class="ln"><b>${bits}</b></div>`:''}${r.budget?`<div class="ln">Budget ${esc(r.budget)}</div>`:''}
+ <div class="ft"><span>${ago(r.created_at)}</span>${r.source?`<span class="tag">${esc(r.source)}</span>`:''}${late(r)?`<span class="tag late">Follow-up overdue</span>`:due(r)?`<span class="tag due">Follow up today</span>`:r.follow_up_on&&!DONE.includes(r.status)?`<span class="tag">Follow up ${esc(fday(r.follow_up_on))}</span>`:''}${r.quote_amount?`<span class="tag amt">${esc(r.quote_ref||'Quote')} · ${inr(r.quote_amount)}</span>`:''}</div></div>`}
+function render(){if($('#app').hidden)return;const c=counts();
+ const K=[['new','New'],['contacted','Contacted'],['quoted','Quotation sent'],['due','Follow-ups due'],['booked','Booked']];
+ $('#kpis').innerHTML=K.map(([k,t])=>{const col=k==='due'?'#e5a24a':SM[k][2];return `<button class="k${flt===k?' on':''}" data-f="${k}"><small><i style="background:${col}"></i>${t}</small><b>${c[k]||0}</b></button>`}).join('');
+ $('#chips').innerHTML=[['all','All']].concat(ST.map(s=>[s[0],s[1]])).map(([k,t])=>`<button class="chip${flt===k?' on':''}" data-f="${k}">${t}<em>${c[k]||0}</em></button>`).join('');
+ document.title=(c.new?`(${c.new}) `:'')+'Enquiries';
+ const a=visible(),body=$('#body');
+ $$('#vw button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+ if(view==='board'&&innerWidth>=900){const q=$('#q').value.trim().toLowerCase(),src=rows.filter(r=>!q||[r.name,r.phone,r.email,r.venue,r.occasion,r.message,r.notes].join(' ').toLowerCase().includes(q));
+  body.innerHTML=`<div class="board">${BOARD.map(k=>{const s=SM[k],l=src.filter(r=>r.status===k);return `<div class="col" data-s="${k}"><h3><i style="background:${s[2]}"></i>${s[1]}<em>${l.length}</em></h3>${l.map(cardHtml).join('')||'<div class="empty" style="padding:24px 8px;font-size:12.5px">Nothing here</div>'}</div>`}).join('')}</div>`;return}
+ body.innerHTML=a.length?`<div class="list">${a.map(cardHtml).join('')}</div>`:`<div class="empty"><b>${rows.length?'No matches':'No enquiries yet'}</b>${rows.length?'Try a different filter or search.':'New enquiries from your form will appear here automatically.'}</div>`}
+/* events */
+document.addEventListener('click',e=>{const k=e.target.closest('[data-f]');if(k&&!e.target.closest('#dr')){flt=(flt===k.dataset.f&&k.classList.contains('k'))?'all':k.dataset.f;render();return}
+ const c=e.target.closest('.card[data-id]');if(c&&!e.target.closest('#dr')){openDr(c.dataset.id);return}
+ if(!e.target.closest('.menu'))$('#pop').hidden=true});
+$('#mn').onclick=()=>{$('#pop').hidden=!$('#pop').hidden};
+$('#rf').onclick=()=>load(true);$('#q').oninput=()=>render();
+$('#vw').onclick=e=>{const b=e.target.closest('button');if(!b)return;view=b.dataset.v;try{localStorage.setItem('jp_enq_view',view)}catch(x){}render()};
+addEventListener('resize',()=>{clearTimeout(tmr);tmr=setTimeout(render,150)});
+document.addEventListener('keydown',e=>{const cd=e.target.closest&&e.target.closest('.card[data-id]');if(cd&&(e.key==='Enter'||e.key===' ')&&!e.target.closest('#dr')){e.preventDefault();openDr(cd.dataset.id);return}if(e.key==='Escape'){if(!$('#md').hidden)$('#md').hidden=true;else closeDr()}if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&!$('#app').hidden){e.preventDefault();$('#q').focus()}});
+/* drag between board columns */
+let dragId=null;
+document.addEventListener('dragstart',e=>{const c=e.target.closest&&e.target.closest('.card[data-id]');if(c){dragId=c.dataset.id;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',dragId)}catch(x){}}});
+document.addEventListener('dragover',e=>{const c=e.target.closest&&e.target.closest('.col');if(c&&dragId){e.preventDefault();$$('.col').forEach(x=>x.classList.toggle('over',x===c))}});
+document.addEventListener('dragend',()=>{dragId=null;$$('.col').forEach(x=>x.classList.remove('over'))});
+document.addEventListener('drop',async e=>{const c=e.target.closest&&e.target.closest('.col');if(!c||!dragId)return;e.preventDefault();const id=dragId;dragId=null;$$('.col').forEach(x=>x.classList.remove('over'));
+ const r=rows.find(x=>x.id===id);if(!r||r.status===c.dataset.s)return;await setStatus(r,c.dataset.s)});
+/* ---------- status ---------- */
+async function setStatus(r,s,extra){const body=Object.assign({status:s},extra||{});if(s==='follow_up'&&!r.follow_up_on&&!(extra&&extra.follow_up_on))body.follow_up_on=plus(3);if(['booked','lost','blocked'].includes(s)&&!(extra&&'follow_up_on' in extra))body.follow_up_on=null;
+ try{const u=await patch(r.id,body);toast(SM[s][1]+(s==='follow_up'&&u&&u.follow_up_on?' · '+fday(u.follow_up_on):''));return u}catch(e){if(e.auth){showLogin(e.message)}else toast(e.message);return null}}
+/* ---------- drawer ---------- */
+const openDr=id=>{const r=rows.find(x=>x.id===id);if(!r)return;cur=id;drawer(r);$('#dr').classList.add('on');$('#ov').classList.add('on')};
+function closeDr(){cur=null;$('#dr').classList.remove('on');$('#ov').classList.remove('on')}
+$('#ov').onclick=closeDr;
+async function quoteLink(r){const code=await QCODEC.enc({o:r.occasion||'',w:String(r.looking_for||'').split(',').map(x=>x.trim()).filter(Boolean),d:r.event_date||'',y:r.days||'',v:r.venue||'',n:r.name||'',p:r.phone||'',e:r.email||'',i:r.instagram||'',b:r.budget||'',br:r.brand||'',f:r.found_via||'',m:r.message||''});return location.origin+'/admin/quote.html#e='+code+'&id='+r.id}
+function drawer(r){const s=SM[r.status]||SM.new,p=phone(r.phone),first=(r.name||'').trim().split(' ')[0]||'there',ig=String(r.instagram||'').replace(/^@/,'').replace(/[^\w.]/g,'');
+ const wm=`Hi ${first}, thank you for reaching out${r.occasion?' about your '+r.occasion.toLowerCase():''}${ownerName?'. This is '+ownerName:''}. I'd love to know a little more. Is now a good time to chat?`;
+ const rowsDl=[['Occasion',r.occasion],['Looking for',r.looking_for],['Date',/^\d{4}-/.test(r.event_date||'')?fday(r.event_date):r.event_date],['Days',r.days],['Venue',r.venue],['Brand',r.brand],['Budget',r.budget],['Phone',r.phone],['Email',r.email],['Instagram',r.instagram],['Found via',r.found_via],['Source',r.source]].filter(x=>x[1]);
+ $('#dr').innerHTML=`<div class="dh"><div style="min-width:0;flex:1"><h2>${esc(r.name)}</h2><div style="color:var(--m);font-size:12px">Received ${esc(fdt(r.created_at))} · ${esc(ago(r.created_at))}</div></div><button class="btn ic ghost" id="dx" aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+ <div class="db"><div class="sec"><div class="acts">${p?`<a class="btn pri" id="wa" target="_blank" rel="noopener" href="https://wa.me/${esc(p)}?text=${encodeURIComponent(wm)}">WhatsApp</a><a class="btn" id="cl" href="tel:+${esc(p)}">Call</a>`:''}${r.email?`<a class="btn" href="mailto:${esc(r.email)}">Email</a>`:''}${ig?`<a class="btn" target="_blank" rel="noopener" href="https://instagram.com/${esc(ig)}">Instagram</a>`:''}</div></div>
+ <div class="sec"><h4>Status</h4><div class="stg">${ST.map(x=>`<button data-st="${x[0]}" class="${r.status===x[0]?'on':''}"><i style="background:${x[2]}"></i>${x[1]}</button>`).join('')}</div>
+  ${!DONE.includes(r.status)?`<div class="fu"><span style="color:var(--m);font-size:12.5px">Follow up</span><button class="btn sm" data-fu="1">Tomorrow</button><button class="btn sm" data-fu="3">3 days</button><button class="btn sm" data-fu="7">Next week</button><input type="date" id="fud" value="${esc(r.follow_up_on||'')}" aria-label="Follow-up date">${r.follow_up_on?`<button class="btn sm ghost" data-fu="0">Clear</button>`:''}</div>`:''}</div>
+ <div class="sec"><h4>Quotation</h4><div class="acts"><button class="btn pri" id="mq">Create quotation</button></div>${r.quote_amount?`<p style="margin-top:10px;color:var(--m);font-size:13px">Last quote <b style="color:var(--fg)">${esc(r.quote_ref||'')}</b> · ${inr(r.quote_amount)}</p>`:''}</div>
+ ${r.message?`<div class="sec"><h4>Their message</h4><div class="msg">${esc(r.message)}</div></div>`:''}
+ <div class="sec"><h4>Details</h4><dl class="dl">${rowsDl.map(([a,b])=>`<dt>${a}</dt><dd>${esc(b)}</dd>`).join('')}</dl></div>
+ <div class="sec"><h4>My notes <span class="saved" id="sv"></span></h4><textarea id="nt" rows="4" placeholder="Call notes, what they asked for, next step…">${esc(r.notes||'')}</textarea></div>
+ <div class="sec"><h4>More</h4><div class="dz">${r.status!=='blocked'?`<button class="btn sm danger" id="bk">Block this number</button>`:`<button class="btn sm" id="ub">Unblock</button>`}<button class="btn sm danger" id="dl">Delete</button></div>${r.status==='blocked'?'':'<p style="color:var(--m);font-size:12px;margin-top:8px">Blocked numbers are hidden from your lists, and any new enquiry from the same number arrives as Blocked.</p>'}</div></div>`;
+ const rr=()=>rows.find(x=>x.id===r.id)||r;
+ $('#dx').onclick=closeDr;
+ $$('#dr [data-st]').forEach(b=>b.onclick=()=>setStatus(rr(),b.dataset.st));
+ $$('#dr [data-fu]').forEach(b=>b.onclick=async()=>{const n=+b.dataset.fu,x=rr();if(!n){await patch(x.id,{follow_up_on:null});toast('Follow-up cleared');return}const d=plus(n);const u=await setStatus(x,'follow_up',{follow_up_on:d})});
+ const fd=$('#fud');if(fd)fd.onchange=async()=>{if(!fd.value)return;const x=rr();await setStatus(x,'follow_up',{follow_up_on:fd.value})};
+ const w=$('#wa');if(w)w.addEventListener('click',()=>{const x=rr();if(x.status==='new')setStatus(x,'contacted')});
+ let nt;$('#nt').oninput=()=>{$('#sv').textContent='Saving…';clearTimeout(nt);nt=setTimeout(async()=>{try{const i=rows.findIndex(x=>x.id===r.id),v=$('#nt').value;await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(r.id),{notes:v||null});if(i>-1)rows[i].notes=v||null;$('#sv').textContent='Saved'}catch(e){$('#sv').textContent=e.message}},700)};
+ $('#mq').onclick=async()=>{window.open(await quoteLink(rr()),'_blank')};
+ const bk=$('#bk');if(bk)bk.onclick=async()=>{if(confirm('Block this number? Their enquiries will be hidden and future ones from the same number arrive as Blocked.')){await setStatus(rr(),'blocked');closeDr()}};
+ const ub=$('#ub');if(ub)ub.onclick=()=>setStatus(rr(),'new');
+ $('#dl').onclick=async()=>{if(!confirm('Delete this enquiry permanently?'))return;try{await ENQDB.rest('DELETE','?id=eq.'+encodeURIComponent(r.id));rows=rows.filter(x=>x.id!==r.id);closeDr();render();toast('Deleted')}catch(e){toast(e.message)}}}
+/* ---------- add ---------- */
+$('#add').onclick=()=>{$('#mb').innerHTML=`<h3>Add an enquiry</h3><p style="color:var(--m);margin-bottom:8px">For leads who message you on Instagram, WhatsApp or call.</p>
+ <label for="a_n">Name</label><input id="a_n" autocomplete="off"><div class="g2"><div><label for="a_p">Phone / WhatsApp</label><input id="a_p" type="tel" inputmode="tel"></div><div><label for="a_s">Where from</label><select id="a_s"><option>Instagram DM</option><option>WhatsApp</option><option>Phone call</option><option>Referral</option><option>Other</option></select></div></div>
+ <div class="g2"><div><label for="a_o">Occasion</label><input id="a_o" placeholder="Wedding, Pre-wedding…"></div><div><label for="a_d">Date</label><input id="a_d" type="date"></div></div><label for="a_v">Venue / city</label><input id="a_v"><label for="a_m">Notes</label><textarea id="a_m" rows="3"></textarea>
+ <div class="err" id="a_e"></div><div style="display:flex;gap:10px;margin-top:10px"><button class="btn" id="a_c" style="flex:1">Cancel</button><button class="btn pri" id="a_k" style="flex:2">Add</button></div>`;
+ $('#md').hidden=false;setTimeout(()=>$('#a_n').focus(),50);
+ $('#a_c').onclick=()=>$('#md').hidden=true;
+ $('#a_k').onclick=async()=>{const n=$('#a_n').value.trim();if(!n){$('#a_e').textContent='Please add a name.';return}
+  const body={name:n,phone:$('#a_p').value.trim()||null,source:$('#a_s').value,occasion:$('#a_o').value.trim()||null,event_date:$('#a_d').value||null,venue:$('#a_v').value.trim()||null,notes:$('#a_m').value.trim()||null};
+  try{const r=await ENQDB.rest('POST','',body,'return=representation');$('#md').hidden=true;if(r&&r[0]){rows.unshift(r[0]);render();openDr(r[0].id)}toast('Added')}catch(e){$('#a_e').textContent=e.message}}};
+$('#md').onclick=e=>{if(e.target.id==='md')$('#md').hidden=true};
+/* ---------- csv ---------- */
+$('#csv').onclick=()=>{$('#pop').hidden=true;const cols=['created_at','status','name','phone','email','instagram','occasion','looking_for','event_date','days','venue','brand','budget','found_via','source','message','notes','follow_up_on','quote_ref','quote_amount'];
+ const q=v=>{v=v==null?'':String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+ const csv=[cols.join(',')].concat(rows.map(r=>cols.map(c=>q(r[c])).join(','))).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='enquiries-'+today()+'.csv';document.body.append(a);a.click();a.remove();toast('Exported '+rows.length+' enquiries')};
+/* ---------- boot ---------- */
+function start(){$('#login').hidden=true;$('#app').hidden=false;setTop(true);first=true;load()}
+setInterval(()=>{if(document.visibilityState==='visible'&&!$('#app').hidden)load()},45000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!$('#app').hidden)load()});
+(async()=>{try{const r=await fetch('/content.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const c=await r.json();ownerName=String(c.name||'').split(' ')[0]}}catch(e){}
+ $('#em').value=ENQDB.cfg.owner;if(ENQDB.session())start();else showLogin('')})();
+</script></body></html>

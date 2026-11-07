@@ -6,12 +6,12 @@ const b64={
 };
 const pipe=async(u,Cls)=>new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new Cls('deflate-raw'))).arrayBuffer());
 window.QCODEC={
- async enc(o){const raw=new TextEncoder().encode(JSON.stringify(o));
-  if(window.CompressionStream){try{return 'z'+b64.enc(await pipe(raw,CompressionStream))}catch(e){}}
-  return 'j'+b64.enc(raw)},
+ async enc(o){const raw=new TextEncoder().encode(JSON.stringify(o)),plain='j'+b64.enc(raw);
+  /* Plain links open on every phone. Only very long quotes are compressed (needs iOS 16.4+ / a current browser). */
+  if(plain.length>1800&&window.CompressionStream){try{return 'z'+b64.enc(await pipe(raw,CompressionStream))}catch(e){}}
+  return plain},
  async dec(t){t=(t||'').replace(/^#/,'');const k=t[0],body=b64.dec(t.slice(1));let raw;
   if(k=='z')raw=await pipe(body,DecompressionStream);else if(k=='j')raw=body;else throw new Error('bad');
   return JSON.parse(new TextDecoder().decode(raw))}
 };
 })();
-

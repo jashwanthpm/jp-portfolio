@@ -85,6 +85,7 @@ iframe{width:100%;height:100%;border:0;background:#0d0c0b}
  <div class="brand"><img src="/images/favicon-1791284648615.png" alt=""><div><b>Quotation Studio</b><small>Create &amp; send quotes</small></div></div>
  <div class="doc"><span id="dn">JP-0000-01</span><span class="pill" id="ds2">Draft</span><span class="sv"><i></i><span id="svt">Saved</span></span></div>
  <div class="sp"></div>
+ <a class="btn hm" href="enquiries.html" title="Enquiry dashboard"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span class="t">Enquiries</span></a>
  <button class="btn" id="lib"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span class="t">Library</span><span class="bd2" id="lc">0</span></button>
  <button class="btn hm" id="nw"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="t">New</span></button>
  <button class="btn hm" id="cp"><svg class="i" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg><span class="t">Copy link</span></button>
@@ -121,7 +122,7 @@ iframe{width:100%;height:100%;border:0;background:#0d0c0b}
  <input id="sq" placeholder="Search quotes" style="margin-bottom:12px"><div id="ll"></div>
  <div class="sec2"><h4>Import an enquiry</h4><p class="hint" style="margin:0 0 8px">Paste the “create_quote_link” from your enquiry email to fill a quote from it.</p><textarea id="imp" rows="3" placeholder="https://…/admin/quote.html#e=…"></textarea><button class="btn sm" id="impb" style="margin-top:8px">Import</button></div></div></aside>
 <div id="toast"></div>
-<script src="/assets/quote.js"></script>
+<script src="/assets/quote.js"></script><script src="/assets/enqdb.js"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const LS={get:k=>{try{return localStorage.getItem(k)}catch{return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}}},J=(k,d)=>{try{return JSON.parse(LS.get(k))||d}catch{return d}};
@@ -136,7 +137,7 @@ const FK=['c','ph','t','e','l','n','d','vd','ds','g','a','nt','upi','pb','tm','t
 let rates=J('q_rates',{}),st,tmr,cur='';
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const newNo=()=>{const d=new Date(),p=(String((QC.quote||{}).prefix||'JP').trim()||'JP')+'-'+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+'-',mx=J('q_lib',[]).reduce((m,x)=>{const s=String(x.n||'');return s.startsWith(p)?Math.max(m,+s.slice(p.length)||0):m},0);return p+String(mx+1).padStart(2,'0')};
-const blank=()=>({id:uid(),sent:false,enq:null,items:[['','',1,0]],f:(()=>{const Q=QC.quote||{},pick=(a,b,c)=>String(a||'').trim()?a:(b||c);return{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:num(Q.validDays)||7,ds:0,g:String(Q.gst||'0'),a:Q.advance!==undefined&&String(Q.advance).trim()!==''?num(Q.advance):50,nt:String(Q.included||''),upi:pick(Q.upi,LS.get('q_upi',''),''),pb:pick(Q.payment,LS.get('q_pb'),''),tm:pick(Q.terms,LS.get('q_tm'),DT),th:''}})()});
+const blank=()=>({id:uid(),sent:false,enq:null,enqId:null,items:[['','',1,0]],f:(()=>{const Q=QC.quote||{},pick=(a,b,c)=>String(a||'').trim()?a:(b||c);return{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:num(Q.validDays)||7,ds:0,g:String(Q.gst||'0'),a:Q.advance!==undefined&&String(Q.advance).trim()!==''?num(Q.advance):50,nt:String(Q.included||''),upi:pick(Q.upi,LS.get('q_upi',''),''),pb:pick(Q.payment,LS.get('q_pb'),''),tm:pick(Q.terms,LS.get('q_tm'),DT),th:''}})()});
 const phone=v=>{v=String(v||'').replace(/\D/g,'');return v.length==10?'91'+v:v};
 const fdate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):(s||'');
 function load(){FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');drawItems();drawEnq();$('#dn').textContent=st.f.n;pill()}
@@ -149,13 +150,14 @@ function drawEnq(){const e=st.enq,box=$('#enqc');if(!e){box.innerHTML='';$('#bud
 function calc(){const it=st.items,sub=it.reduce((s,x)=>s+num(x[2])*num(x[3]),0),dis=Math.min(num(st.f.ds),sub),tx=sub-dis,gp=num(st.f.g),tot=tx+tx*gp/100,ap=Math.min(100,num(st.f.a));return{tot,ap,adv:Math.round(tot*ap/100)}}
 function payload(){const f=st.f,v=f.d||today();return{v:1,n:String(f.n||'').trim(),d:v,x:addD(v,Math.max(1,num(f.vd)||7)),c:String(f.c).trim(),t:String(f.t).trim(),e:String(f.e).trim(),l:String(f.l).trim(),i:st.items.filter(x=>String(x[0]).trim()).map(x=>[String(x[0]).trim(),String(x[1]||'').trim(),num(x[2])||1,num(x[3])]),ds:num(f.ds),g:num(f.g),a:num(f.a),nt:String(f.nt).trim(),upi:String(f.upi||'').trim(),pb:String(f.pb).trim(),tm:String(f.tm).trim(),th:['noir','ivory','blush','editorial'].includes(f.th)?f.th:undefined}}
 async function upd(){const c=calc();$('#tot').textContent=inr(c.tot);$('#advl').textContent=`Advance (${c.ap}%)`;$('#adv').textContent=inr(c.adv);$('#dn').textContent=st.f.n;
- cur=await QCODEC.enc(payload());const previewBase='https://smyupcjfusgduaoxqfvu.supabase.co/functions/v1/smart-preview';$('#lnk').value=previewBase+'?type=quote&data='+encodeURIComponent(cur);
+ cur=await QCODEC.enc(payload());$('#lnk').value=location.origin+'/q#'+cur;
  const fr=$('#fr');try{if(fr.dataset.on)fr.contentWindow.location.hash=cur;else{fr.dataset.on=1;fr.src='/q.html#'+cur}}catch{fr.src='/q.html#'+cur}
  LS.set('q_cur',JSON.stringify(st));LS.set('q_upi',st.f.upi||'');LS.set('q_pb',st.f.pb);LS.set('q_tm',st.f.tm);upsert();$('#svt').textContent='Saved'}
 const sched=()=>{$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
 function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const lib=J('q_lib',[]).filter(x=>x.id!=st.id);lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length,60)}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),1600)}
-function markSent(){if(!st.sent){st.sent=true;pill();upd()}}
+function markSent(){if(!st.sent){st.sent=true;pill();upd()}syncEnquiry()}
+async function syncEnquiry(){if(!st.enqId||!window.ENQDB||!ENQDB.session())return;try{await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(st.enqId)+'&status=in.(new,contacted,follow_up,quoted)',{status:'quoted',quote_ref:String(st.f.n||''),quote_amount:calc().tot});toast('Enquiry marked as quotation sent')}catch(e){}}
 /* inputs */
 $('#scroll').addEventListener('input',e=>{const t=e.target;
  if(t.dataset.i!=null){const x=st.items[+t.dataset.i],k=+t.dataset.k;x[k]=t.value;
@@ -193,18 +195,18 @@ $('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J
  else if(b.dataset.dup){const x=lib.find(y=>y.id==b.dataset.dup);if(x){st=JSON.parse(JSON.stringify(x.st));st.id=uid();st.sent=false;st.f.n=newNo();st.f.d=today();load();upd();open(false);toast('Duplicated')}}
  else if(b.dataset.rm){if(confirm('Delete this quote?')){LS.set('q_lib',JSON.stringify(lib.filter(y=>y.id!=b.dataset.rm)));$('#lc').textContent=J('q_lib',[]).length;drawLib()}}};
 /* enquiry import */
-async function fromEnquiry(code){let e;try{e=await QCODEC.dec(code);if(!e||typeof e!='object')throw 0}catch{toast('That enquiry link is not valid');return false}
- const imp=J('q_imp',{});if(imp[code]){const x=J('q_lib',[]).find(y=>y.id==imp[code]);if(x){st=JSON.parse(JSON.stringify(x.st));load();upd();toast('Opened the quote you already made');return true}}
- st=blank();const f=st.f;st.enq={o:e.o||'',w:Array.isArray(e.w)?e.w.map(String):[],d:e.d||'',y:e.y||'',v:e.v||'',n:e.n||'',p:e.p||'',e:e.e||'',i:e.i||'',b:e.b||'',br:e.br||'',f:e.f||'',m:e.m||''};
+async function fromEnquiry(code,eid){let e;try{e=await QCODEC.dec(code);if(!e||typeof e!='object')throw 0}catch{toast('That enquiry link is not valid');return false}
+ const imp=J('q_imp',{});if(imp[code]){const x=J('q_lib',[]).find(y=>y.id==imp[code]);if(x){st=JSON.parse(JSON.stringify(x.st));if(eid)st.enqId=eid;load();upd();toast('Opened the quote you already made');return true}}
+ st=blank();st.enqId=eid||null;const f=st.f;st.enq={o:e.o||'',w:Array.isArray(e.w)?e.w.map(String):[],d:e.d||'',y:e.y||'',v:e.v||'',n:e.n||'',p:e.p||'',e:e.e||'',i:e.i||'',b:e.b||'',br:e.br||'',f:e.f||'',m:e.m||''};
  f.c=st.enq.n;f.ph=phone(st.enq.p);f.t=st.enq.o;f.e=/^\d{4}-/.test(st.enq.d)?fdate(st.enq.d):(st.enq.d==='Not fixed yet'?'Date to be confirmed':'');f.l=st.enq.v;
  const names=[OCC[st.enq.o]||st.enq.o].concat(st.enq.w.filter(w=>!['Not sure yet'].includes(w))).filter(Boolean);
  st.items=names.length?names.map(n=>[n,'',1,rateFor(n)]):[['','',1,0]];
  imp[code]=st.id;LS.set('q_imp',JSON.stringify(imp));load();upd();toast('Quote started from the enquiry');return true}
-$('#impb').onclick=async()=>{const t=$('#imp').value.trim(),m=t.match(/#e=([A-Za-z0-9_-]+)/)||t.match(/^e=([A-Za-z0-9_-]+)$/)||t.match(/^([zj][A-Za-z0-9_-]{8,})$/);if(!m){toast('Paste the full enquiry link');return}if(await fromEnquiry(m[1])){$('#imp').value='';open(false)}};
+$('#impb').onclick=async()=>{const t=$('#imp').value.trim(),m=t.match(/#e=([A-Za-z0-9_-]+)(?:&id=([0-9a-fA-F-]{36}))?/)||t.match(/^e=([A-Za-z0-9_-]+)$/)||t.match(/^([zj][A-Za-z0-9_-]{8,})$/);if(!m){toast('Paste the full enquiry link');return}if(await fromEnquiry(m[1],m[2])){$('#imp').value='';open(false)}};
 /* boot */
-addEventListener('hashchange',()=>{const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)/);if(m){history.replaceState(null,'',location.pathname);fromEnquiry(m[1])}});
+addEventListener('hashchange',()=>{const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)(?:&id=([0-9a-fA-F-]{36}))?/);if(m){history.replaceState(null,'',location.pathname);fromEnquiry(m[1],m[2])}});
 (async()=>{try{const c=new AbortController();setTimeout(()=>c.abort(),2500);const r=await fetch('/content.json?t='+Date.now(),{cache:'no-store',signal:c.signal});if(r.ok){const d=await r.json();QC={quote:d.quote||{},qRates:Array.isArray(d.qRates)?d.qRates:[]};drawQuick()}}catch(e){}
- $('#lc').textContent=J('q_lib',[]).length;const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)/);
+ $('#lc').textContent=J('q_lib',[]).length;const m=location.hash.match(/^#e=([A-Za-z0-9_-]+)(?:&id=([0-9a-fA-F-]{36}))?/);
  const sv=J('q_cur',null);st=sv&&sv.f?sv:blank();st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];
- if(m){history.replaceState(null,'',location.pathname);load();await fromEnquiry(m[1])}else{load();upd()}})();
+ if(m){history.replaceState(null,'',location.pathname);load();await fromEnquiry(m[1],m[2])}else{load();upd()}})();
 </script></body></html>
