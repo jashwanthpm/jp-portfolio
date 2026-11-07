@@ -199,11 +199,32 @@ $('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J
 
 (async()=>{try{const c=new AbortController();setTimeout(()=>c.abort(),2500);const r=await fetch('/content.json?t='+Date.now(),{cache:'no-store',signal:c.signal});if(r.ok){const d=await r.json();QC={quote:d.quote||{},qRates:Array.isArray(d.qRates)?d.qRates:[]};drawQuick()}}catch(e){}
  $('#lc').textContent=J('q_lib',[]).length;
- const sv=J('q_cur',null);let incoming=null;
- if(location.hash.length>2){try{incoming=await QCODEC.dec(location.hash.slice(1));if(!incoming||!incoming.f||!Array.isArray(incoming.items))incoming=null}catch(e){}}
+ const sv=J('q_cur',null);let incoming=null,fromEnquiry=false;
+ if(location.hash.length>2){
+  try{
+   const hash=location.hash.slice(1);
+   if(hash.startsWith('e=')){
+    const params=new URLSearchParams(hash),e=await QCODEC.dec(params.get('e')||'');
+    if(e&&typeof e==='object'){
+     incoming=blank();fromEnquiry=true;
+     incoming.enq=e;incoming.enqId=params.get('id')||null;
+     incoming.f.c=String(e.n||'');
+     incoming.f.ph=String(e.p||'');
+     incoming.f.t=String(e.o||((e.w||[]).join(', '))||'');
+     incoming.f.e=String(e.d||'');
+     incoming.f.l=String(e.v||'');
+    }
+   }else{
+    incoming=await QCODEC.dec(hash);
+    if(!incoming||!incoming.f||!Array.isArray(incoming.items))incoming=null;
+   }
+  }catch(e){incoming=null}
+ }
  st=incoming||((sv&&sv.f)?sv:blank());
- if(incoming&&sv&&sv.f&&sv.f.n===incoming.f.n)st.id=sv.id;
+ if(incoming&&!fromEnquiry&&sv&&sv.f&&sv.f.n===incoming.f.n)st.id=sv.id;
  st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];
  if(incoming)history.replaceState(null,'',location.pathname+location.search);
- load();upd()})();
+ load();upd();
+ if(fromEnquiry)toast('Enquiry details loaded — build your quote');
+})();
 </script></body></html>
