@@ -183,11 +183,11 @@ contact(){
  try{const r=await fetch(C.formEndpoint,{method:'POST',body:new FormData(e.target),headers:{Accept:'application/json'}});if(!r.ok)throw 0;e.target.reset();txt('ok',"Thank you — I'll reply to you personally, soon.")}catch{txt('ok','Could not send. Please email me directly.')}}}
 ,enquire(){
  const root=$('#ew');if(!root)return;
- const S={occasion:'',days:'',wants:[],budget:'',found:''},N=5,steps=$$('.ew-step',root),bar=$('#ewb'),lab=$('#ewl'),back=$('#ewback'),next=$('#ewnext'),err=$('#ewerr'),f=$('#ef'),
+ const S={occasion:'',days:'',wants:[],budget:'',found:'',collabModel:'',collabType:''},N=5,steps=$('.ew-step',root),bar=$('#ewb'),lab=$('#ewl'),back=$('#ewback'),next=$('#ewnext'),err=$('#ewerr'),f=$('#ef'),
   val=n=>(f.elements[n]&&f.elements[n].value||'').trim();
  let i=0,busy=false;
  const go=(n,quiet)=>{i=Math.max(0,Math.min(N-1,n));steps.forEach((s,k)=>s.hidden=k!=i);bar.style.width=(i+1)/N*100+'%';lab.textContent=`Step ${i+1} of ${N}`;back.hidden=i==0;
-  next.textContent=i==N-1?'Send enquiry':'Continue';err.textContent='';$('#ewbrandw').hidden=S.occasion!='Collab / brand shoot';
+  next.textContent=i==N-1?'Send enquiry':'Continue';err.textContent='';$('#ewbrandw').hidden=S.occasion!='Brand shoot';$('#ewcollab').hidden=S.occasion!='Collab shoot';$('#ewbrand').hidden=S.occasion!='Brand shoot';
   if(!quiet)$('.ew-top').scrollIntoView({behavior:'smooth',block:'start'});
   if(i==4)setTimeout(()=>f.elements.name.focus({preventScroll:true}),350)};
  const other=g=>{const w=root.querySelector(`.ew-other[data-for=${g}]`);if(!w)return;const on=[].concat(S[g]).includes('Other');w.hidden=!on;return on?w.querySelector('input'):null};
@@ -202,7 +202,7 @@ contact(){
  tbd.onclick=()=>{tbd.classList.toggle('on');dt.disabled=tbd.classList.contains('on');if(dt.disabled)dt.value=''};
  const check=()=>{
   if(i==0){if(!S.occasion)return'Please pick one to continue.';if(S.occasion=='Other'&&!val('occasion_other'))return'Please tell me what you have in mind.'}
-  if(i==2&&S.wants.includes('Other')&&!val('wants_other'))return'Please tell me what else you need.';
+  if(i==1&&S.occasion=='Collab shoot'){if(!S.collabModel)return'Please tell me if you are a model.';if(!val('collab_ig'))return'Please add your Instagram handle.';if(!S.collabType)return'Please choose the kind of collaboration.'}if(i==1&&S.occasion=='Brand shoot'&&!val('brand_name'))return'Please add your brand or company name.';if(i==2&&S.wants.includes('Other')&&!val('wants_other'))return'Please tell me what else you need.';
   if(i==4){if(!val('name'))return'Please add your name.';if(val('phone').replace(/\D/g,'').length<10)return'Please add a valid WhatsApp number.';if(val('email')&&!/^\S+@\S+\.\S+$/.test(val('email')))return'That email does not look right.';if(!val('message'))return'Please describe your requirements so I can understand what you need.';
    if(S.found=='Other'&&!val('found_other'))return'Please tell me where you heard about me.'}
   return''};
@@ -211,9 +211,9 @@ contact(){
  const submit=async()=>{if(busy||val('_gotcha'))return;busy=true;next.disabled=true;next.textContent='Sending…';
   const occ=S.occasion=='Other'?val('occasion_other'):S.occasion,wants=S.wants.map(w=>w=='Other'?val('wants_other'):w).filter(Boolean),found=S.found=='Other'?val('found_other'):S.found,
    date=tbd.classList.contains('on')?'Not fixed yet':val('date'),
-   q={o:occ,w:wants,d:date,y:S.days,v:val('venue'),n:val('name'),p:val('phone'),e:val('email'),i:val('instagram'),b:S.budget,br:val('brand'),f:found,m:val('message')};
+   q={o:occ,w:wants,d:date,y:S.days,v:val('venue'),n:val('name'),p:val('phone'),e:val('email'),i:S.occasion=='Collab shoot'?val('collab_ig'):val('instagram'),b:S.occasion=='Collab shoot'?S.collabType:S.budget,br:S.occasion=='Brand shoot'?val('brand_name'):'',f:found,m:[val('message'),S.occasion=='Collab shoot'?'Model: '+S.collabModel+' | Collaboration: '+S.collabType:'',S.occasion=='Brand shoot'?'Brand Instagram / website: '+val('brand_social'):''].filter(Boolean).join('\n')};
   let link='';try{link=location.origin+'/admin/quote.html#e='+(await QCODEC.enc(q))}catch{}
-  const payload={name:q.n,phone:q.p,email:q.e||null,instagram:q.i||null,occasion:occ,looking_for:wants.join(', '),event_date:/^\\d{4}-\\d{2}-\\d{2}$/.test(date)?date:null,days:(parseInt(String(q.y).match(/\\d+/)?.[0]||'',10)||null),venue:q.v||null,brand:q.br||null,budget:q.b||null,found_via:found||null,message:q.m||null,source:new URLSearchParams(location.search).get('ref')||'direct link'};
+  const payload={name:q.n,phone:q.p,email:q.e||null,instagram:q.i||null,occasion:occ,looking_for:[...wants,...(S.occasion=='Collab shoot'?['Collaboration']:S.occasion=='Brand shoot'?['Brand photography']:[])].join(', '),event_date:/^\\d{4}-\\d{2}-\\d{2}$/.test(date)?date:null,days:(parseInt(String(q.y).match(/\\d+/)?.[0]||'',10)||null),venue:q.v||null,brand:q.br||null,budget:q.b||null,found_via:found||null,message:q.m||null,source:new URLSearchParams(location.search).get('ref')||'direct link'};
   try{if(!window.ENQDB||typeof ENQDB.submitPublic!=='function')throw new Error('Enquiry service is not available.');await ENQDB.submitPublic(payload);
    f.hidden=true;$('.ew-top').hidden=true;$('.ew-tiny').hidden=true;$('#ewok').hidden=false;$('#ewokn').innerHTML='Thank <em>you'+(q.n?', '+q.n.split(' ')[0].replace(/[<>&"]/g,''):'')+'</em>';
    const a=$('#ewokw');if(waNumber()){a.href=waHref(`Hi ${C.name||''}, I just filled the enquiry form.`);a.style.display='inline-flex'}
