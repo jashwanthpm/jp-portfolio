@@ -95,9 +95,8 @@ select option{background:#1a1714}
   <div class="pop" id="pop" hidden><a href="quote.html"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/></svg>Quotation studio</a><a href="./"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8"/></svg>Site editor</a><button id="csv"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Export to CSV</button><button id="out"><svg class="i" viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h9"/></svg>Sign out</button></div></div>
 </header>
 
-<main class="login" id="login" hidden><div class="lc"><img src="/images/favicon-1791284648615.png" alt=""><h1>Enquiries</h1><p>Sign in to see who has reached out.</p>
- <label for="em">Email</label><input id="em" type="email" inputmode="email" autocomplete="username" autocapitalize="none"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
- <div class="err" id="le" role="alert"></div><button class="btn pri" id="go" style="width:100%;margin-top:6px;min-height:46px">Sign in</button></div></main>
+<main class="login" id="login" hidden><div class="lc"><img src="/images/favicon-1791284648615.png" alt=""><h1>Enquiries</h1><p>This dashboard uses the same private GitHub access as Studio Admin. No separate password is needed.</p>
+ <div class="err" id="le" role="alert"></div><a class="btn pri" href="/admin/" style="width:100%;margin-top:12px;min-height:46px">Open Studio Admin</a></div></main>
 
 <div class="app" id="app" hidden>
  <div class="kpis" id="kpis"></div>
@@ -126,13 +125,9 @@ const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearT
 const due=r=>!!r.follow_up_on&&!DONE.includes(r.status)&&r.follow_up_on<=today();
 const late=r=>!!r.follow_up_on&&!DONE.includes(r.status)&&r.follow_up_on<today();
 /* ---------- auth ---------- */
-function showLogin(msg){$('#login').hidden=false;$('#app').hidden=true;$('#le').textContent=msg||'';$('#em').value=$('#em').value||ENQDB.cfg.owner;closeDr();setTop(false)}
+function showLogin(msg){$('#login').hidden=false;$('#app').hidden=true;$('#le').textContent=msg||'Open Studio Admin to continue with your existing GitHub access.';closeDr();setTop(false)}
 function setTop(on){['#upd','#rf','#add','.menu'].forEach(s=>{const e=$(s);if(e)e.style.display=on?'':'none'})}
-$('#go').onclick=async()=>{const b=$('#go');b.disabled=true;b.textContent='Signing in…';$('#le').textContent='';
- try{const e=$('#em').value.trim().toLowerCase();await ENQDB.signIn(e,$('#pw').value);$('#pw').value='';start()}catch(x){$('#le').textContent=x.message==='Invalid login credentials'?'That email or password is not right.':x.message}
- b.disabled=false;b.textContent='Sign in'};
-$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('#go').click()});
-$('#out').onclick=()=>{ENQDB.signOut();$('#pop').hidden=true;rows=[];showLogin('')};
+$('#out').onclick=()=>{location.href='/admin/'};
 /* ---------- data ---------- */
 async function load(manual){if(busy)return;busy=true;
  try{const data=await ENQDB.rest('GET','?select=*&order=created_at.desc&limit=1000');
@@ -229,5 +224,5 @@ function start(){$('#login').hidden=true;$('#app').hidden=false;setTop(true);fir
 setInterval(()=>{if(document.visibilityState==='visible'&&!$('#app').hidden)load()},45000);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!$('#app').hidden)load()});
 (async()=>{try{const r=await fetch('/content.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const c=await r.json();ownerName=String(c.name||'').split(' ')[0]}}catch(e){}
- $('#em').value=ENQDB.cfg.owner;if(ENQDB.session())start();else showLogin('')})();
+ if(ENQDB.session())start();else showLogin('Open Studio Admin first. This dashboard reuses its GitHub access.')})();
 </script></body></html>
