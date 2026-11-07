@@ -2404,21 +2404,13 @@
     "collabTypeLabel": "What kind of collaboration are you looking for?"
   },
   "eqOcc": [
-    {
-      "t": "Wedding"
-    },
-    {
-      "t": "Pre-wedding"
-    },
-    {
-      "t": "Engagement"
-    },
-    {
-      "t": "Collab / brand shoot"
-    },
-    {
-      "t": "Portraits"
-    }
+    "Wedding",
+    "Pre-wedding",
+    "Engagement",
+    "Haldi / Mehendi / Sangeet",
+    "Collab shoot",
+    "Brand shoot",
+    "Portraits"
   ],
   "eqDays": [
     {
