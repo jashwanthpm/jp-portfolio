@@ -26,7 +26,7 @@
 #ew-collab-ig-label::after,#ew-collab-city-label::after,#ew-collab-area-label::after{content:" *";color:var(--acc)}
 body.ew-loc-optional #ew-collab-city-label::after,body.ew-loc-optional #ew-collab-area-label::after{display:none}
 .ew-note{margin:18px 0 0;padding:13px 16px;border-left:2px solid var(--acc);background:color-mix(in srgb,var(--acc) 8%,transparent);border-radius:0 var(--ew-rad,12px) var(--ew-rad,12px) 0;color:var(--ew-label,#cfc6ba);font-size:.88rem;line-height:1.55}
-.ew-note[hidden]{display:none!important}
+.ew-note[hidden],.ew-note:empty{display:none!important}
 </style>
 <style id="ewthemes">
 /* Looks for the enquiry form. Picked in the site editor (Enquiry tab). */
@@ -75,7 +75,7 @@ body.ew-wait{opacity:0}body{transition:opacity .25s,background .3s}
 <div class="ew-other" data-for="collabModel" hidden><input name="collab_role_other" placeholder="Tell me a little about you" autocomplete="off" enterkeyhint="next"></div>
 <label class="ew-l" id="ew-collab-ig-label" for="ewci">Your Instagram handle</label><input id="ewci" name="collab_ig" autocapitalize="none" autocomplete="off" placeholder="@yourhandle" required aria-required="true" enterkeyhint="next">
 <label class="ew-l" id="ew-collab-type-label">What kind of collaboration are you looking for?</label><div class="ew-chips" data-g="collabType"><button type="button" class="ew-opt" data-v="Barter">Barter</button><button type="button" class="ew-opt" data-v="Paid collaboration">Paid collaboration</button><button type="button" class="ew-opt" data-v="Open to either">Open to either</button></div>
-<p class="ew-note" id="ew-collab-note">Barter collaborations are considered based on your portfolio, reach and engagement.</p></div></section>
+<p class="ew-note" id="ew-collab-note" hidden>Barter collaborations are considered based on your portfolio, reach and engagement.</p></div></section>
 <section class="ew-step" data-s="2" hidden><h1>What do you <em>need?</em></h1><p class="ew-sub">Pick as many as you like.</p>
 <div class="ew-chips" data-g="wants" data-multi><button type="button" class="ew-opt" data-v="Candid photography">Candid photography</button><button type="button" class="ew-opt" data-v="Traditional photography">Traditional photography</button><button type="button" class="ew-opt" data-v="Album">Album</button><button type="button" class="ew-opt" data-v="Reels / teaser">Reels / teaser</button><button type="button" class="ew-opt" data-v="Not sure yet">Not sure yet</button><button type="button" class="ew-opt" data-v="Other">Other</button></div>
 <div class="ew-other" data-for="wants" hidden><input name="wants_other" placeholder="What else do you need?" autocomplete="off" enterkeyhint="done"></div></section>
@@ -126,7 +126,7 @@ window.fetch=function(u,o){try{const url=String(u&&u.url||u);if(/formspree\.io/.
   const txt=(sel,v,html)=>{const e=$(sel);if(e&&typeof v==='string'&&v.trim())html?e.innerHTML=em(v):e.textContent=v};
   const opts=(g,l,other)=>{const b=$('[data-g="'+g+'"]'),a=list(l);if(!b)return;if(!a.length){if(!other){const o=b.querySelector('[data-v="Other"]');o&&o.remove()}return}b.innerHTML=a.map(btn).join('')+(other?btn('Other'):'')};
   [['0','s1h','s1s'],['1','s2h','s2s'],['5','collabStepH','collabStepS'],['2','s3h','s3s'],['3','s4h','s4s'],['4','s5h','s5s']].forEach(([n,h,s])=>{txt('[data-s="'+n+'"] h1',E[h],1);txt('[data-s="'+n+'"] .ew-sub',E[s])});
-  opts('occasion',D.eqOcc,E.occOther!==false);opts('days',D.eqDays,false);txt('#ew-model-label',E.collabRoleLabel);txt('#ew-collab-city-label',E.collabCityLabel);txt('#ew-collab-area-label',E.collabAreaLabel);window.__ewLocReq=E.collabLocReq!==false;document.body.classList.toggle('ew-loc-optional',!window.__ewLocReq);txt('#ew-collab-ig-label',E.collabIgLabel);txt('#ew-collab-type-label',E.collabTypeLabel);opts('collabModel',D.eqCollabRole,E.collabRoleOther!==false);opts('collabType',D.eqCollabType,false);const nt=$('#ew-collab-note');if(nt&&typeof E.collabNote==='string'){nt.textContent=E.collabNote;nt.hidden=!E.collabNote.trim()}opts('wants',D.eqWants,E.wantsOther!==false);opts('budget',D.eqBudget,false);opts('found',D.eqFound,E.foundOther!==false);
+  opts('occasion',D.eqOcc,E.occOther!==false);opts('days',D.eqDays,false);txt('#ew-model-label',E.collabRoleLabel);txt('#ew-collab-city-label',E.collabCityLabel);txt('#ew-collab-area-label',E.collabAreaLabel);window.__ewLocReq=E.collabLocReq!==false;document.body.classList.toggle('ew-loc-optional',!window.__ewLocReq);txt('#ew-collab-ig-label',E.collabIgLabel);txt('#ew-collab-type-label',E.collabTypeLabel);opts('collabModel',D.eqCollabRole,E.collabRoleOther!==false);opts('collabType',D.eqCollabType,false);const nt=$('#ew-collab-note');if(nt&&typeof E.collabNote==='string')nt.textContent=E.collabNote.trim();opts('wants',D.eqWants,E.wantsOther!==false);opts('budget',D.eqBudget,false);opts('found',D.eqFound,E.foundOther!==false);
   txt('label[for="ewm"]',E.reqLabel);const ta=$('#ewm');if(ta&&E.reqPh)ta.placeholder=E.reqPh;
   window.__ewReq=E.reqOn!==false;
   if(window.__ewReq){ta.setAttribute('required','');ta.setAttribute('aria-required','true');$('#ewtag').textContent='Required'}else{ta.removeAttribute('required');ta.removeAttribute('aria-required');$('#ewtag').textContent='Optional'}
@@ -135,10 +135,10 @@ window.fetch=function(u,o){try{const url=String(u&&u.url||u);if(/formspree\.io/.
   if(PV)txt('#ewokn',(E.okh||'Thank *you*').replace(/\{name\}/g,'Name'),1);
   else if(typeof E.okh==='string'&&E.okh.trim()&&E.okh.trim()!=='Thank *you*'){mo=new MutationObserver(()=>{const n=(($('#ewn')||{}).value||'').trim().split(' ')[0];mo.disconnect();h.innerHTML=em(E.okh.replace(/\{name\}/g,n));mo.observe(h,{childList:true})});mo.observe(h,{childList:true})}
  }
- if(PV){const st=document.createElement('style');st.textContent='.ew .ew-step[hidden],.ew #ewok[hidden],.ew #ewcollab[hidden],.ew #ewcollabloc[hidden]{display:block!important}.ew .ew-step{padding-bottom:34px;margin-bottom:34px;border-bottom:1px dashed var(--line)}.ew-bar,.ew-top,.ew-tiny{display:none!important}.ew-ok{padding-top:10px!important}';document.head.appendChild(st);
+ if(PV){const st=document.createElement('style');st.textContent='.ew .ew-step[hidden],.ew #ewok[hidden],.ew #ewcollab[hidden],.ew #ewcollabloc[hidden]{display:block!important}.ew #ew-collab-note[hidden]:not(:empty){display:block!important}.ew .ew-step{padding-bottom:34px;margin-bottom:34px;border-bottom:1px dashed var(--line)}.ew-bar,.ew-top,.ew-tiny{display:none!important}.ew-ok{padding-top:10px!important}';document.head.appendChild(st);
   addEventListener('message',e=>{if(e.origin!==location.origin||!e.data||e.data.type!=='content'||!e.data.data)return;try{live=true;apply(e.data.data)}catch(x){}})}
  (async()=>{try{const r=await fetch('content.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(!live)apply(d)}}catch(e){}document.body.classList.remove('ew-wait');
-  const s=document.createElement('script');s.src='assets/site.js?v=20261109-collab3';document.body.appendChild(s)})();
+  const s=document.createElement('script');s.src='assets/site.js?v=20261110-collab4';document.body.appendChild(s)})();
 })();
 </script>
 <script>
