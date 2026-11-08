@@ -23,7 +23,8 @@
 .ew-req.bad textarea{border-color:#e08a78;box-shadow:0 0 0 3px rgba(224,138,120,.12)}
 .ew-fe{color:#ff9b8a;font-size:.86rem;margin:10px 0 0}
 .ew-req [hidden]{display:none!important}
-#ew-collab-ig-label::after{content:" *";color:var(--acc)}
+#ew-collab-ig-label::after,#ew-collab-city-label::after,#ew-collab-area-label::after{content:" *";color:var(--acc)}
+body.ew-loc-optional #ew-collab-city-label::after,body.ew-loc-optional #ew-collab-area-label::after{display:none}
 .ew-note{margin:18px 0 0;padding:13px 16px;border-left:2px solid var(--acc);background:color-mix(in srgb,var(--acc) 8%,transparent);border-radius:0 var(--ew-rad,12px) var(--ew-rad,12px) 0;color:var(--ew-label,#cfc6ba);font-size:.88rem;line-height:1.55}
 .ew-note[hidden]{display:none!important}
 </style>
@@ -66,8 +67,11 @@ body.ew-wait{opacity:0}body{transition:opacity .25s,background .3s}
 <div class="ew-other" data-for="occasion" hidden><input name="occasion_other" placeholder="Tell me what you have in mind" autocomplete="off" enterkeyhint="done"></div></section>
 <section class="ew-step" data-s="1" hidden><h1>When &amp; <em>where?</em></h1><p class="ew-sub">Rough details are fine. We can sort the rest later.</p>
 <label class="ew-l" for="ewd">Date</label><input id="ewd" name="date" type="date"><div class="ew-chips" id="ewt" style="margin-top:10px"><button type="button" class="ew-opt" id="ewtbd">Date not fixed yet</button></div>
-<label class="ew-l" for="ewv">City / venue</label><input id="ewv" name="venue" placeholder="e.g. Bengaluru, or the venue name" autocomplete="off">
-<label class="ew-l">How many days?</label><div class="ew-chips" data-g="days"><button type="button" class="ew-opt" data-v="1 day">1 day</button><button type="button" class="ew-opt" data-v="2 days">2 days</button><button type="button" class="ew-opt" data-v="3+ days">3+ days</button><button type="button" class="ew-opt" data-v="Not sure">Not sure</button></div><div id="ewcollab" hidden><label class="ew-l" id="ew-model-label">Who are you collaborating as?</label><div class="ew-chips" data-g="collabModel"><button type="button" class="ew-opt" data-v="Model">Model</button><button type="button" class="ew-opt" data-v="Influencer / content creator">Influencer / content creator</button><button type="button" class="ew-opt" data-v="Brand or business">Brand or business</button><button type="button" class="ew-opt" data-v="Other">Other</button></div>
+<div id="ewvenueb"><label class="ew-l" for="ewv">City / venue</label><input id="ewv" name="venue" placeholder="e.g. Bengaluru, or the venue name" autocomplete="off"></div>
+<div id="ewcollabloc" hidden><label class="ew-l" id="ew-collab-city-label" for="ewcc">City</label><input id="ewcc" name="collab_city" autocomplete="address-level2" placeholder="e.g. Bengaluru" enterkeyhint="next"><label class="ew-l" id="ew-collab-area-label" for="ewca">Area where you stay</label><input id="ewca" name="collab_area" autocomplete="off" placeholder="e.g. Indiranagar, Jayanagar" enterkeyhint="next"></div>
+<div id="ewdaysb"><label class="ew-l">How many days?</label><div class="ew-chips" data-g="days"><button type="button" class="ew-opt" data-v="1 day">1 day</button><button type="button" class="ew-opt" data-v="2 days">2 days</button><button type="button" class="ew-opt" data-v="3+ days">3+ days</button><button type="button" class="ew-opt" data-v="Not sure">Not sure</button></div></div></section>
+<section class="ew-step" data-s="5" hidden><h1>Tell me about <em>the collab</em></h1><p class="ew-sub">A few quick details so I can see if it's a fit.</p>
+<div id="ewcollab"><label class="ew-l" id="ew-model-label">Who are you collaborating as?</label><div class="ew-chips" data-g="collabModel"><button type="button" class="ew-opt" data-v="Model">Model</button><button type="button" class="ew-opt" data-v="Influencer / content creator">Influencer / content creator</button><button type="button" class="ew-opt" data-v="Brand or business">Brand or business</button><button type="button" class="ew-opt" data-v="Other">Other</button></div>
 <div class="ew-other" data-for="collabModel" hidden><input name="collab_role_other" placeholder="Tell me a little about you" autocomplete="off" enterkeyhint="next"></div>
 <label class="ew-l" id="ew-collab-ig-label" for="ewci">Your Instagram handle</label><input id="ewci" name="collab_ig" autocapitalize="none" autocomplete="off" placeholder="@yourhandle" required aria-required="true" enterkeyhint="next">
 <label class="ew-l" id="ew-collab-type-label">What kind of collaboration are you looking for?</label><div class="ew-chips" data-g="collabType"><button type="button" class="ew-opt" data-v="Barter">Barter</button><button type="button" class="ew-opt" data-v="Paid collaboration">Paid collaboration</button><button type="button" class="ew-opt" data-v="Open to either">Open to either</button></div>
@@ -121,8 +125,8 @@ window.fetch=function(u,o){try{const url=String(u&&u.url||u);if(/formspree\.io/.
   document.body.dataset.theme=['noir','ivory','blush','editorial'].includes(E.theme)?E.theme:'noir';if(['sharp','soft','round'].includes(E.corners))document.body.dataset.corners=E.corners;else document.body.removeAttribute('data-corners');
   const txt=(sel,v,html)=>{const e=$(sel);if(e&&typeof v==='string'&&v.trim())html?e.innerHTML=em(v):e.textContent=v};
   const opts=(g,l,other)=>{const b=$('[data-g="'+g+'"]'),a=list(l);if(!b)return;if(!a.length){if(!other){const o=b.querySelector('[data-v="Other"]');o&&o.remove()}return}b.innerHTML=a.map(btn).join('')+(other?btn('Other'):'')};
-  [['0','s1h','s1s'],['1','s2h','s2s'],['2','s3h','s3s'],['3','s4h','s4s'],['4','s5h','s5s']].forEach(([n,h,s])=>{txt('[data-s="'+n+'"] h1',E[h],1);txt('[data-s="'+n+'"] .ew-sub',E[s])});
-  opts('occasion',D.eqOcc,E.occOther!==false);opts('days',D.eqDays,false);txt('#ew-model-label',E.collabRoleLabel);txt('#ew-collab-ig-label',E.collabIgLabel);txt('#ew-collab-type-label',E.collabTypeLabel);opts('collabModel',D.eqCollabRole,E.collabRoleOther!==false);opts('collabType',D.eqCollabType,false);const nt=$('#ew-collab-note');if(nt&&typeof E.collabNote==='string'){nt.textContent=E.collabNote;nt.hidden=!E.collabNote.trim()}opts('wants',D.eqWants,E.wantsOther!==false);opts('budget',D.eqBudget,false);opts('found',D.eqFound,E.foundOther!==false);
+  [['0','s1h','s1s'],['1','s2h','s2s'],['5','collabStepH','collabStepS'],['2','s3h','s3s'],['3','s4h','s4s'],['4','s5h','s5s']].forEach(([n,h,s])=>{txt('[data-s="'+n+'"] h1',E[h],1);txt('[data-s="'+n+'"] .ew-sub',E[s])});
+  opts('occasion',D.eqOcc,E.occOther!==false);opts('days',D.eqDays,false);txt('#ew-model-label',E.collabRoleLabel);txt('#ew-collab-city-label',E.collabCityLabel);txt('#ew-collab-area-label',E.collabAreaLabel);window.__ewLocReq=E.collabLocReq!==false;document.body.classList.toggle('ew-loc-optional',!window.__ewLocReq);txt('#ew-collab-ig-label',E.collabIgLabel);txt('#ew-collab-type-label',E.collabTypeLabel);opts('collabModel',D.eqCollabRole,E.collabRoleOther!==false);opts('collabType',D.eqCollabType,false);const nt=$('#ew-collab-note');if(nt&&typeof E.collabNote==='string'){nt.textContent=E.collabNote;nt.hidden=!E.collabNote.trim()}opts('wants',D.eqWants,E.wantsOther!==false);opts('budget',D.eqBudget,false);opts('found',D.eqFound,E.foundOther!==false);
   txt('label[for="ewm"]',E.reqLabel);const ta=$('#ewm');if(ta&&E.reqPh)ta.placeholder=E.reqPh;
   window.__ewReq=E.reqOn!==false;
   if(window.__ewReq){ta.setAttribute('required','');ta.setAttribute('aria-required','true');$('#ewtag').textContent='Required'}else{ta.removeAttribute('required');ta.removeAttribute('aria-required');$('#ewtag').textContent='Optional'}
@@ -131,10 +135,10 @@ window.fetch=function(u,o){try{const url=String(u&&u.url||u);if(/formspree\.io/.
   if(PV)txt('#ewokn',(E.okh||'Thank *you*').replace(/\{name\}/g,'Name'),1);
   else if(typeof E.okh==='string'&&E.okh.trim()&&E.okh.trim()!=='Thank *you*'){mo=new MutationObserver(()=>{const n=(($('#ewn')||{}).value||'').trim().split(' ')[0];mo.disconnect();h.innerHTML=em(E.okh.replace(/\{name\}/g,n));mo.observe(h,{childList:true})});mo.observe(h,{childList:true})}
  }
- if(PV){const st=document.createElement('style');st.textContent='.ew .ew-step[hidden],.ew #ewok[hidden],.ew #ewcollab[hidden]{display:block!important}.ew .ew-step{padding-bottom:34px;margin-bottom:34px;border-bottom:1px dashed var(--line)}.ew-bar,.ew-top,.ew-tiny{display:none!important}.ew-ok{padding-top:10px!important}';document.head.appendChild(st);
+ if(PV){const st=document.createElement('style');st.textContent='.ew .ew-step[hidden],.ew #ewok[hidden],.ew #ewcollab[hidden],.ew #ewcollabloc[hidden]{display:block!important}.ew .ew-step{padding-bottom:34px;margin-bottom:34px;border-bottom:1px dashed var(--line)}.ew-bar,.ew-top,.ew-tiny{display:none!important}.ew-ok{padding-top:10px!important}';document.head.appendChild(st);
   addEventListener('message',e=>{if(e.origin!==location.origin||!e.data||e.data.type!=='content'||!e.data.data)return;try{live=true;apply(e.data.data)}catch(x){}})}
  (async()=>{try{const r=await fetch('content.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(!live)apply(d)}}catch(e){}document.body.classList.remove('ew-wait');
-  const s=document.createElement('script');s.src='assets/site.js?v=20261108-collab2';document.body.appendChild(s)})();
+  const s=document.createElement('script');s.src='assets/site.js?v=20261109-collab3';document.body.appendChild(s)})();
 })();
 </script>
 <script>
