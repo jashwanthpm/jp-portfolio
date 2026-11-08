@@ -178,7 +178,7 @@ const msg=url=>`Hi ${String(st.f.c).trim()||'there'}, here is your quotation for
 const copy=async t=>{try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove();return true}};
 async function makeShortLink(){if(shareUrl)return shareUrl;const r=await fetch('https://q.sakkhi.co.in/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload())});let d={};try{d=await r.json()}catch{}if(!r.ok||!d.url)throw new Error(d.error||'Could not create a short link');shareUrl=d.url;$('#lnk').value=shareUrl;return shareUrl}\n const cpl=async()=>{try{const url=await makeShortLink();await copy(url);markSent();toast('Short link copied')}catch(e){toast(e.message||'Could not create link')}};
 $('#cp').onclick=cpl;$('#cp2').onclick=cpl;
-$('#wa').onclick=async()=>{try{const url=await makeShortLink(),p=phone(st.f.ph);window.open((p?'https://wa.me/'+p:'https://wa.me/')+'?text='+encodeURIComponent(msg(url)),'_blank');markSent()}catch(e){toast(e.message||'Could not create link')}};
+$('#wa').onclick=async()=>{const tab=window.open('about:blank','_blank');try{const url=await makeShortLink(),p=phone(st.f.ph),target=(p?'https://wa.me/'+p:'https://wa.me/')+'?text='+encodeURIComponent(msg(url));if(tab)tab.location.href=target;else location.href=target;markSent()}catch(e){if(tab)tab.close();toast(e.message||'Could not create link')}};
 $('#op').onclick=()=>window.open(shareUrl||location.origin+'/q.html#'+cur,'_blank');
 $('#nw').onclick=()=>{st=blank();load();upd();$('#f_c').focus()};
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key=='s'){e.preventDefault();upd();toast('Saved')}});
