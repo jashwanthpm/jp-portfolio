@@ -225,7 +225,7 @@ function drawRev(){const r=st.rev||0,h=st.hist||[],c=calc(),box=$('#rvt');if(!bo
  rows.push(`<div class="rvr cur"><b>${r>0?'R'+r:'Original'}</b><div class="mid"><small>Current \u00b7 ${st.sent?'sent':'draft'}</small></div><div class="am">${inr(c.tot)}${prev!=null?d(c.tot,prev):''}</div></div>`);
  box.innerHTML=rows.join('');
  $('#rvh').textContent=r>0?'Revision '+r:'Original quotation';
- const b=$('#rv');b.textContent=r>0?'Create next revision (R'+(r+1)+')':'Create revised version';b.disabled=!(c.tot>0&&st.sent)}
+ const b=$('#rv');b.textContent=r>0?'Create next revision (R'+(r+1)+')':'Create revised version';b.disabled=!(c.tot>0);b.title=(st.sent||st.link||shareUrl)?'Create the next quotation revision':'Send or copy the original quotation link before starting a revision'}
 function agreedPreview(){const ag=num($('#f_ag').value),sub=st.items.reduce((s,x)=>s+num(x[2])*num(x[3]),0),gp=num(st.f.g),h=$('#agh');
  if(!ag){h.textContent="Enter the total you agreed with the client. Nothing is added automatically.";return null}
  if(!sub){h.textContent='Add your items and rates first.';return null}
@@ -236,7 +236,9 @@ $('#rvt').addEventListener('click',e=>{const b=e.target.closest('[data-rmrev]');
  $('#f_ag').addEventListener('input',agreedPreview);
 $('#ag').onclick=()=>{const dis=agreedPreview();if(dis==null){toast('Enter a total below your items total');return}st.f.ds=dis;$('#f_ds').value=dis;sched();toast('Discount set to '+inr(dis))};
 $('#rv').onclick=()=>{const r=st.rev||0,c=calc();
- if(!(c.tot>0)||!st.sent)return;
+ if(!(c.tot>0)){toast('Add at least one priced item first');return}
+  if(!(st.sent||st.link||shareUrl)){toast('First copy the original link or send it on WhatsApp, then create a revision');return}
+  if(!st.sent){st.sent=true;pill();}
  const next=r+1,msg0=`Create revision R${next}? The current ${r?'R'+r:'original quotation'} (${inr(c.tot)}) stays in the history. You can then adjust the agreed price and send R${next}.`;
  if(!confirm(msg0))return;
  st.hist=st.hist||[];st.hist.push({r:r,total:c.tot,at:st.f.d||today(),link:st.link||shareUrl||'',sent:!!st.sent,kind:r===0?'original':'revision'});
