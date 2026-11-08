@@ -102,7 +102,7 @@ h1{font:400 clamp(2.5rem,8.5vw,5.2rem)/1 var(--d);letter-spacing:-.01em;margin-b
 .tl b{min-width:26px;color:var(--acc);font-weight:600}.tl em{font-style:normal;margin-left:auto;font-variant-numeric:tabular-nums}
 @media(max-width:640px){.cmp{grid-template-columns:1fr}.cmp .ar{transform:rotate(90deg);justify-self:start;margin:-4px 0}}
 </style></head><body data-theme="noir"><div class="wrap" id="qp"></div>
-<script src="assets/quote.js?v=20261105-quote"></script>
+<script src="assets/quote.js?v=20261108-revision-state"></script>
 <script>
 (()=>{
 const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
@@ -125,7 +125,7 @@ function draw(){
  const th=TH.includes(q.th)?q.th:(TH.includes(Q.theme)?Q.theme:'noir');document.body.dataset.theme=th;
  const acc=(C.theme&&C.theme.accent)||'';if(acc)document.documentElement.style.setProperty('--site-acc',acc);else document.documentElement.style.removeProperty('--site-acc');
  fonts();
- const hist=Array.isArray(q.rh)?q.rh.slice(-6).map((h,i)=>({r:num(h[0]),t:num(h[1]),d:String(h[2]||''),kind:String(h[3]||(i===0?'original':'revision'))})).filter(h=>h.t):[],rev=hist.length,prev=hist.length?hist[hist.length-1]:null;
+ const hist=Array.isArray(q.rh)?q.rh.slice(-6).map((h,i)=>({r:num(h[0]),t:num(h[1]),d:String(h[2]||''),kind:String(h[3]||(i===0?'original':'revision'))})).filter(h=>h.t):[],rev=num(q.r),prev=hist.length?hist[hist.length-1]:null;
  const items=(q.i||[]).slice(0,40).map(r=>({d:r[0],n:r[1],q:num(r[2])||1,r:num(r[3])})),
   sub=items.reduce((s,x)=>s+x.q*x.r,0),dis=Math.min(num(q.ds),sub),tx=sub-dis,gp=num(q.g),gs=tx*gp/100,tot=tx+gs,ap=Math.min(100,num(q.a)),adv=Math.round(tot*ap/100),bal=tot-adv,
   exp=/^\d{4}-\d{2}-\d{2}$/.test(q.x||'')&&q.x<isoD(new Date()),title=q.t||'Photography',client=q.c||'',
