@@ -159,6 +159,7 @@ select option{background:#1f1c19;color:#efe9df}
 <li><b>Publish changes</b> sends everything to GitHub. You will see each step, and your site updates in about a minute. (Shortcut: Cmd/Ctrl + S)</li></ol><div class="btns" style="margin-top:20px"><button class="pri" id="helpx">Got it</button></div></div></div>
 <div id="toast"></div>
 <input type="file" id="fi" accept="image/*" hidden>
+<script src="../assets/dialog.js"></script>
 <script>
 const LS={get:k=>{try{return localStorage.getItem(k)}catch{return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}},del:k=>{try{localStorage.removeItem(k)}catch{}}};
 const REPO='jashwanthpm/jp-portfolio',BR='main',API=`https://api.github.com/repos/${REPO}/contents/`,GIT=`https://api.github.com/repos/${REPO}/git/`;
@@ -197,10 +198,10 @@ async function draftAction(mode,value){const db=await draftDB();try{return await
 function scheduleDraft(){clearTimeout(draftTimer);draftTimer=setTimeout(writeDraft,850)}
 async function writeDraft(){if(!dirty||!D)return;if(draftBusy){draftAgain=true;return}draftBusy=true;try{await draftAction('put',{version:1,at:Date.now(),data:structuredClone(D),pending:structuredClone(pend),shareDirty,forceStubs});}catch(e){console.warn('Local draft could not be stored',e);toast('Draft backup unavailable. Publish to avoid losing changes.',1)}finally{draftBusy=false;if(draftAgain){draftAgain=false;scheduleDraft()}}}
 async function clearDraft(){clearTimeout(draftTimer);try{await draftAction('delete')}catch(e){console.warn('Draft cleanup failed',e)}}
-async function recoverDraft(){try{const v=await draftAction('get');if(!v||v.version!==1||!v.data)return;const count=Object.keys(v.pending||{}).length;const when=new Date(v.at).toLocaleString();if(!confirm('An unpublished draft from '+when+' was found ('+count+' pending image files). Restore it?\\n\\nOK = Restore | Cancel = Discard this local draft')){await clearDraft();return}D=v.data;pend=v.pending||{};shareDirty=!!v.shareDirty;forceStubs=!!v.forceStubs;blobs={};for(const [path,file] of Object.entries(pend)){if(file.b)blobs[path]='data:image/'+(path.endsWith('.png')?'png':'jpeg')+';base64,'+file.b;else if(file.blob)blobs[path]=URL.createObjectURL(file.blob)}dirty=true;render();pages();go();chip('dirty');$('#save').disabled=false;toast('Draft restored. Review and publish your changes.');}catch(e){console.warn('Draft recovery failed',e);toast('Could not read the local draft backup.',1)}}
+async function recoverDraft(){try{const v=await draftAction('get');if(!v||v.version!==1||!v.data)return;const count=Object.keys(v.pending||{}).length;const when=new Date(v.at).toLocaleString();if(!await JPDialog.confirm('An unpublished draft from '+when+' was found ('+count+' pending image files). Restore your unsaved edits and pending images?',{title:'Restore local draft?',confirmText:'Restore draft'})){await clearDraft();return}D=v.data;pend=v.pending||{};shareDirty=!!v.shareDirty;forceStubs=!!v.forceStubs;blobs={};for(const [path,file] of Object.entries(pend)){if(file.b)blobs[path]='data:image/'+(path.endsWith('.png')?'png':'jpeg')+';base64,'+file.b;else if(file.blob)blobs[path]=URL.createObjectURL(file.blob)}dirty=true;render();pages();go();chip('dirty');$('#save').disabled=false;toast('Draft restored. Review and publish your changes.');}catch(e){console.warn('Draft recovery failed',e);toast('Could not read the local draft backup.',1)}}
 async function storageMeter(){try{const r=await fetch('https://api.github.com/repos/'+REPO+'?t='+Date.now(),{headers:hd()});if(!r.ok)throw Error(r.status);const info=await r.json();repoKb=info.size;const mb=(repoKb/1024).toFixed(0),pct=Math.round(repoKb/1048576*100);const el=$('#storage');el.textContent='Repo ~'+mb+' MB / 1 GB'+(pct>=80?' ⚠':'');el.style.color=pct>=80?'#ffb980':'var(--m)';el.title='GitHub repository size estimate (includes Git history), not exact live-site or remaining upload quota. GitHub Pages published-site guideline is 1 GB.'}catch{$('#storage').textContent='Storage: unavailable'}}
 function incomingBytes(files){return files.reduce((a,f)=>a+(f.size||0),0)}
-function storageWarning(bytes){if(repoKb===null)return true;const projected=repoKb*1024+bytes;if(projected>=.8*1073741824)return confirm('Storage warning: the estimated repository usage plus these files is nearing the 1 GB guideline. Original downloads can add substantial size. Continue?');return true}
+async function storageWarning(bytes){if(repoKb===null)return true;const projected=repoKb*1024+bytes;if(projected>=.8*1073741824)return await JPDialog.confirm('The estimated repository usage plus these files is nearing the 1 GB guideline. Original downloads can add substantial size. Continue?',{title:'Storage is getting large',confirmText:'Continue'});return true}
 const src=v=>blobs[v]||(v&&v[0]=='/'?'..'+v:v);
 const tsrc=v=>blobs[v]||(v&&v.startsWith('/images/')&&!v.startsWith('/images/t/')?'..'+v.replace('/images/','/images/t/'):src(v));
 const timg=v=>`<img src="${esc(tsrc(v))}" loading="lazy" onerror="this.onerror=null;this.src='${esc(src(v))}'">`;
@@ -294,7 +295,7 @@ async function prep(file,mode){const bm=await createImageBitmap(file),name=Date.
  if(mode=='high'||mode=='orig'){const ext=mode=='orig'?((/\.(\w+)$/.exec(file.name||'')||[0,'jpg'])[1]).toLowerCase():'jpg',hp='/images/hi/'+name.replace(/\.jpg$/,'')+'.'+ext,blob=mode=='orig'?file:await new Promise(r=>mkc(bm,4000).toBlob(r,'image/jpeg',.9));pend[hp]={blob,u:p};D.hi[p]=hp}
  bm.close&&bm.close();return p}
 async function prepIcon(file){const bm=await createImageBitmap(file),s=Math.min(bm.width,bm.height),c=document.createElement('canvas');c.width=c.height=256;c.getContext('2d').drawImage(bm,(bm.width-s)/2,(bm.height-s)/2,s,s,0,0,256,256);const u=c.toDataURL('image/png'),p='/images/favicon-'+Date.now()+'.png';pend[p]={b:u.split(',')[1]};blobs[p]=u;return p}
-async function ingest(files,t){files=[...files].filter(x=>x.type.startsWith('image/'));if(!files.length)return;if(!storageWarning(incomingBytes(files)))return;
+async function ingest(files,t){files=[...files].filter(x=>x.type.startsWith('image/'));if(!files.length)return;if(!await storageWarning(incomingBytes(files)))return;
  if(t.share){pOpen('Preparing preview picture');try{await makeShare(files[0])}catch(e){pFail('That picture could not be read.');return}pClose(200);render();touch();toast('Preview picture ready. Publish to make it live.');return}pOpen('Preparing pictures');const ps=[];
  try{for(let n=0;n<files.length;n++){pSet(n/files.length,`Picture ${n+1} of ${files.length}…`);ps.push(await (t.icon?prepIcon(files[n]):prep(files[n],t.g=='c'&&D.clients[t.i]?D.clients[t.i].download:null)))}}catch(e){pFail('One picture could not be read: '+e.message);return}
  if(t.p!=null)st(D,t.p,ps[0]);else arr(t.g,t.i).push(...ps);pSet(1,'Done');pClose(350);render();touch();writeDraft();push();if(PM)pmDraw();toast(ps.length+' picture'+(ps.length>1?'s':'')+' added. Publish when you are ready.')}
@@ -372,10 +373,10 @@ function showPage(pg){const s=$('#pg');if(!pg||![...s.options].some(o=>o.value==
 const scrollPrev=sel=>{const w=$('#fr').contentWindow;w&&w.postMessage({type:'scroll',sel},location.origin)};
 $('#pg').onchange=go;
 $('#dk').onclick=()=>{$('#st').classList.remove('m');$('#dk').className='on';$('#mb').className=''};$('#mb').onclick=()=>{$('#st').classList.add('m');$('#mb').className='on';$('#dk').className=''};
-addEventListener('message',e=>{if(e.origin!=location.origin||!e.data)return;const d=e.data;
+addEventListener('message',async e=>{if(e.origin!=location.origin||!e.data)return;const d=e.data;
  if(d.type=='ready'){push();if(pscroll){const s=pscroll;pscroll=null;setTimeout(()=>scrollPrev(s),600)}}
  if(d.type=='text'){st(D,d.path,d.value);touch();const q=side.querySelector(`[data-p="${d.path}"]`);if(q&&document.activeElement!==q)q.value=d.value}
- if(d.type=='item'){const it=(D[d.list]||[])[d.i];if(!it)return;if(d.act=='hide'){if(d.list=='clients')it.private=!it.private;else it.hide=!it.hide}else{if(!confirm('Remove this item?'))return;D[d.list].splice(d.i,1);OPEN.clear()}render();touch();push()}
+ if(d.type=='item'){const it=(D[d.list]||[])[d.i];if(!it)return;if(d.act=='hide'){if(d.list=='clients')it.private=!it.private;else it.hide=!it.hide}else{if(!await JPDialog.confirm('This item will be removed from your site content.',{title:'Remove item?',confirmText:'Remove',danger:true}))return;D[d.list].splice(d.i,1);OPEN.clear()}render();touch();push()}
  if(d.type=='edit'){const [s,fl]=d.path.split(':'),m=SECTAB[s];if(!m)return;tab=m[0];gi=-1;if(m[1])open1[tab]=m[1];render();const el=(fl&&side.querySelector(`[data-p="${fl}"]`))||side.querySelector('details[open]');if(el){el.scrollIntoView({block:'center',behavior:'smooth'});el.focus&&el.focus()}}});
 /* ---------- left panel events ---------- */
 $('#rail').onclick=e=>{const b=e.target.closest('[data-t]');if(!b)return;tab=b.dataset.t;gi=-1;OPEN.clear();render();showPage(TABPG[tab]);side.scrollTop=0;if(tab=='hf')pscroll=null}
@@ -387,12 +388,12 @@ side.addEventListener('input',e=>{const t=e.target,p=t.dataset.p;if(p=='own')ret
  st(D,p,v);touch();push();if(p.startsWith('clients.'))clearTimeout(window.pt),window.pt=setTimeout(pages,600)});
 side.addEventListener('change',e=>{if(e.target.dataset.p=='own'){try{e.target.checked?LS.set('jp_notrack','1'):LS.del('jp_notrack')}catch{}return}if(e.target.dataset.p=='analytics.provider'){render();return}const m=(e.target.dataset.p||'').match(/^igItems\.(\d+)\.url$/);if(m&&!D.igItems[+m[1]].covers.length)autoCover(+m[1])});
 side.addEventListener('toggle',e=>{const d=e.target;if(!d.dataset||!d.dataset.id)return;if(d.open){open1[tab]=d.dataset.id;side.querySelectorAll('details[open]').forEach(x=>x!==d&&(x.open=false));const s=SECSEL[d.dataset.id];if(s)scrollPrev(s)}else if(open1[tab]==d.dataset.id)open1[tab]=''},true);
-side.onclick=e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,l=b.dataset.l,p=b.dataset.p,i=+b.dataset.i,k=+b.dataset.k;
+side.onclick=async e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,l=b.dataset.l,p=b.dataset.p,i=+b.dataset.i,k=+b.dataset.k;
  if(a=='laypick'){st(D,p,b.dataset.v);touch();push();render();return}
  if(a=='copyurl'){navigator.clipboard&&navigator.clipboard.writeText(b.dataset.url);toast('Link copied');return}
  if(a=='eqtheme'){D.enq.theme=b.dataset.v;touch();push();render();return}
  if(a=='qtheme'){D.quote.theme=b.dataset.v;touch();push();render();return}
- if(a=='eqreset'){if(!confirm('Reset every question, choice and heading on the enquiry form to the original wording?'))return;D.enq=JSON.parse(JSON.stringify(ENQ_DEF.enq));EQL.forEach(k=>D[k]=ENQ_DEF[k].map(t=>({t})));touch();render();toast('Enquiry form reset');return}
+ if(a=='eqreset'){if(!await JPDialog.confirm('Every question, choice and heading on the enquiry form will return to the original wording. Your custom wording will be lost.',{title:'Reset enquiry form?',confirmText:'Reset form',danger:true}))return;D.enq=JSON.parse(JSON.stringify(ENQ_DEF.enq));EQL.forEach(k=>D[k]=ENQ_DEF[k].map(t=>({t})));touch();render();toast('Enquiry form reset');return}
  if(a=='itog'){const key=b.dataset.k;OPEN.has(key)?OPEN.delete(key):OPEN.add(key);render();return}
  if(a=='gopen'){gi=i;open1.gal='g2';render();showPage('gallery.html?c='+D.clients[i].slug);side.scrollTop=0;return}
  if(a=='gback'){gi=-1;render();showPage('clients.html');return}
@@ -408,10 +409,10 @@ side.onclick=e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.d
  if(a=='helpopen'){$('#helpm').hidden=false;return}
  if(a=='tpl'){st(D,b.dataset.k,b.dataset.v);render();touch();push();if(b.dataset.k=='ftr.style')scrollPrev('#ft');return}
  if(a=='copy'){const v=side.querySelector('#lnk'+i);v.select();navigator.clipboard&&navigator.clipboard.writeText(v.value);toast('Link copied');return}
- if(a=='pinset'||a=='pinnew'){const v=(a=='pinset'?side.querySelector('#pin'+i).value:(prompt('Enter the new PIN (4 to 10 characters)')||'')).trim();if(v.length<4){toast('A PIN needs at least 4 characters.',1);return}setPin(i,v);return}
+ if(a=='pinset'||a=='pinnew'){const entered=a=='pinnew'?await JPDialog.prompt('Choose a PIN between 4 and 10 characters.',{title:'Set gallery PIN',placeholder:'New PIN',confirmText:'Save PIN'}):side.querySelector('#pin'+i).value;const v=String(entered||'').trim();if(v.length<4){toast('A PIN needs at least 4 characters.',1);return}setPin(i,v);return}
  if(a=='pinoff'){const c=D.clients[i];delete c.pinHash;delete c.pinSalt;delete LASTPIN[c.slug];render();touch();push();return}
  if(a=='up'||a=='dn'){const r=D[l],j=a=='up'?i-1:i+1;[r[i],r[j]]=[r[j],r[i]];OPEN.clear()}
- else if(a=='del'){if(!confirm('Remove this '+(l=='clients'?'gallery and its picture list':'item')+'?'))return;D[l].splice(i,1);OPEN.clear();if(l=='clients')gi=-1}
+ else if(a=='del'){if(!await JPDialog.confirm('Remove this '+(l=='clients'?'gallery and its picture list':'item')+'? This cannot be undone.',{title:'Remove '+(l=='clients'?'gallery':'item')+'?',confirmText:'Remove',danger:true}))return;D[l].splice(i,1);OPEN.clear();if(l=='clients')gi=-1}
  else if(a=='add'){D[l].push(NEW[l]());OPEN.add(l+':'+(D[l].length-1))}
  else if(a=='eye')D.home[i].show=!D.home[i].show;
  else if(a=='pl'||a=='pr'){const r=arr(b.dataset.g,i),jx=a=='pl'?k-1:k+1;if(jx<0||jx>=r.length)return;[r[k],r[jx]]=[r[jx],r[k]]}
@@ -443,7 +444,7 @@ function pmDraw(){if(!PM)return;const a=arr(PM.g,PM.i),n=PM.sel.size,nm={pf:'Por
  $('#pmg').innerHTML=a.length?a.map((p,k)=>`<div class="pi${PM.sel.has(k)?' sel':''}" draggable="true" data-k="${k}">${timg(p)}<span class="no">${k+1}</span><span class="ck">${IC.check}</span>${cv&&cv==p?'<span class="cvb">Cover</span>':''}</div>`).join('')+`<div class="pi end" data-k="${a.length}">Drop here to move to the end</div>`:`<div class="big">No pictures yet. Press “Add pictures”, or drop files anywhere on this screen.</div>`;
  $('#pmb').hidden=!n;$('#pmc').textContent=n+' selected';const cb=document.querySelector('#pmb [data-pm="cover"]');cb.style.display=PM.g=='c'?'':'none';cb.disabled=n!=1}
 function pmMove(S,t){const a=arr(PM.g,PM.i),items=S.map(k=>a[k]),before=S.filter(k=>k<t).length,rest=a.filter((_,k)=>!S.includes(k));rest.splice(t-before,0,...items);a.splice(0,a.length,...rest);PM.sel=new Set(items.map((_,j)=>t-before+j))}
-function pmAct(x){const a=arr(PM.g,PM.i),S=[...PM.sel].sort((p,q)=>p-q);let ch=true;
+async function pmAct(x){const a=arr(PM.g,PM.i),S=[...PM.sel].sort((p,q)=>p-q);let ch=true;
  if(x=='done')return pmClose();
  if(x=='add'){tgt={i:PM.i,g:PM.g};fi.multiple=true;fi.click();return}
  if(x=='all'){PM.sel=new Set(a.map((_,k)=>k));ch=false}
@@ -453,7 +454,7 @@ function pmAct(x){const a=arr(PM.g,PM.i),S=[...PM.sel].sort((p,q)=>p-q);let ch=t
  else if(x=='earlier'){const ns=new Set();S.forEach(k=>{if(k>0&&!PM.sel.has(k-1)&&!ns.has(k-1)){[a[k],a[k-1]]=[a[k-1],a[k]];ns.add(k-1)}else ns.add(k)});PM.sel=ns}
  else if(x=='later'){const ns=new Set();[...S].reverse().forEach(k=>{if(k<a.length-1&&!PM.sel.has(k+1)&&!ns.has(k+1)){[a[k],a[k+1]]=[a[k+1],a[k]];ns.add(k+1)}else ns.add(k)});PM.sel=ns}
  else if(x=='cover'){D.clients[PM.i].cover=a[S[0]]}
- else if(x=='del'){if(!confirm('Delete '+S.length+' picture'+(S.length>1?'s':'')+'?'))return;const gone=S.map(k=>a[k]);for(let j=S.length-1;j>=0;j--)a.splice(S[j],1);if(PM.g=='c'&&gone.includes(D.clients[PM.i].cover))D.clients[PM.i].cover='';PM.sel=new Set()}
+ else if(x=='del'){if(!await JPDialog.confirm('Delete '+S.length+' selected picture'+(S.length>1?'s':'')+'? This cannot be undone.',{title:'Delete pictures?',confirmText:'Delete',danger:true}))return;const gone=S.map(k=>a[k]);for(let j=S.length-1;j>=0;j--)a.splice(S[j],1);if(PM.g=='c'&&gone.includes(D.clients[PM.i].cover))D.clients[PM.i].cover='';PM.sel=new Set()}
  if(ch){touch();push()}pmDraw()}
 $('#pm').addEventListener('click',e=>{const b=e.target.closest('[data-pm]');if(b)return pmAct(b.dataset.pm);
  const z=e.target.closest('[data-pz]');if(z){PZ=+z.dataset.pz;document.querySelectorAll('#pms button').forEach(x=>x.classList.toggle('on',x===z));pmDraw();return}
