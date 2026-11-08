@@ -159,7 +159,7 @@ const blank=()=>({id:uid(),sent:false,rev:1,hist:[],link:'',enq:null,enqId:null,
 const phone=v=>{v=String(v||'').replace(/\D/g,'');return v.length==10?'91'+v:v};
 const fdate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):(s||'');
 const dn=()=>String(st.f.n||'')+((st.rev||1)>1?' \u00b7 R'+st.rev:'');
-function load(){st.rev=st.rev||1;st.hist=st.hist||[];shareUrl=st.link||'';FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');$('#f_ag').value='';drawItems();drawEnq();$('#dn').textContent=dn();pill();drawRev()}
+function load(){st.hist=Array.isArray(st.hist)?st.hist:[];st.hist.forEach((h,i)=>h.r=i+1);st.rev=st.hist.length+1;shareUrl=st.link||'';FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');$('#f_ag').value='';drawItems();drawEnq();$('#dn').textContent=dn();pill();drawRev()}
 function pill(){const p=$('#ds2'),r=st.rev||1;p.textContent=(r>1?'R'+r+' \u00b7 ':'')+(st.sent?'Sent':'Draft');p.className='pill'+(st.sent?' sent':'')}
 function drawItems(){$('#items').innerHTML=st.items.map((x,i)=>`<div class="ir"><div><input data-i="${i}" data-k="0" value="${esc(x[0])}" placeholder="Item" aria-label="Item"><input class="dn" data-i="${i}" data-k="1" value="${esc(x[1])}" placeholder="Add a note (optional)" aria-label="Note"></div><input class="q" data-i="${i}" data-k="2" type="number" min="1" value="${esc(x[2])}" placeholder="Qty" aria-label="Quantity"><input class="r" data-i="${i}" data-k="3" type="number" min="0" value="${x[3]||''}" placeholder="0" aria-label="Rate"><div class="am">${inr(num(x[2])*num(x[3]))}</div><button class="x" data-del="${i}" aria-label="Remove item"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`).join('')}
 function drawEnq(){const e=st.enq,box=$('#enqc');if(!e){box.innerHTML='';$('#bud').innerHTML='';return}
@@ -232,7 +232,7 @@ function agreedPreview(){const ag=num($('#f_ag').value),sub=st.items.reduce((s,x
  const dis=Math.round((sub-ag/(1+gp/100))*100)/100;
  if(dis<0){h.textContent='That is higher than your items total. Raise the rates instead.';return null}
  h.textContent=`Discount will be ${inr(dis)}${gp?' (so the total after GST is '+inr(ag)+')':''}.`;return dis}
-$('#rvt').addEventListener('click',e=>{const b=e.target.closest('[data-rmrev]');if(!b)return;const i=Number(b.dataset.rmrev),h=st.hist||[],item=h[i];if(!item)return;if(!confirm('Remove revision R'+item.r+' from this quotation? Later revisions will be renumbered. Previously shared links cannot be changed.'))return;h.splice(i,1);h.forEach((x,j)=>x.r=j+1);st.hist=h;st.rev=h.length+1;sched();pill();drawRev();toast('Revision removed · remaining versions renumbered')});
+$('#rvt').addEventListener('click',e=>{const b=e.target.closest('[data-rmrev]');if(!b)return;const i=Number(b.dataset.rmrev),h=st.hist||[],item=h[i];if(!item)return;if(!confirm('Remove revision R'+item.r+' from this quotation? Later revisions will be renumbered. Previously shared links cannot be changed.'))return;h.splice(i,1);h.forEach((x,j)=>x.r=j+1);st.hist=h;st.rev=h.length+1;st.sent=false;st.link='';shareUrl='';sched();pill();drawRev();toast('Revision removed · remaining versions renumbered')});
  $('#f_ag').addEventListener('input',agreedPreview);
 $('#ag').onclick=()=>{const dis=agreedPreview();if(dis==null){toast('Enter a total below your items total');return}st.f.ds=dis;$('#f_ds').value=dis;sched();toast('Discount set to '+inr(dis))};
 $('#rv').onclick=()=>{const r=st.rev||1,c=calc();
