@@ -125,7 +125,7 @@ function draw(){
  const th=TH.includes(q.th)?q.th:(TH.includes(Q.theme)?Q.theme:'noir');document.body.dataset.theme=th;
  const acc=(C.theme&&C.theme.accent)||'';if(acc)document.documentElement.style.setProperty('--site-acc',acc);else document.documentElement.style.removeProperty('--site-acc');
  fonts();
- const hist=Array.isArray(q.rh)?q.rh.slice(-6).map((h,i)=>({r:i+1,t:num(h[1]),d:String(h[2]||'')})).filter(h=>h.t):[],rev=hist.length?hist.length+1:0,prev=hist.length?hist[hist.length-1]:null;
+ const hist=Array.isArray(q.rh)?q.rh.slice(-6).map((h,i)=>({r:num(h[0]),t:num(h[1]),d:String(h[2]||''),kind:String(h[3]||(i===0?'original':'revision'))})).filter(h=>h.t):[],rev=hist.length,prev=hist.length?hist[hist.length-1]:null;
  const items=(q.i||[]).slice(0,40).map(r=>({d:r[0],n:r[1],q:num(r[2])||1,r:num(r[3])})),
   sub=items.reduce((s,x)=>s+x.q*x.r,0),dis=Math.min(num(q.ds),sub),tx=sub-dis,gp=num(q.g),gs=tx*gp/100,tot=tx+gs,ap=Math.min(100,num(q.a)),adv=Math.round(tot*ap/100),bal=tot-adv,
   exp=/^\d{4}-\d{2}-\d{2}$/.test(q.x||'')&&q.x<isoD(new Date()),title=q.t||'Photography',client=q.c||'',
@@ -147,7 +147,7 @@ function draw(){
  </section>
  ${rev?`<section class="sec rev"><div class="revh"><span class="revb">R${rev}</span><div><h2>${esc(Q.revTitle||'Revised quotation')}</h2><p>${esc(Q.revNote||'This replaces my earlier quotation.')}</p></div></div>
  ${prev?`<div class="cmp"><div><small>Earlier \u00b7 R${prev.r}</small><s>${inr(prev.t)}</s></div><div class="ar" aria-hidden="true">\u2192</div><div class="nw"><small>Revised \u00b7 R${rev}</small><b>${inr(tot)}</b></div>${prev.t>tot?`<div class="sv">You save ${inr(prev.t-tot)}</div>`:''}</div>`:''}
- ${hist.length?`<ol class="tl">${hist.map(h=>`<li><b>R${h.r}</b><span>${esc(fd(h.d)||'')}</span><em>${inr(h.t)}</em></li>`).join('')}<li class="cur"><b>R${rev}</b><span>Current</span><em>${inr(tot)}</em></li></ol>`:''}</section>`:''}
+ ${hist.length?`<ol class="tl">${hist.map(h=>`<li><b>${h.kind==='original'?'Original':'R'+h.r}</b><span>${esc(fd(h.d)||'')}</span><em>${inr(h.t)}</em></li>`).join('')}<li class="cur"><b>R${rev}</b><span>Current</span><em>${inr(tot)}</em></li></ol>`:''}</section>`:''}
  ${exp?`<div class="warn">This quotation expired on ${fd(q.x)}. Message me and I'll send you an updated one.</div>`:''}
  ${Q.showSign===false?'':`<section class="sec intro"><p>${esc(intro)}</p><div class="sign"><i></i><div><b>${esc(Q.signName||name)}</b>${esc(Q.signRole||'Photographer')}</div></div></section>`}
  ${inc.length&&Q.showIncluded!==false?`<section class="sec"><h2>What's included</h2><ul class="inc">${inc.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section>`:''}
