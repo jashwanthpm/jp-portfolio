@@ -80,6 +80,18 @@ iframe{width:100%;height:100%;border:0;background:#0d0c0b}
  .doc,.brand small{display:none}.top{gap:8px;padding:0 12px}.brand b{font-size:19px}.btn.hm{display:none}
  .stage{padding:0}.dev,.dev.m{width:100%;border:0;border-radius:0;box-shadow:none}.pt .seg{display:none}.g3{grid-template-columns:1fr 1fr}.dr{width:100%}
 }
+a.btn{color:var(--fg);text-decoration:none}a.btn.pri{color:#18120a}
+.rvc{border-color:rgba(201,164,106,.4);background:linear-gradient(180deg,rgba(201,164,106,.06),var(--p) 55%)}
+.rvt{display:grid;gap:8px;margin:0 0 14px}
+.rvr{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--l);border-radius:12px;background:var(--p2);flex-wrap:wrap}
+.rvr.cur{border-color:var(--a);background:color-mix(in srgb,var(--a) 9%,var(--p2))}
+.rvr>b{font-weight:600;min-width:28px;color:var(--a)}.rvr .mid{flex:1;min-width:110px}.rvr .mid small{color:var(--m);font-size:11.5px;display:block;line-height:1.3}
+.rvr .am{text-align:right;font-variant-numeric:tabular-nums;font-weight:500}.rvr .am i{display:block;font-style:normal;font-size:11.5px;font-weight:500}
+.rvr .am i.dn{color:#7fc29b}.rvr .am i.up{color:#e59080}
+.rvr a.btn{text-decoration:none}
+.rvx{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.rvx .btn{min-height:40px}
+.pill.rv{background:color-mix(in srgb,var(--a) 18%,transparent);color:var(--a)}
 </style></head><body>
 <header class="top">
  <div class="brand"><img src="/images/favicon-1791284648615.png" alt=""><div><b>Quotation Studio</b><small>Create &amp; send quotes</small></div></div>
@@ -107,6 +119,12 @@ iframe{width:100%;height:100%;border:0;background:#0d0c0b}
    <div class="chips" id="quick"></div><button class="btn sm" id="add"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add item</button></div>
   <div class="card"><div class="ch"><span class="num">4</span><h3>Pricing</h3></div>
    <div class="g3"><div><label for="f_ds">Discount (₹)</label><input id="f_ds" data-k="ds" type="number" min="0"></div><div><label for="f_g">GST</label><select id="f_g" data-k="g"><option value="0">None</option><option value="18">18%</option><option value="12">12%</option><option value="5">5%</option></select></div><div><label for="f_a">Advance %</label><input id="f_a" data-k="a" type="number" min="0" max="100"></div></div></div>
+  <div class="card rvc" id="rvcard"><div class="ch"><span class="num">R</span><h3>Revisions</h3><small id="rvh">Client negotiating?</small></div>
+   <div class="rvt" id="rvt"></div>
+   <div class="rvx"><div><label for="f_ag">Agreed total (₹)</label><input id="f_ag" type="number" min="0" inputmode="numeric" placeholder="e.g. 80000"></div><button class="btn" id="ag" type="button">Set discount</button></div>
+   <p class="hint" id="agh">Type the price you both agreed and I'll work out the discount for you.</p>
+   <button class="btn pri" id="rv" type="button" style="width:100%;margin-top:14px">Create revised version</button>
+   <p class="hint">Your current version stays in the history. Your client's page then shows the earlier price, the revised price and what they save.</p></div>
   <div class="card"><div class="ch"><span class="num">5</span><h3>Details</h3></div>
    <div class="fl"><label for="f_nt">What's included <span style="font-weight:400">(one point per line)</span></label><textarea id="f_nt" data-k="nt" rows="4"></textarea></div>
    <div class="fl"><label for="f_upi">UPI ID</label><input id="f_upi" data-k="upi" placeholder="yourname@bank" autocomplete="off" inputmode="email"><p class="hint">Used by the Pay via UPI button. Prefilled from your Studio Editor settings.</p></div><div class="fl"><label for="f_pb">Payment details</label><textarea id="f_pb" data-k="pb" rows="3" placeholder="Account name, bank transfer details or other instructions"></textarea></div>
@@ -137,27 +155,29 @@ const FK=['c','ph','t','e','l','n','d','vd','ds','g','a','nt','upi','pb','tm','t
 let rates=J('q_rates',{}),st,tmr,cur='',shareUrl='';
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const newNo=()=>{const d=new Date(),p=(String((QC.quote||{}).prefix||'JP').trim()||'JP')+'-'+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+'-',mx=J('q_lib',[]).reduce((m,x)=>{const s=String(x.n||'');return s.startsWith(p)?Math.max(m,+s.slice(p.length)||0):m},0);return p+String(mx+1).padStart(2,'0')};
-const blank=()=>({id:uid(),sent:false,enq:null,enqId:null,items:[['','',1,0]],f:(()=>{const Q=QC.quote||{},pick=(a,b,c)=>String(a||'').trim()?a:(b||c);return{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:num(Q.validDays)||7,ds:0,g:String(Q.gst||'0'),a:Q.advance!==undefined&&String(Q.advance).trim()!==''?num(Q.advance):50,nt:String(Q.included||''),upi:pick(Q.upi,LS.get('q_upi',''),''),pb:pick(Q.payment,LS.get('q_pb'),''),tm:pick(Q.terms,LS.get('q_tm'),DT),th:''}})()});
+const blank=()=>({id:uid(),sent:false,rev:1,hist:[],link:'',enq:null,enqId:null,items:[['','',1,0]],f:(()=>{const Q=QC.quote||{},pick=(a,b,c)=>String(a||'').trim()?a:(b||c);return{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:num(Q.validDays)||7,ds:0,g:String(Q.gst||'0'),a:Q.advance!==undefined&&String(Q.advance).trim()!==''?num(Q.advance):50,nt:String(Q.included||''),upi:pick(Q.upi,LS.get('q_upi',''),''),pb:pick(Q.payment,LS.get('q_pb'),''),tm:pick(Q.terms,LS.get('q_tm'),DT),th:''}})()});
 const phone=v=>{v=String(v||'').replace(/\D/g,'');return v.length==10?'91'+v:v};
 const fdate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):(s||'');
-function load(){shareUrl='';FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');drawItems();drawEnq();$('#dn').textContent=st.f.n;pill()}
-function pill(){const p=$('#ds2');p.textContent=st.sent?'Sent':'Draft';p.className='pill'+(st.sent?' sent':'')}
+const dn=()=>String(st.f.n||'')+((st.rev||1)>1?' \u00b7 R'+st.rev:'');
+function load(){st.rev=st.rev||1;st.hist=st.hist||[];shareUrl=st.link||'';FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');$('#f_ag').value='';drawItems();drawEnq();$('#dn').textContent=dn();pill();drawRev()}
+function pill(){const p=$('#ds2'),r=st.rev||1;p.textContent=(r>1?'R'+r+' \u00b7 ':'')+(st.sent?'Sent':'Draft');p.className='pill'+(st.sent?' sent':'')}
 function drawItems(){$('#items').innerHTML=st.items.map((x,i)=>`<div class="ir"><div><input data-i="${i}" data-k="0" value="${esc(x[0])}" placeholder="Item" aria-label="Item"><input class="dn" data-i="${i}" data-k="1" value="${esc(x[1])}" placeholder="Add a note (optional)" aria-label="Note"></div><input class="q" data-i="${i}" data-k="2" type="number" min="1" value="${esc(x[2])}" placeholder="Qty" aria-label="Quantity"><input class="r" data-i="${i}" data-k="3" type="number" min="0" value="${x[3]||''}" placeholder="0" aria-label="Rate"><div class="am">${inr(num(x[2])*num(x[3]))}</div><button class="x" data-del="${i}" aria-label="Remove item"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`).join('')}
 function drawEnq(){const e=st.enq,box=$('#enqc');if(!e){box.innerHTML='';$('#bud').innerHTML='';return}
  const rows=[['Occasion',e.o],['Looking for',(e.w||[]).join(', ')],['Date',fdate(e.d)],['Days',e.y],['Venue',e.v],['Brand',e.br],['Budget',e.b?`<span class="bud">${esc(e.b)}</span>`:''],['Found via',e.f],['Instagram',e.i],['Email',e.e],['Message',e.m]].filter(r=>r[1]).map(([a,b])=>`<dt>${a}</dt><dd>${a=='Budget'?b:esc(b)}</dd>`).join(''),p=phone(e.p);
  box.innerHTML=`<div class="card enq"><div class="ch"><svg class="i" viewBox="0 0 24 24" style="color:var(--a)"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><h3>Enquiry</h3><small>${esc(e.n||'')}</small></div><dl>${rows}</dl><div class="acts">${p?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/${esc(p)}">WhatsApp</a><a class="btn sm" href="tel:+${esc(p)}">Call</a>`:''}${e.e?`<a class="btn sm" href="mailto:${esc(e.e)}">Email</a>`:''}</div></div>`;
  $('#bud').innerHTML=e.b?`Client budget: <b>${esc(e.b)}</b>`:''}
 function calc(){const it=st.items,sub=it.reduce((s,x)=>s+num(x[2])*num(x[3]),0),dis=Math.min(num(st.f.ds),sub),tx=sub-dis,gp=num(st.f.g),tot=tx+tx*gp/100,ap=Math.min(100,num(st.f.a));return{tot,ap,adv:Math.round(tot*ap/100)}}
-function payload(){const f=st.f,v=f.d||today();return{v:1,n:String(f.n||'').trim(),d:v,x:addD(v,Math.max(1,num(f.vd)||7)),c:String(f.c).trim(),t:String(f.t).trim(),e:String(f.e).trim(),l:String(f.l).trim(),i:st.items.filter(x=>String(x[0]).trim()).map(x=>[String(x[0]).trim(),String(x[1]||'').trim(),num(x[2])||1,num(x[3])]),ds:num(f.ds),g:num(f.g),a:num(f.a),nt:String(f.nt).trim(),upi:String(f.upi||'').trim(),pb:String(f.pb).trim(),tm:String(f.tm).trim(),th:['noir','ivory','blush','editorial'].includes(f.th)?f.th:undefined}}
-async function upd(){const c=calc();$('#tot').textContent=inr(c.tot);$('#advl').textContent=`Advance (${c.ap}%)`;$('#adv').textContent=inr(c.adv);$('#dn').textContent=st.f.n;
+function payload(){const f=st.f,v=f.d||today();return{v:1,n:String(f.n||'').trim(),d:v,x:addD(v,Math.max(1,num(f.vd)||7)),c:String(f.c).trim(),t:String(f.t).trim(),e:String(f.e).trim(),l:String(f.l).trim(),i:st.items.filter(x=>String(x[0]).trim()).map(x=>[String(x[0]).trim(),String(x[1]||'').trim(),num(x[2])||1,num(x[3])]),ds:num(f.ds),g:num(f.g),a:num(f.a),nt:String(f.nt).trim(),upi:String(f.upi||'').trim(),r:(st.rev||1)>1?st.rev:undefined,rh:(st.rev||1)>1?(st.hist||[]).map(h=>[h.r,h.total,h.at]):undefined,pb:String(f.pb).trim(),tm:String(f.tm).trim(),th:['noir','ivory','blush','editorial'].includes(f.th)?f.th:undefined}}
+async function upd(){const c=calc();$('#tot').textContent=inr(c.tot);$('#advl').textContent=`Advance (${c.ap}%)`;$('#adv').textContent=inr(c.adv);$('#dn').textContent=dn();drawRev();
  cur=await QCODEC.enc(payload());$('#lnk').value=shareUrl||'Click Copy link or Send on WhatsApp to create a short link';
  const fr=$('#fr');try{if(fr.dataset.on)fr.contentWindow.location.hash=cur;else{fr.dataset.on=1;fr.src='/q.html#'+cur}}catch{fr.src='/q.html#'+cur}
  LS.set('q_cur',JSON.stringify(st));LS.set('q_upi',st.f.upi||'');LS.set('q_pb',st.f.pb);LS.set('q_tm',st.f.tm);upsert();$('#svt').textContent='Saved'}
-const sched=()=>{shareUrl='';$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
-function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const lib=J('q_lib',[]).filter(x=>x.id!=st.id&&x.n!=st.f.n);lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length,60)}
+const sched=()=>{shareUrl='';st.link='';$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
+function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const lib=J('q_lib',[]).filter(x=>x.id!=st.id&&x.n!=st.f.n);lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,rev:st.rev||1,was:(st.hist&&st.hist.length)?st.hist[st.hist.length-1].total:0,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length,60)}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),1600)}
 function markSent(){if(!st.sent){st.sent=true;pill();upd()}syncEnquiry()}
-async function syncEnquiry(){if(!st.enqId||!window.ENQDB||!ENQDB.session())return;try{await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(st.enqId)+'&status=in.(new,contacted,follow_up,quoted)',{status:'quoted',quote_ref:String(st.f.n||''),quote_amount:calc().tot});toast('Enquiry marked as quotation sent')}catch(e){}}
+function refText(){const r=st.rev||1,n=String(st.f.n||'');if(r<2)return n;const h=st.hist||[],prev=h.length?h[h.length-1].total:0,first=h.length?h[0].total:0;return (n+' \u00b7 R'+r+' \u00b7 was '+inr(prev)+(h.length>1?' \u00b7 first '+inr(first):'')).slice(0,60)}
+async function syncEnquiry(){if(!st.enqId||!window.ENQDB||!ENQDB.session())return;try{await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(st.enqId)+'&status=in.(new,contacted,follow_up,quoted)',{status:'quoted',quote_ref:refText(),quote_amount:calc().tot});toast('Enquiry marked as quotation sent')}catch(e){}}
 /* inputs */
 $('#scroll').addEventListener('input',e=>{const t=e.target;
  if(t.dataset.i!=null){const x=st.items[+t.dataset.i],k=+t.dataset.k;x[k]=t.value;
@@ -174,9 +194,9 @@ $('#scroll').addEventListener('click',e=>{const b=e.target.closest('button');if(
 const drawQuick=()=>{$('#quick').innerHTML=quickList().map(q=>`<button type="button" data-q="${esc(q)}">+ ${esc(q)}</button>`).join('')};drawQuick();
 $('#add').onclick=()=>addRow();
 /* actions */
-const msg=url=>`Hi ${String(st.f.c).trim()||'there'}, here is your quotation for ${String(st.f.t).trim()||'your shoot'} (${inr(calc().tot)}):\n${url}`;
+const msg=url=>{const r=st.rev||1,h=st.hist||[],prev=h.length?h[h.length-1].total:0,nm=String(st.f.c).trim()||'there',t=String(st.f.t).trim()||'your shoot';return r>1?`Hi ${nm}, here is the revised quotation (R${r}) for ${t}: ${inr(calc().tot)}${prev?' (earlier '+inr(prev)+')':''}.\n${url}`:`Hi ${nm}, here is your quotation for ${t} (${inr(calc().tot)}):\n${url}`};
 const copy=async t=>{try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove();return true}};
-async function makeShortLink(){if(shareUrl)return shareUrl;const r=await fetch('https://q.sakkhi.co.in/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload())});let d={};try{d=await r.json()}catch{}if(!r.ok||!d.url)throw new Error(d.error||'Could not create a short link');shareUrl=d.url;$('#lnk').value=shareUrl;return shareUrl}
+async function makeShortLink(){if(shareUrl)return shareUrl;const r=await fetch('https://q.sakkhi.co.in/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload())});let d={};try{d=await r.json()}catch{}if(!r.ok||!d.url)throw new Error(d.error||'Could not create a short link');shareUrl=d.url;st.link=d.url;$('#lnk').value=shareUrl;LS.set('q_cur',JSON.stringify(st));upsert();return shareUrl}
  const cpl=async()=>{try{const url=await makeShortLink();await copy(url);markSent();toast('Short link copied')}catch(e){toast(e.message||'Could not create link')}};
 $('#cp').onclick=cpl;$('#cp2').onclick=cpl;
 $('#wa').onclick=async()=>{const tab=window.open('about:blank','_blank');try{const url=await makeShortLink(),p=phone(st.f.ph),target=(p?'https://wa.me/'+p:'https://wa.me/')+'?text='+encodeURIComponent(msg(url));if(tab)tab.location.href=target;else location.href=target;markSent()}catch(e){if(tab)tab.close();toast(e.message||'Could not create link')}};
@@ -190,12 +210,38 @@ $('#tp').onclick=()=>{$('#work').classList.add('showpv');$('#tp').classList.add(
 const dr=$('#dr'),ov=$('#ov');const open=v=>{dr.classList.toggle('on',v);ov.classList.toggle('on',v);if(v)drawLib()};
 $('#lib').onclick=()=>open(true);$('#dx').onclick=()=>open(false);ov.onclick=()=>open(false);$('#sq').oninput=drawLib;
 function drawLib(){const q=$('#sq').value.toLowerCase(),lib=J('q_lib',[]).filter(x=>!q||(x.c+' '+x.n+' '+x.t).toLowerCase().includes(q));
- $('#ll').innerHTML=lib.length?lib.map(x=>`<div class="li${x.id==st.id?' cur':''}"><div class="r1"><b>${esc(x.c||'(no name)')}</b><b>${inr(x.total)}</b></div><small>${esc(x.n)} · ${esc(x.t||'Quote')} · ${esc(fdate(x.at))}</small><div class="r2"><span class="pill${x.sent?' sent':''}">${x.sent?'Sent':'Draft'}</span><div class="sp"></div><button class="btn sm" data-o="${x.id}">Open</button><button class="btn sm" data-dup="${x.id}">Duplicate</button><button class="btn sm ghost" data-rm="${x.id}">Delete</button></div></div>`).join(''):'<div class="empty">No quotes yet. They save here automatically as you type.</div>'}
+ $('#ll').innerHTML=lib.length?lib.map(x=>`<div class="li${x.id==st.id?' cur':''}"><div class="r1"><b>${esc(x.c||'(no name)')}</b><b>${inr(x.total)}</b></div><small>${esc(x.n)} · ${esc(x.t||'Quote')} · ${esc(fdate(x.at))}${x.was?' · was '+inr(x.was):''}</small><div class="r2">${(x.rev||1)>1?`<span class="pill rv">R${x.rev}</span>`:''}<span class="pill${x.sent?' sent':''}">${x.sent?'Sent':'Draft'}</span><div class="sp"></div><button class="btn sm" data-o="${x.id}">Open</button><button class="btn sm" data-dup="${x.id}">Duplicate</button><button class="btn sm ghost" data-rm="${x.id}">Delete</button></div></div>`).join(''):'<div class="empty">No quotes yet. They save here automatically as you type.</div>'}
 $('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J('q_lib',[]);
  if(b.dataset.o){const x=lib.find(y=>y.id==b.dataset.o);if(x){st=JSON.parse(JSON.stringify(x.st));load();upd();open(false)}}
- else if(b.dataset.dup){const x=lib.find(y=>y.id==b.dataset.dup);if(x){st=JSON.parse(JSON.stringify(x.st));st.id=uid();st.sent=false;st.f.n=newNo();st.f.d=today();load();upd();open(false);toast('Duplicated')}}
+ else if(b.dataset.dup){const x=lib.find(y=>y.id==b.dataset.dup);if(x){st=JSON.parse(JSON.stringify(x.st));st.id=uid();st.sent=false;st.rev=1;st.hist=[];st.link='';st.f.n=newNo();st.f.d=today();load();upd();open(false);toast('Duplicated')}}
  else if(b.dataset.rm){if(confirm('Delete this quote?')){LS.set('q_lib',JSON.stringify(lib.filter(y=>y.id!=b.dataset.rm)));$('#lc').textContent=J('q_lib',[]).length;drawLib()}}};
 
+
+/* ---------- revisions ---------- */
+function drawRev(){const r=st.rev||1,h=st.hist||[],c=calc(),box=$('#rvt');if(!box)return;
+ const d=(a,b)=>{const x=Math.round((a-b)*100)/100;return !x?'':`<i class="${x<0?'dn':'up'}">${x<0?'\u2212':'+'} ${inr(Math.abs(x))}</i>`};
+ const rows=h.map((x,i)=>`<div class="rvr"><b>R${x.r}</b><div class="mid"><small>${x.sent?'Sent':'Not sent'} \u00b7 ${esc(fdate(x.at))}</small></div><div class="am">${inr(x.total)}${i?d(x.total,h[i-1].total):''}</div>${x.link?`<a class="btn sm" href="${esc(x.link)}" target="_blank" rel="noopener">Open</a>`:''}</div>`);
+ const prev=h.length?h[h.length-1].total:null;
+ rows.push(`<div class="rvr cur"><b>R${r}</b><div class="mid"><small>Current \u00b7 ${st.sent?'sent':'draft'}</small></div><div class="am">${inr(c.tot)}${prev!=null?d(c.tot,prev):''}</div></div>`);
+ box.innerHTML=rows.join('');
+ $('#rvh').textContent=r>1?'Revision '+r:'Client negotiating?';
+ const b=$('#rv');b.textContent=r>1?'Create another revision (R'+(r+1)+')':'Create revised version';b.disabled=!(c.tot>0)}
+function agreedPreview(){const ag=num($('#f_ag').value),sub=st.items.reduce((s,x)=>s+num(x[2])*num(x[3]),0),gp=num(st.f.g),h=$('#agh');
+ if(!ag){h.textContent="Type the price you both agreed and I'll work out the discount for you.";return null}
+ if(!sub){h.textContent='Add your items and rates first.';return null}
+ const dis=Math.round((sub-ag/(1+gp/100))*100)/100;
+ if(dis<0){h.textContent='That is higher than your items total. Raise the rates instead.';return null}
+ h.textContent=`Discount will be ${inr(dis)}${gp?' (so the total after GST is '+inr(ag)+')':''}.`;return dis}
+$('#f_ag').addEventListener('input',agreedPreview);
+$('#ag').onclick=()=>{const dis=agreedPreview();if(dis==null){toast('Enter a total below your items total');return}st.f.ds=dis;$('#f_ds').value=dis;sched();toast('Discount set to '+inr(dis))};
+$('#rv').onclick=()=>{const r=st.rev||1,c=calc();
+ if(!(c.tot>0))return;
+ const msg0=st.sent?`Create revision R${r+1}? Version R${r} (${inr(c.tot)}) stays in the history. You can then change the prices and send R${r+1}.`:`R${r} hasn't been sent yet. Create revision R${r+1} anyway?`;
+ if(!confirm(msg0))return;
+ st.hist=st.hist||[];st.hist.push({r:r,total:c.tot,at:st.f.d||today(),link:st.link||shareUrl||'',sent:!!st.sent});
+ st.rev=r+1;st.sent=false;st.link='';shareUrl='';st.f.d=today();$('#f_d').value=st.f.d;$('#f_ag').value='';
+ pill();upd();agreedPreview();toast('R'+st.rev+' started. Change the prices, then send it.');
+ setTimeout(()=>{const f=$('#f_ag');f.scrollIntoView({behavior:'smooth',block:'center'});f.focus({preventScroll:true})},200)};
 /* boot */
 
 (async()=>{try{const c=new AbortController();setTimeout(()=>c.abort(),2500);const r=await fetch('/content.json?t='+Date.now(),{cache:'no-store',signal:c.signal});if(r.ok){const d=await r.json();QC={quote:d.quote||{},qRates:Array.isArray(d.qRates)?d.qRates:[]};drawQuick()}}catch(e){}
@@ -226,7 +272,7 @@ $('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J
  /* Never restore the previous local quote when an enquiry link was supplied. */
  st=incoming||((!hasEnquiryLink&&sv&&sv.f)?sv:blank());
  if(incoming&&!fromEnquiry&&sv&&sv.f&&sv.f.n===incoming.f.n)st.id=sv.id;
- st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];
+ st.f=Object.assign(blank().f,st.f);st.items=st.items&&st.items.length?st.items:[['','',1,0]];st.rev=st.rev||1;st.hist=st.hist||[];
  if(incoming)history.replaceState(null,'',location.pathname+location.search);
  load();upd();
  if(fromEnquiry)toast('Enquiry details loaded — build your quote');
