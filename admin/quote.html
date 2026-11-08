@@ -141,6 +141,7 @@ a.btn{color:var(--fg);text-decoration:none}a.btn.pri{color:#18120a}
 </div></aside>
 <div id="toast"></div>
 <script src="/assets/quote.js"></script><script src="/assets/enqdb.js?v=20261107-jp-only"></script>
+<script src="../assets/dialog.js"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const LS={get:k=>{try{return localStorage.getItem(k)}catch{return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}}},J=(k,d)=>{try{return JSON.parse(LS.get(k))||d}catch{return d}};
@@ -211,10 +212,10 @@ const dr=$('#dr'),ov=$('#ov');const open=v=>{dr.classList.toggle('on',v);ov.clas
 $('#lib').onclick=()=>open(true);$('#dx').onclick=()=>open(false);ov.onclick=()=>open(false);$('#sq').oninput=drawLib;
 function drawLib(){const q=$('#sq').value.toLowerCase(),lib=J('q_lib',[]).filter(x=>!q||(x.c+' '+x.n+' '+x.t).toLowerCase().includes(q));
  $('#ll').innerHTML=lib.length?lib.map(x=>`<div class="li${x.id==st.id?' cur':''}"><div class="r1"><b>${esc(x.c||'(no name)')}</b><b>${inr(x.total)}</b></div><small>${esc(x.n)} · ${esc(x.t||'Quote')} · ${esc(fdate(x.at))}${x.was?' · was '+inr(x.was):''}</small><div class="r2">${(x.rev||1)>1?`<span class="pill rv">R${x.rev}</span>`:''}<span class="pill${x.sent?' sent':''}">${x.sent?'Sent':'Draft'}</span><div class="sp"></div><button class="btn sm" data-o="${x.id}">Open</button><button class="btn sm" data-dup="${x.id}">Duplicate</button><button class="btn sm ghost" data-rm="${x.id}">${x.sent?'Delete':'Delete draft'}</button></div></div>`).join(''):'<div class="empty">No quotes yet. They save here automatically as you type.</div>'}
-$('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J('q_lib',[]);
+$('#ll').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const lib=J('q_lib',[]);
  if(b.dataset.o){const x=lib.find(y=>y.id==b.dataset.o);if(x){st=JSON.parse(JSON.stringify(x.st));load();upd();open(false)}}
  else if(b.dataset.dup){const x=lib.find(y=>y.id==b.dataset.dup);if(x){st=JSON.parse(JSON.stringify(x.st));st.id=uid();st.sent=false;st.rev=1;st.hist=[];st.link='';st.f.n=newNo();st.f.d=today();load();upd();open(false);toast('Duplicated')}}
- else if(b.dataset.rm){const x=lib.find(y=>y.id==b.dataset.rm);if(!x)return;const draft=!x.sent;if(confirm(draft?'Delete this draft quotation permanently?':'Delete this sent quotation from your library? This will not revoke links already shared.')){const next=lib.filter(y=>y.id!=b.dataset.rm);LS.set('q_lib',JSON.stringify(next));if(st&&st.id==b.dataset.rm&&draft){LS.set('q_cur','');st=blank();load();upd();toast('Draft deleted')}else{const saved=J('q_cur',null);if(saved&&saved.id==b.dataset.rm&&draft)LS.set('q_cur','');toast(draft?'Draft deleted':'Quotation removed from library')}$('#lc').textContent=next.length;drawLib()}}};
+ else if(b.dataset.rm){const x=lib.find(y=>y.id==b.dataset.rm);if(!x)return;const draft=!x.sent;if(await JPDialog.confirm(draft?'Delete this draft quotation permanently?':'Delete this sent quotation from your library? This will not revoke links already shared.',{title:draft?'Delete draft?':'Remove quotation?',confirmText:'Delete',danger:true})){const next=lib.filter(y=>y.id!=b.dataset.rm);LS.set('q_lib',JSON.stringify(next));if(st&&st.id==b.dataset.rm&&draft){LS.set('q_cur','');st=blank();load();upd();toast('Draft deleted')}else{const saved=J('q_cur',null);if(saved&&saved.id==b.dataset.rm&&draft)LS.set('q_cur','');toast(draft?'Draft deleted':'Quotation removed from library')}$('#lc').textContent=next.length;drawLib()}}};
 
 
 /* ---------- revisions ---------- */
@@ -232,15 +233,15 @@ function agreedPreview(){const ag=num($('#f_ag').value),sub=st.items.reduce((s,x
  const targetBase=ag/(1+gp/100),dis=Math.round((sub-targetBase)*100)/100;
  if(dis<0){h.textContent='The agreed total is above the current item total. Update the item rate(s) to reach that amount.';return null}
  h.textContent=`Discount will be ${inr(dis)}${gp?' (so the total after GST is '+inr(ag)+')':''}. Nothing changes until you select Set discount.`;return dis}
-$('#rvt').addEventListener('click',e=>{const b=e.target.closest('[data-rmrev]');if(!b)return;const i=Number(b.dataset.rmrev),h=st.hist||[],item=h[i];if(!item)return;if(!confirm('Remove '+(i===0?'the original quotation':'revision R'+item.r)+' from this quotation? Later revisions will be renumbered. Previously shared links cannot be changed.'))return;h.splice(i,1);h.forEach((x,j)=>{x.kind=j===0?'original':'revision';x.r=j;});st.hist=h;st.rev=h.length;st.sent=false;st.link='';shareUrl='';sched();pill();drawRev();toast('Revision removed · remaining versions renumbered')});
+$('#rvt').addEventListener('click',async e=>{const b=e.target.closest('[data-rmrev]');if(!b)return;const i=Number(b.dataset.rmrev),h=st.hist||[],item=h[i];if(!item)return;if(!await JPDialog.confirm('Remove '+(i===0?'the original quotation':'revision R'+item.r)+' from this quotation? Later revisions will be renumbered. Previously shared links cannot be changed.',{title:'Remove quotation version?',confirmText:'Remove',danger:true}))return;h.splice(i,1);h.forEach((x,j)=>{x.kind=j===0?'original':'revision';x.r=j;});st.hist=h;st.rev=h.length;st.sent=false;st.link='';shareUrl='';sched();pill();drawRev();toast('Revision removed · remaining versions renumbered')});
  $('#f_ag').addEventListener('input',agreedPreview);
 $('#ag').onclick=()=>{const dis=agreedPreview();if(dis==null){toast('Enter a total below your items total');return}st.f.ds=dis;$('#f_ds').value=dis;sched();toast('Discount set to '+inr(dis))};
-$('#rv').onclick=()=>{const r=st.rev||0,c=calc();
+$('#rv').onclick=async()=>{const r=st.rev||0,c=calc();
  if(!(c.tot>0)){toast('Add at least one priced item first');return}
   if(!(st.sent||st.link||shareUrl)){toast('First copy the original link or send it on WhatsApp, then create a revision');return}
   if(!st.sent){st.sent=true;pill();}
  const next=r+1,msg0=`Create revision R${next}? The current ${r?'R'+r:'original quotation'} (${inr(c.tot)}) stays in the history. You can then adjust the agreed price and send R${next}.`;
- if(!confirm(msg0))return;
+ if(!await JPDialog.confirm(msg0,{title:'Create revision R'+next+'?',confirmText:'Create revision'}))return;
  st.hist=st.hist||[];st.hist.push({r:r,total:c.tot,at:st.f.d||today(),link:st.link||shareUrl||'',sent:!!st.sent,kind:r===0?'original':'revision'});
  st.rev=next;st.sent=false;st.link='';shareUrl='';st.f.d=today();$('#f_d').value=st.f.d;$('#f_ag').value='';
  pill();upd();agreedPreview();toast('R'+st.rev+' started. Adjust the agreed price, then send it.');
