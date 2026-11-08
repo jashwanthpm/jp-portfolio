@@ -146,7 +146,7 @@ function draw(){
   <div class="chips">${chip('Date',q.e)}${chip('Venue',q.l)}${chip('Issued',fd(q.d))}${fd(q.x)?`<div class="chip"><small>Valid until</small><b>${fd(q.x)}${exp?'<span class="pill x">Expired</span>':''}</b></div>`:''}</div>
  </section>
  ${rev?`<section class="sec rev"><div class="revh"><span class="revb">R${rev}</span><div><h2>${esc(Q.revTitle||'Revised quotation')}</h2><p>${esc(Q.revNote||'This replaces my earlier quotation.')}</p></div></div>
- ${prev?`<div class="cmp"><div><small>Earlier \u00b7 R${prev.r}</small><s>${inr(prev.t)}</s></div><div class="ar" aria-hidden="true">\u2192</div><div class="nw"><small>Revised \u00b7 R${rev}</small><b>${inr(tot)}</b></div>${prev.t>tot?`<div class="sv">You save ${inr(prev.t-tot)}</div>`:''}</div>`:''}
+ ${prev?`<div class="cmp"><div><small>${prev.kind==='original'?'Original quotation':'Earlier \u00b7 R'+prev.r}</small><s>${inr(prev.t)}</s></div><div class="ar" aria-hidden="true">\u2192</div><div class="nw"><small>Revised \u00b7 R${rev}</small><b>${inr(tot)}</b></div>${prev.t>tot?`<div class="sv">You save ${inr(prev.t-tot)}</div>`:''}</div>`:''}
  ${hist.length?`<ol class="tl">${hist.map(h=>`<li><b>${h.kind==='original'?'Original':'R'+h.r}</b><span>${esc(fd(h.d)||'')}</span><em>${inr(h.t)}</em></li>`).join('')}<li class="cur"><b>R${rev}</b><span>Current</span><em>${inr(tot)}</em></li></ol>`:''}</section>`:''}
  ${exp?`<div class="warn">This quotation expired on ${fd(q.x)}. Message me and I'll send you an updated one.</div>`:''}
  ${Q.showSign===false?'':`<section class="sec intro"><p>${esc(intro)}</p><div class="sign"><i></i><div><b>${esc(Q.signName||name)}</b>${esc(Q.signRole||'Photographer')}</div></div></section>`}
