@@ -232,7 +232,7 @@ function agreedPreview(){const ag=num($('#f_ag').value),sub=st.items.reduce((s,x
  const dis=Math.round((sub-ag/(1+gp/100))*100)/100;
  if(dis<0){h.textContent='That is higher than your items total. Raise the rates instead.';return null}
  h.textContent=`Discount will be ${inr(dis)}${gp?' (so the total after GST is '+inr(ag)+')':''}.`;return dis}
-$('#rvt').addEventListener('click',e=>{const b=e.target.closest('[data-rmrev]');if(!b)return;const i=Number(b.dataset.rmrev),h=st.hist||[],item=h[i];if(!item)return;if(!confirm('Remove revision R'+item.r+' from this quotation? Later revisions will be renumbered. Previously shared links cannot be changed.'))return;h.splice(i,1);h.forEach((x,j)=>x.r=j+1);st.hist=h;st.rev=h.length+1;st.sent=st.sent&&st.rev>1;sched();pill();drawRev();toast('Revision removed · remaining versions renumbered')});
+$('#rvt').addEventListener('click',e=>{const b=e.target.closest('[data-rmrev]');if(!b)return;const i=Number(b.dataset.rmrev),h=st.hist||[],item=h[i];if(!item)return;if(!confirm('Remove revision R'+item.r+' from this quotation? Later revisions will be renumbered. Previously shared links cannot be changed.'))return;h.splice(i,1);h.forEach((x,j)=>x.r=j+1);st.hist=h;st.rev=h.length+1;sched();pill();drawRev();toast('Revision removed · remaining versions renumbered')});
  $('#f_ag').addEventListener('input',agreedPreview);
 $('#ag').onclick=()=>{const dis=agreedPreview();if(dis==null){toast('Enter a total below your items total');return}st.f.ds=dis;$('#f_ds').value=dis;sched();toast('Discount set to '+inr(dis))};
 $('#rv').onclick=()=>{const r=st.rev||1,c=calc();
