@@ -220,7 +220,7 @@ $('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J
 /* ---------- revisions ---------- */
 function drawRev(){const r=st.rev||1,h=st.hist||[],c=calc(),box=$('#rvt');if(!box)return;
  const d=(a,b)=>{const x=Math.round((a-b)*100)/100;return !x?'':`<i class="${x<0?'dn':'up'}">${x<0?'\u2212':'+'} ${inr(Math.abs(x))}</i>`};
- const rows=h.map((x,i)=>`<div class="rvr"><b>R${x.r}</b><div class="mid"><small>${x.sent?'Sent':'Not sent'} \u00b7 ${esc(fdate(x.at))}</small></div><div class="am">${inr(x.total)}${i?d(x.total,h[i-1].total):''}</div>${x.link?`<a class="btn sm" href="${esc(x.link)}" target="_blank" rel="noopener">Open</a>`:''}</div>`);
+ const rows=h.map((x,i)=>`<div class="rvr"><b>R${x.r}</b><div class="mid"><small>${x.sent?'Sent':'Not sent'} \u00b7 ${esc(fdate(x.at))}</small></div><div class="am">${inr(x.total)}${i?d(x.total,h[i-1].total):''}</div>${x.link?`<a class="btn sm" href="${esc(x.link)}" target="_blank" rel="noopener">Open</a>`:''}<button class="btn sm danger" type="button" data-rmrev="${i}" title="Remove this revision" aria-label="Remove revision R${x.r}">Remove</button></div>`);
  const prev=h.length?h[h.length-1].total:null;
  rows.push(`<div class="rvr cur"><b>R${r}</b><div class="mid"><small>Current \u00b7 ${st.sent?'sent':'draft'}</small></div><div class="am">${inr(c.tot)}${prev!=null?d(c.tot,prev):''}</div></div>`);
  box.innerHTML=rows.join('');
@@ -232,7 +232,8 @@ function agreedPreview(){const ag=num($('#f_ag').value),sub=st.items.reduce((s,x
  const dis=Math.round((sub-ag/(1+gp/100))*100)/100;
  if(dis<0){h.textContent='That is higher than your items total. Raise the rates instead.';return null}
  h.textContent=`Discount will be ${inr(dis)}${gp?' (so the total after GST is '+inr(ag)+')':''}.`;return dis}
-$('#f_ag').addEventListener('input',agreedPreview);
+$('#rvt').addEventListener('click',e=>{const b=e.target.closest('[data-rmrev]');if(!b)return;const i=Number(b.dataset.rmrev),h=st.hist||[],item=h[i];if(!item)return;if(!confirm('Remove revision R'+item.r+' from this quotation and its revision history? This does not revoke links already shared.'))return;h.splice(i,1);st.hist=h;sched();drawRev();toast('Revision R'+item.r+' removed')});
+ $('#f_ag').addEventListener('input',agreedPreview);
 $('#ag').onclick=()=>{const dis=agreedPreview();if(dis==null){toast('Enter a total below your items total');return}st.f.ds=dis;$('#f_ds').value=dis;sched();toast('Discount set to '+inr(dis))};
 $('#rv').onclick=()=>{const r=st.rev||1,c=calc();
  if(!(c.tot>0))return;
