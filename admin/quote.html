@@ -155,28 +155,28 @@ const FK=['c','ph','t','e','l','n','d','vd','ds','g','a','nt','upi','pb','tm','t
 let rates=J('q_rates',{}),st,tmr,cur='',shareUrl='';
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const newNo=()=>{const d=new Date(),p=(String((QC.quote||{}).prefix||'JP').trim()||'JP')+'-'+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+'-',mx=J('q_lib',[]).reduce((m,x)=>{const s=String(x.n||'');return s.startsWith(p)?Math.max(m,+s.slice(p.length)||0):m},0);return p+String(mx+1).padStart(2,'0')};
-const blank=()=>({id:uid(),sent:false,rev:1,hist:[],link:'',enq:null,enqId:null,items:[['','',1,0]],f:(()=>{const Q=QC.quote||{},pick=(a,b,c)=>String(a||'').trim()?a:(b||c);return{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:num(Q.validDays)||7,ds:0,g:String(Q.gst||'0'),a:Q.advance!==undefined&&String(Q.advance).trim()!==''?num(Q.advance):50,nt:String(Q.included||''),upi:pick(Q.upi,LS.get('q_upi',''),''),pb:pick(Q.payment,LS.get('q_pb'),''),tm:pick(Q.terms,LS.get('q_tm'),DT),th:''}})()});
+const blank=()=>({id:uid(),sent:false,rev:0,hist:[],link:'',enq:null,enqId:null,items:[['','',1,0]],f:(()=>{const Q=QC.quote||{},pick=(a,b,c)=>String(a||'').trim()?a:(b||c);return{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:num(Q.validDays)||7,ds:0,g:String(Q.gst||'0'),a:Q.advance!==undefined&&String(Q.advance).trim()!==''?num(Q.advance):50,nt:String(Q.included||''),upi:pick(Q.upi,LS.get('q_upi',''),''),pb:pick(Q.payment,LS.get('q_pb'),''),tm:pick(Q.terms,LS.get('q_tm'),DT),th:''}})()});
 const phone=v=>{v=String(v||'').replace(/\D/g,'');return v.length==10?'91'+v:v};
 const fdate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):(s||'');
-const dn=()=>String(st.f.n||'')+((st.rev||1)>1?' \u00b7 R'+st.rev:'');
-function load(){st.hist=Array.isArray(st.hist)?st.hist:[];st.hist.forEach((h,i)=>h.r=i+1);st.rev=st.hist.length+1;shareUrl=st.link||'';FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');$('#f_ag').value='';drawItems();drawEnq();$('#dn').textContent=dn();pill();drawRev()}
-function pill(){const p=$('#ds2'),r=st.rev||1;p.textContent=(r>1?'R'+r+' \u00b7 ':'')+(st.sent?'Sent':'Draft');p.className='pill'+(st.sent?' sent':'')}
+const dn=()=>String(st.f.n||'')+((st.rev||0)>0?' \u00b7 R'+st.rev:'');
+function load(){st.hist=Array.isArray(st.hist)?st.hist:[];st.hist.forEach((h,i)=>{h.kind=i===0?'original':'revision';h.r=i;});st.rev=st.hist.length;shareUrl=st.link||'';FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');$('#f_ag').value='';drawItems();drawEnq();$('#dn').textContent=dn();pill();drawRev()}
+function pill(){const p=$('#ds2'),r=st.rev||0;p.textContent=(r>0?'R'+r+' \u00b7 ':'')+(st.sent?'Sent':'Draft');p.className='pill'+(st.sent?' sent':'')}
 function drawItems(){$('#items').innerHTML=st.items.map((x,i)=>`<div class="ir"><div><input data-i="${i}" data-k="0" value="${esc(x[0])}" placeholder="Item" aria-label="Item"><input class="dn" data-i="${i}" data-k="1" value="${esc(x[1])}" placeholder="Add a note (optional)" aria-label="Note"></div><input class="q" data-i="${i}" data-k="2" type="number" min="1" value="${esc(x[2])}" placeholder="Qty" aria-label="Quantity"><input class="r" data-i="${i}" data-k="3" type="number" min="0" value="${x[3]||''}" placeholder="0" aria-label="Rate"><div class="am">${inr(num(x[2])*num(x[3]))}</div><button class="x" data-del="${i}" aria-label="Remove item"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`).join('')}
 function drawEnq(){const e=st.enq,box=$('#enqc');if(!e){box.innerHTML='';$('#bud').innerHTML='';return}
  const rows=[['Occasion',e.o],['Looking for',(e.w||[]).join(', ')],['Date',fdate(e.d)],['Days',e.y],['Venue',e.v],['Brand',e.br],['Budget',e.b?`<span class="bud">${esc(e.b)}</span>`:''],['Found via',e.f],['Instagram',e.i],['Email',e.e],['Message',e.m]].filter(r=>r[1]).map(([a,b])=>`<dt>${a}</dt><dd>${a=='Budget'?b:esc(b)}</dd>`).join(''),p=phone(e.p);
  box.innerHTML=`<div class="card enq"><div class="ch"><svg class="i" viewBox="0 0 24 24" style="color:var(--a)"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><h3>Enquiry</h3><small>${esc(e.n||'')}</small></div><dl>${rows}</dl><div class="acts">${p?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/${esc(p)}">WhatsApp</a><a class="btn sm" href="tel:+${esc(p)}">Call</a>`:''}${e.e?`<a class="btn sm" href="mailto:${esc(e.e)}">Email</a>`:''}</div></div>`;
  $('#bud').innerHTML=e.b?`Client budget: <b>${esc(e.b)}</b>`:''}
 function calc(){const it=st.items,sub=it.reduce((s,x)=>s+num(x[2])*num(x[3]),0),dis=Math.min(num(st.f.ds),sub),tx=sub-dis,gp=num(st.f.g),tot=tx+tx*gp/100,ap=Math.min(100,num(st.f.a));return{tot,ap,adv:Math.round(tot*ap/100)}}
-function payload(){const f=st.f,v=f.d||today();return{v:1,n:String(f.n||'').trim(),d:v,x:addD(v,Math.max(1,num(f.vd)||7)),c:String(f.c).trim(),t:String(f.t).trim(),e:String(f.e).trim(),l:String(f.l).trim(),i:st.items.filter(x=>String(x[0]).trim()).map(x=>[String(x[0]).trim(),String(x[1]||'').trim(),num(x[2])||1,num(x[3])]),ds:num(f.ds),g:num(f.g),a:num(f.a),nt:String(f.nt).trim(),upi:String(f.upi||'').trim(),r:(st.rev||1)>1?st.rev:undefined,rh:(st.rev||1)>1?(st.hist||[]).map(h=>[h.r,h.total,h.at]):undefined,pb:String(f.pb).trim(),tm:String(f.tm).trim(),th:['noir','ivory','blush','editorial'].includes(f.th)?f.th:undefined}}
+function payload(){const f=st.f,v=f.d||today();return{v:1,n:String(f.n||'').trim(),d:v,x:addD(v,Math.max(1,num(f.vd)||7)),c:String(f.c).trim(),t:String(f.t).trim(),e:String(f.e).trim(),l:String(f.l).trim(),i:st.items.filter(x=>String(x[0]).trim()).map(x=>[String(x[0]).trim(),String(x[1]||'').trim(),num(x[2])||1,num(x[3])]),ds:num(f.ds),g:num(f.g),a:num(f.a),nt:String(f.nt).trim(),upi:String(f.upi||'').trim(),r:(st.rev||0)>0?st.rev:undefined,rh:(st.hist||[]).length?(st.hist||[]).map(h=>[h.r,h.total,h.at,h.kind]):undefined,pb:String(f.pb).trim(),tm:String(f.tm).trim(),th:['noir','ivory','blush','editorial'].includes(f.th)?f.th:undefined}}
 let previewUpdate=0;async function upd(){const version=++previewUpdate,c=calc();$('#tot').textContent=inr(c.tot);$('#advl').textContent=`Advance (${c.ap}%)`;$('#adv').textContent=inr(c.adv);$('#dn').textContent=dn();drawRev();
  const encoded=await QCODEC.enc(payload());if(version!==previewUpdate)return;cur=encoded;$('#lnk').value=shareUrl||'Click Copy link or Send on WhatsApp to create a short link';
  const fr=$('#fr');try{if(fr.dataset.on){if(fr.contentWindow.location.hash!==('#'+cur))fr.contentWindow.location.hash=cur}else{fr.dataset.on=1;fr.src='/q.html#'+cur}}catch{fr.src='/q.html#'+cur}
  LS.set('q_cur',JSON.stringify(st));LS.set('q_upi',st.f.upi||'');LS.set('q_pb',st.f.pb);LS.set('q_tm',st.f.tm);upsert();$('#svt').textContent='Saved'}
 const sched=()=>{shareUrl='';st.link='';$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
-function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const eid=String(st.enqId||''),lib=J('q_lib',[]).filter(x=>x.id!=st.id&&x.n!=st.f.n&&!(eid&&x.st&&String(x.st.enqId||'')===eid));lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,rev:st.rev||1,was:(st.hist&&st.hist.length)?st.hist[st.hist.length-1].total:0,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length+1,60)}
+function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const eid=String(st.enqId||''),lib=J('q_lib',[]).filter(x=>x.id!=st.id&&x.n!=st.f.n&&!(eid&&x.st&&String(x.st.enqId||'')===eid));lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,rev:st.rev||0,was:(st.hist&&st.hist.length)?st.hist[st.hist.length-1].total:0,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length+1,60)}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),1600)}
 function markSent(){if(!st.sent){st.sent=true;pill();upd()}syncEnquiry()}
-function refText(){const r=st.rev||1,n=String(st.f.n||'');if(r<2)return n;const h=st.hist||[],prev=h.length?h[h.length-1].total:0,first=h.length?h[0].total:0;return (n+' \u00b7 R'+r+' \u00b7 was '+inr(prev)+(h.length>1?' \u00b7 first '+inr(first):'')).slice(0,60)}
+function refText(){const r=st.rev||1,n=String(st.f.n||'');if(r<1)return n;const h=st.hist||[],prev=h.length?h[h.length-1].total:0,first=h.length?h[0].total:0;return (n+' \u00b7 R'+r+' \u00b7 was '+inr(prev)+(h.length>1?' \u00b7 first '+inr(first):'')).slice(0,60)}
 async function syncEnquiry(){if(!st.enqId||!window.ENQDB||!ENQDB.session())return;try{await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(st.enqId)+'&status=in.(new,contacted,follow_up,quoted)',{status:'quoted',quote_ref:refText(),quote_amount:calc().tot});toast('Enquiry marked as quotation sent')}catch(e){}}
 /* inputs */
 $('#scroll').addEventListener('input',e=>{const t=e.target;
@@ -220,28 +220,28 @@ $('#ll').onclick=e=>{const b=e.target.closest('button');if(!b)return;const lib=J
 /* ---------- revisions ---------- */
 function drawRev(){const r=st.rev||1,h=st.hist||[],c=calc(),box=$('#rvt');if(!box)return;
  const d=(a,b)=>{const x=Math.round((a-b)*100)/100;return !x?'':`<i class="${x<0?'dn':'up'}">${x<0?'\u2212':'+'} ${inr(Math.abs(x))}</i>`};
- const rows=h.map((x,i)=>`<div class="rvr"><b>R${x.r}</b><div class="mid"><small>${x.sent?'Sent':'Not sent'} \u00b7 ${esc(fdate(x.at))}</small></div><div class="am">${inr(x.total)}${i?d(x.total,h[i-1].total):''}</div>${x.link?`<a class="btn sm" href="${esc(x.link)}" target="_blank" rel="noopener">Open</a>`:''}<button class="btn sm danger" type="button" data-rmrev="${i}" title="Remove this revision" aria-label="Remove revision R${x.r}">Remove</button></div>`);
+ const rows=h.map((x,i)=>`<div class="rvr"><b>${i===0?'Original':'R'+x.r}</b><div class="mid"><small>${x.sent?'Sent':'Not sent'} \u00b7 ${esc(fdate(x.at))}</small></div><div class="am">${inr(x.total)}${i?d(x.total,h[i-1].total):''}</div>${x.link?`<a class="btn sm" href="${esc(x.link)}" target="_blank" rel="noopener">Open</a>`:''}<button class="btn sm danger" type="button" data-rmrev="${i}" title="Remove this revision" aria-label="Remove revision R${x.r}">Remove</button></div>`);
  const prev=h.length?h[h.length-1].total:null;
- rows.push(`<div class="rvr cur"><b>R${r}</b><div class="mid"><small>Current \u00b7 ${st.sent?'sent':'draft'}</small></div><div class="am">${inr(c.tot)}${prev!=null?d(c.tot,prev):''}</div></div>`);
+ rows.push(`<div class="rvr cur"><b>${r>0?'R'+r:'Original'}</b><div class="mid"><small>Current \u00b7 ${st.sent?'sent':'draft'}</small></div><div class="am">${inr(c.tot)}${prev!=null?d(c.tot,prev):''}</div></div>`);
  box.innerHTML=rows.join('');
- $('#rvh').textContent=r>1?'Revision '+r:'Client negotiating?';
- const b=$('#rv');b.textContent=r>1?'Create another revision (R'+(r+1)+')':'Create revised version';b.disabled=!(c.tot>0)}
+ $('#rvh').textContent=r>0?'Revision '+r:'Original quotation';
+ const b=$('#rv');b.textContent=r>1?'Create another revision (R'+(r+1)+')':'Create revised version';b.disabled=!(c.tot>0&&st.sent)}
 function agreedPreview(){const ag=num($('#f_ag').value),sub=st.items.reduce((s,x)=>s+num(x[2])*num(x[3]),0),gp=num(st.f.g),h=$('#agh');
  if(!ag){h.textContent="Type the price you both agreed and I'll work out the discount for you.";return null}
  if(!sub){h.textContent='Add your items and rates first.';return null}
  const dis=Math.round((sub-ag/(1+gp/100))*100)/100;
  if(dis<0){h.textContent='That is higher than your items total. Raise the rates instead.';return null}
  h.textContent=`Discount will be ${inr(dis)}${gp?' (so the total after GST is '+inr(ag)+')':''}.`;return dis}
-$('#rvt').addEventListener('click',e=>{const b=e.target.closest('[data-rmrev]');if(!b)return;const i=Number(b.dataset.rmrev),h=st.hist||[],item=h[i];if(!item)return;if(!confirm('Remove revision R'+item.r+' from this quotation? Later revisions will be renumbered. Previously shared links cannot be changed.'))return;h.splice(i,1);h.forEach((x,j)=>x.r=j+1);st.hist=h;st.rev=h.length+1;st.sent=false;st.link='';shareUrl='';sched();pill();drawRev();toast('Revision removed · remaining versions renumbered')});
+$('#rvt').addEventListener('click',e=>{const b=e.target.closest('[data-rmrev]');if(!b)return;const i=Number(b.dataset.rmrev),h=st.hist||[],item=h[i];if(!item)return;if(!confirm('Remove '+(i===0?'the original quotation':'revision R'+item.r)+' from this quotation? Later revisions will be renumbered. Previously shared links cannot be changed.'))return;h.splice(i,1);h.forEach((x,j)=>{x.kind=j===0?'original':'revision';x.r=j;});st.hist=h;st.rev=h.length;st.sent=false;st.link='';shareUrl='';sched();pill();drawRev();toast('Revision removed · remaining versions renumbered')});
  $('#f_ag').addEventListener('input',agreedPreview);
 $('#ag').onclick=()=>{const dis=agreedPreview();if(dis==null){toast('Enter a total below your items total');return}st.f.ds=dis;$('#f_ds').value=dis;sched();toast('Discount set to '+inr(dis))};
-$('#rv').onclick=()=>{const r=st.rev||1,c=calc();
- if(!(c.tot>0))return;
- const msg0=st.sent?`Create revision R${r+1}? Version R${r} (${inr(c.tot)}) stays in the history. You can then change the prices and send R${r+1}.`:`R${r} hasn't been sent yet. Create revision R${r+1} anyway?`;
+$('#rv').onclick=()=>{const r=st.rev||0,c=calc();
+ if(!(c.tot>0)||!st.sent)return;
+ const next=r+1,msg0=`Create revision R${next}? The current ${r?'R'+r:'original quotation'} (${inr(c.tot)}) stays in the history. You can then adjust the agreed price and send R${next}.`;
  if(!confirm(msg0))return;
- st.hist=st.hist||[];st.hist.push({r:r,total:c.tot,at:st.f.d||today(),link:st.link||shareUrl||'',sent:!!st.sent});
- st.rev=r+1;st.sent=false;st.link='';shareUrl='';st.f.d=today();$('#f_d').value=st.f.d;$('#f_ag').value='';
- pill();upd();agreedPreview();toast('R'+st.rev+' started. Change the prices, then send it.');
+ st.hist=st.hist||[];st.hist.push({r:r,total:c.tot,at:st.f.d||today(),link:st.link||shareUrl||'',sent:!!st.sent,kind:r===0?'original':'revision'});
+ st.rev=next;st.sent=false;st.link='';shareUrl='';st.f.d=today();$('#f_d').value=st.f.d;$('#f_ag').value='';
+ pill();upd();agreedPreview();toast('R'+st.rev+' started. Adjust the agreed price, then send it.');
  setTimeout(()=>{const f=$('#f_ag');f.scrollIntoView({behavior:'smooth',block:'center'});f.focus({preventScroll:true})},200)};
 /* boot */
 
