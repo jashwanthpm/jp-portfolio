@@ -173,7 +173,7 @@ async function upd(){const c=calc();$('#tot').textContent=inr(c.tot);$('#advl').
  const fr=$('#fr');try{if(fr.dataset.on)fr.contentWindow.location.hash=cur;else{fr.dataset.on=1;fr.src='/q.html#'+cur}}catch{fr.src='/q.html#'+cur}
  LS.set('q_cur',JSON.stringify(st));LS.set('q_upi',st.f.upi||'');LS.set('q_pb',st.f.pb);LS.set('q_tm',st.f.tm);upsert();$('#svt').textContent='Saved'}
 const sched=()=>{shareUrl='';st.link='';$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
-function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const lib=J('q_lib',[]).filter(x=>x.id!=st.id&&x.n!=st.f.n);lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,rev:st.rev||1,was:(st.hist&&st.hist.length)?st.hist[st.hist.length-1].total:0,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length,60)}
+function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const eid=String(st.enqId||''),lib=J('q_lib',[]).filter(x=>x.id!=st.id&&x.n!=st.f.n&&!(eid&&x.st&&String(x.st.enqId||'')===eid));lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,rev:st.rev||1,was:(st.hist&&st.hist.length)?st.hist[st.hist.length-1].total:0,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length+1,60)}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),1600)}
 function markSent(){if(!st.sent){st.sent=true;pill();upd()}syncEnquiry()}
 function refText(){const r=st.rev||1,n=String(st.f.n||'');if(r<2)return n;const h=st.hist||[],prev=h.length?h[h.length-1].total:0,first=h.length?h[0].total:0;return (n+' \u00b7 R'+r+' \u00b7 was '+inr(prev)+(h.length>1?' \u00b7 first '+inr(first):'')).slice(0,60)}
@@ -252,18 +252,26 @@ $('#rv').onclick=()=>{const r=st.rev||1,c=calc();
  if(enquiryCode){
   hasEnquiryLink=true;
   try{
-   const e=await QCODEC.dec(enquiryCode);
+   const e=await QCODEC.dec(enquiryCode),enquiryId=params.get('id')||null;
    if(e&&typeof e==='object'){
-    incoming=blank();fromEnquiry=true;
-    incoming.enq=e;incoming.enqId=params.get('id')||null;
-    incoming.f.c=String(e.n||'');
-    incoming.f.ph=String(e.p||'');
-    incoming.f.t=String(e.o||((e.w||[]).join(', '))||'');
-    incoming.f.e=String(e.d||'');
-    incoming.f.l=String(e.v||'');
+    const existing=J('q_lib',[]).find(x=>enquiryId&&x.st&&String(x.st.enqId||'')===String(enquiryId));
+    if(existing&&existing.st&&existing.st.f){
+     incoming=JSON.parse(JSON.stringify(existing.st));fromEnquiry=true;
+    }else{
+     incoming=blank();fromEnquiry=true;
+     incoming.enq=e;incoming.enqId=enquiryId;
+     incoming.f.c=String(e.n||'');
+     incoming.f.ph=String(e.p||'');
+     incoming.f.t=String(e.o||((e.w||[]).join(', '))||'');
+     incoming.f.e=String(e.d||'');
+     incoming.f.l=String(e.v||'');
+     const requested=Array.isArray(e.w)?e.w.map(x=>String(x||'').trim()).filter(x=>x&&!/^(collaboration|collab)$/i.test(x)&&!/^not sure/i.test(x)):[];
+     const titles=requested.length?requested:[(OCC[e.o]||e.o||'Photography services')];
+     const brief=String(e.m||'').trim();
+     incoming.items=titles.map((name,i)=>[name,i===0&&brief?'Client brief: '+brief:'',1,rateFor(name)]);
+    }
    }
-  }catch(e){incoming=null}
- }else if(location.hash.length>2){
+  }catch(e){incoming=null} }else if(location.hash.length>2){
   try{
    incoming=await QCODEC.dec(location.hash.slice(1));
    if(!incoming||!incoming.f||!Array.isArray(incoming.items))incoming=null;
