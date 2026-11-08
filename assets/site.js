@@ -1,5 +1,6 @@
 (function(){const p=location.pathname;if(/\.html$/.test(p)){const n=p.replace(/\/index\.html$/,'/').replace(/\.html$/,'');history.replaceState(null,'',(n||'/')+location.search+location.hash)}})();
-const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const jpDialogReady=window.JPDialog?Promise.resolve():new Promise(resolve=>{const s=document.createElement('script');s.src='/assets/dialog.js';s.onload=resolve;s.onerror=resolve;document.head.appendChild(s)});
+const $=(s,r=document)=>r.querySelector(s),$=(s,r=document)=>[...r.querySelectorAll(s)];
 const shuf=a=>{a=[...a];for(let i=a.length;i>1;){const j=Math.random()*i--|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const NAV=[['/','Home','home'],['/portfolio','Portfolio','portfolio'],['/clients','Galleries','clients'],['/about','About','about'],['/contact','Contact','contact']];
 const NV=()=>NAV.filter(n=>n[2]=='home'||!((C.vis||{})['nav_'+n[2]]===false));
@@ -57,7 +58,7 @@ async function zipAll(c,btn){const sp=$('#dlp')||{};btn.disabled=true;
  try{if(!window.JSZip)await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
   const z=new JSZip(),ps=c.photos;let n=0;for(const p of ps){const r=await fetch(dlSrc(p));if(!r.ok)throw 0;z.file(dlName(p),await r.blob());n++;sp.textContent=`Preparing ${n} / ${ps.length}…`}
   const blob=await z.generateAsync({type:'blob',compression:'STORE'},m=>sp.textContent=`Zipping ${Math.round(m.percent)}%`),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=c.slug+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
- catch{alert('Could not prepare the download. Please download the pictures one by one instead.')}sp.textContent='';btn.disabled=false}
+ catch{await jpDialogReady;if(window.JPDialog)await JPDialog.alert('The download could not be prepared. Please try downloading the pictures one by one instead.');else alert('Could not prepare the download. Please download the pictures one by one instead.')}sp.textContent='';btn.disabled=false}
 const at=(l,i,x)=>PV?` data-item="${l}:${i}"${x.hide?' data-hid="1"':''}`:'';
 const shown=a=>(a||[]).map((x,i)=>[x,i]).filter(([x])=>PV||!x.hide);
 const em=s=>String(s).replace(/\*(.+?)\*/g,'<em>$1</em>');
