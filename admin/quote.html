@@ -134,13 +134,13 @@ const QUICK=['Wedding day coverage','Pre-wedding shoot','Engagement shoot','Cand
 const OCC={'Wedding':'Wedding day coverage','Pre-wedding':'Pre-wedding shoot','Engagement':'Engagement shoot','Haldi / Mehendi / Sangeet':'Haldi / Mehendi / Sangeet coverage','Collab / brand shoot':'Collab / brand shoot','Portraits':'Portrait session'};
 const DT="Booking is confirmed once the advance is received.\nBalance is due on or before the shoot date.\nThis quotation is valid until the date shown above.\nTravel and stay outside the city are charged extra unless mentioned.";
 const FK=['c','ph','t','e','l','n','d','vd','ds','g','a','nt','upi','pb','tm','th'];
-let rates=J('q_rates',{}),st,tmr,cur='';
+let rates=J('q_rates',{}),st,tmr,cur='',shareUrl='';
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const newNo=()=>{const d=new Date(),p=(String((QC.quote||{}).prefix||'JP').trim()||'JP')+'-'+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+'-',mx=J('q_lib',[]).reduce((m,x)=>{const s=String(x.n||'');return s.startsWith(p)?Math.max(m,+s.slice(p.length)||0):m},0);return p+String(mx+1).padStart(2,'0')};
 const blank=()=>({id:uid(),sent:false,enq:null,enqId:null,items:[['','',1,0]],f:(()=>{const Q=QC.quote||{},pick=(a,b,c)=>String(a||'').trim()?a:(b||c);return{c:'',ph:'',t:'',e:'',l:'',n:newNo(),d:today(),vd:num(Q.validDays)||7,ds:0,g:String(Q.gst||'0'),a:Q.advance!==undefined&&String(Q.advance).trim()!==''?num(Q.advance):50,nt:String(Q.included||''),upi:pick(Q.upi,LS.get('q_upi',''),''),pb:pick(Q.payment,LS.get('q_pb'),''),tm:pick(Q.terms,LS.get('q_tm'),DT),th:''}})()});
 const phone=v=>{v=String(v||'').replace(/\D/g,'');return v.length==10?'91'+v:v};
 const fdate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):(s||'');
-function load(){FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');drawItems();drawEnq();$('#dn').textContent=st.f.n;pill()}
+function load(){shareUrl='';FK.forEach(k=>$('#f_'+k).value=st.f[k]??'');drawItems();drawEnq();$('#dn').textContent=st.f.n;pill()}
 function pill(){const p=$('#ds2');p.textContent=st.sent?'Sent':'Draft';p.className='pill'+(st.sent?' sent':'')}
 function drawItems(){$('#items').innerHTML=st.items.map((x,i)=>`<div class="ir"><div><input data-i="${i}" data-k="0" value="${esc(x[0])}" placeholder="Item" aria-label="Item"><input class="dn" data-i="${i}" data-k="1" value="${esc(x[1])}" placeholder="Add a note (optional)" aria-label="Note"></div><input class="q" data-i="${i}" data-k="2" type="number" min="1" value="${esc(x[2])}" placeholder="Qty" aria-label="Quantity"><input class="r" data-i="${i}" data-k="3" type="number" min="0" value="${x[3]||''}" placeholder="0" aria-label="Rate"><div class="am">${inr(num(x[2])*num(x[3]))}</div><button class="x" data-del="${i}" aria-label="Remove item"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`).join('')}
 function drawEnq(){const e=st.enq,box=$('#enqc');if(!e){box.innerHTML='';$('#bud').innerHTML='';return}
@@ -150,10 +150,10 @@ function drawEnq(){const e=st.enq,box=$('#enqc');if(!e){box.innerHTML='';$('#bud
 function calc(){const it=st.items,sub=it.reduce((s,x)=>s+num(x[2])*num(x[3]),0),dis=Math.min(num(st.f.ds),sub),tx=sub-dis,gp=num(st.f.g),tot=tx+tx*gp/100,ap=Math.min(100,num(st.f.a));return{tot,ap,adv:Math.round(tot*ap/100)}}
 function payload(){const f=st.f,v=f.d||today();return{v:1,n:String(f.n||'').trim(),d:v,x:addD(v,Math.max(1,num(f.vd)||7)),c:String(f.c).trim(),t:String(f.t).trim(),e:String(f.e).trim(),l:String(f.l).trim(),i:st.items.filter(x=>String(x[0]).trim()).map(x=>[String(x[0]).trim(),String(x[1]||'').trim(),num(x[2])||1,num(x[3])]),ds:num(f.ds),g:num(f.g),a:num(f.a),nt:String(f.nt).trim(),upi:String(f.upi||'').trim(),pb:String(f.pb).trim(),tm:String(f.tm).trim(),th:['noir','ivory','blush','editorial'].includes(f.th)?f.th:undefined}}
 async function upd(){const c=calc();$('#tot').textContent=inr(c.tot);$('#advl').textContent=`Advance (${c.ap}%)`;$('#adv').textContent=inr(c.adv);$('#dn').textContent=st.f.n;
- cur=await QCODEC.enc(payload());$('#lnk').value=location.origin+'/q#'+cur;
+ cur=await QCODEC.enc(payload());$('#lnk').value=shareUrl||'Click Copy link or Send on WhatsApp to create a short link';
  const fr=$('#fr');try{if(fr.dataset.on)fr.contentWindow.location.hash=cur;else{fr.dataset.on=1;fr.src='/q.html#'+cur}}catch{fr.src='/q.html#'+cur}
  LS.set('q_cur',JSON.stringify(st));LS.set('q_upi',st.f.upi||'');LS.set('q_pb',st.f.pb);LS.set('q_tm',st.f.tm);upsert();$('#svt').textContent='Saved'}
-const sched=()=>{$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
+const sched=()=>{shareUrl='';$('#svt').textContent='Saving…';clearTimeout(tmr);tmr=setTimeout(upd,300)};
 function upsert(){if(!String(st.f.c).trim()&&!st.items.some(x=>String(x[0]).trim()))return;const lib=J('q_lib',[]).filter(x=>x.id!=st.id&&x.n!=st.f.n);lib.unshift({id:st.id,n:st.f.n,c:st.f.c,t:st.f.t,total:calc().tot,at:today(),sent:st.sent,st:JSON.parse(JSON.stringify(st))});LS.set('q_lib',JSON.stringify(lib.slice(0,60)));$('#lc').textContent=Math.min(lib.length,60)}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),1600)}
 function markSent(){if(!st.sent){st.sent=true;pill();upd()}syncEnquiry()}
@@ -174,12 +174,12 @@ $('#scroll').addEventListener('click',e=>{const b=e.target.closest('button');if(
 const drawQuick=()=>{$('#quick').innerHTML=quickList().map(q=>`<button type="button" data-q="${esc(q)}">+ ${esc(q)}</button>`).join('')};drawQuick();
 $('#add').onclick=()=>addRow();
 /* actions */
-const msg=()=>`Hi ${String(st.f.c).trim()||'there'}, here is your quotation for ${String(st.f.t).trim()||'your shoot'} (${inr(calc().tot)}):\n${$('#lnk').value}`;
+const msg=url=>`Hi ${String(st.f.c).trim()||'there'}, here is your quotation for ${String(st.f.t).trim()||'your shoot'} (${inr(calc().tot)}):\n${url}`;
 const copy=async t=>{try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove();return true}};
-const cpl=async()=>{await copy($('#lnk').value);markSent();toast('Link copied')};
+async function makeShortLink(){if(shareUrl)return shareUrl;const r=await fetch('https://q.sakkhi.co.in/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload())});let d={};try{d=await r.json()}catch{}if(!r.ok||!d.url)throw new Error(d.error||'Could not create a short link');shareUrl=d.url;$('#lnk').value=shareUrl;return shareUrl}\n const cpl=async()=>{try{const url=await makeShortLink();await copy(url);markSent();toast('Short link copied')}catch(e){toast(e.message||'Could not create link')}};
 $('#cp').onclick=cpl;$('#cp2').onclick=cpl;
-$('#wa').onclick=()=>{const p=phone(st.f.ph);window.open((p?'https://wa.me/'+p:'https://wa.me/')+'?text='+encodeURIComponent(msg()),'_blank');markSent()};
-$('#op').onclick=()=>window.open($('#lnk').value,'_blank');
+$('#wa').onclick=async()=>{try{const url=await makeShortLink(),p=phone(st.f.ph);window.open((p?'https://wa.me/'+p:'https://wa.me/')+'?text='+encodeURIComponent(msg(url)),'_blank');markSent()}catch(e){toast(e.message||'Could not create link')}};
+$('#op').onclick=()=>window.open(shareUrl||location.origin+'/q.html#'+cur,'_blank');
 $('#nw').onclick=()=>{st=blank();load();upd();$('#f_c').focus()};
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key=='s'){e.preventDefault();upd();toast('Saved')}});
 $$('.seg button').forEach(b=>b.onclick=()=>{$$('.seg button').forEach(x=>x.classList.toggle('on',x==b));$('#dev').classList.toggle('m',b.dataset.d=='m')});
