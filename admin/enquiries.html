@@ -108,6 +108,7 @@ select option{background:#1a1714}
 <div class="md" id="md" hidden><div class="mb" id="mb"></div></div>
 <div id="toast" role="status"></div>
 <script src="/assets/quote.js"></script><script src="/assets/enqdb.js?v=20261107-sharedsession3"></script>
+<script src="../assets/dialog.js"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -200,9 +201,9 @@ function drawer(r){const s=SM[r.status]||SM.new,p=phone(r.phone),first=(r.name||
  const w=$('#wa');if(w)w.addEventListener('click',()=>{const x=rr();if(x.status==='new')setStatus(x,'contacted')});
  let nt;$('#nt').oninput=()=>{$('#sv').textContent='Saving…';clearTimeout(nt);nt=setTimeout(async()=>{try{const i=rows.findIndex(x=>x.id===r.id),v=$('#nt').value;await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(r.id),{notes:v||null});if(i>-1)rows[i].notes=v||null;$('#sv').textContent='Saved'}catch(e){$('#sv').textContent=e.message}},700)};
  $('#mq').onclick=async()=>{window.open(await quoteLink(rr()),'_blank')};
- const bk=$('#bk');if(bk)bk.onclick=async()=>{if(confirm('Block this number? Their enquiries will be hidden and future ones from the same number arrive as Blocked.')){await setStatus(rr(),'blocked');closeDr()}};
+ const bk=$('#bk');if(bk)bk.onclick=async()=>{if(await JPDialog.confirm('Their existing enquiries will be hidden, and future enquiries from this number will arrive as Blocked.',{title:'Block this number?',confirmText:'Block number',danger:true})){await setStatus(rr(),'blocked');closeDr()}};
  const ub=$('#ub');if(ub)ub.onclick=()=>setStatus(rr(),'new');
- $('#dl').onclick=async()=>{if(!confirm('Delete this enquiry permanently?'))return;try{await ENQDB.rest('DELETE','?id=eq.'+encodeURIComponent(r.id));rows=rows.filter(x=>x.id!==r.id);closeDr();render();toast('Deleted')}catch(e){toast(e.message)}}}
+ $('#dl').onclick=async()=>{if(!await JPDialog.confirm('This enquiry and its notes will be permanently deleted. This cannot be undone.',{title:'Delete enquiry?',confirmText:'Delete permanently',danger:true}))return;try{await ENQDB.rest('DELETE','?id=eq.'+encodeURIComponent(r.id));rows=rows.filter(x=>x.id!==r.id);closeDr();render();toast('Deleted')}catch(e){toast(e.message)}}}
 /* ---------- add ---------- */
 $('#add').onclick=()=>{$('#mb').innerHTML=`<h3>Add an enquiry</h3><p style="color:var(--m);margin-bottom:8px">For leads who message you on Instagram, WhatsApp or call.</p>
  <label for="a_n">Name</label><input id="a_n" autocomplete="off"><div class="g2"><div><label for="a_p">Phone / WhatsApp</label><input id="a_p" type="tel" inputmode="tel"></div><div><label for="a_s">Where from</label><select id="a_s"><option>Instagram DM</option><option>WhatsApp</option><option>Phone call</option><option>Referral</option><option>Other</option></select></div></div>
