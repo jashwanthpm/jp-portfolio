@@ -2394,23 +2394,42 @@
     "s5h": "Where do I *send it?*",
     "s5s": "I'll reply with your quotation on WhatsApp or email.",
     "foundOther": true,
-    "collabModelLabel": "Are you a model?",
+    "collabStepH": "Tell me about *the collab*",
+    "collabStepS": "A few quick details so I can see if it's a fit.",
+    "collabCityLabel": "City",
+    "collabAreaLabel": "Area where you stay",
+    "collabLocReq": true,
+    "collabRoleLabel": "Who are you collaborating as?",
+    "collabRoleOther": true,
     "collabIgLabel": "Your Instagram handle",
     "collabTypeLabel": "What kind of collaboration are you looking for?",
+    "collabNote": "Barter collaborations are considered based on your portfolio, reach and engagement.",
     "reqLabel": "Tell me about your plans",
     "reqPh": "Dates, ideas, moments you want captured…",
     "reqOn": true,
     "okh": "Thank *you*",
-    "okt": "I've got your details and will  get back to you shortly."
+    "okt": "I've got your details and will  get back to you shortly.",
+    "collabModelLabel": "Are you a model?"
   },
   "eqOcc": [
-    "Wedding",
-    "Pre-wedding",
-    "Engagement",
-    "Haldi / Mehendi / Sangeet",
-    "Collab shoot",
-    "Brand shoot",
-    "Portraits"
+    {
+      "t": "Wedding"
+    },
+    {
+      "t": "Pre-wedding"
+    },
+    {
+      "t": "Engagement"
+    },
+    {
+      "t": "Collab shoot"
+    },
+    {
+      "t": "Brand shoot"
+    },
+    {
+      "t": "Portraits"
+    }
   ],
   "eqDays": [
     {
@@ -2530,6 +2549,28 @@
     {
       "t": "Portrait session",
       "r": "5000"
+    }
+  ],
+  "eqCollabRole": [
+    {
+      "t": "Model"
+    },
+    {
+      "t": "Influencer / content creator"
+    },
+    {
+      "t": "Brand or business"
+    }
+  ],
+  "eqCollabType": [
+    {
+      "t": "Barter"
+    },
+    {
+      "t": "Paid collaboration"
+    },
+    {
+      "t": "Open to either"
     }
   ]
 }
