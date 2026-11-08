@@ -183,14 +183,14 @@ contact(){
  try{const r=await fetch(C.formEndpoint,{method:'POST',body:new FormData(e.target),headers:{Accept:'application/json'}});if(!r.ok)throw 0;e.target.reset();txt('ok',"Thank you — I'll reply to you personally, soon.")}catch{txt('ok','Could not send. Please email me directly.')}}}
 ,enquire(){
  const root=$('#ew');if(!root)return;
- const S={occasion:'',days:'',wants:[],budget:'',found:'',collabModel:'',collabType:''},isBarter=()=>isC()&&S.collabType==='Barter',seq=()=>isC()?(isBarter()?[0,1,5,2,4]:[0,1,5,2,3,4]):[0,1,2,3,4],bar=$('#ewb'),lab=$('#ewl'),back=$('#ewback'),next=$('#ewnext'),err=$('#ewerr'),f=$('#ef'),
+ const S={occasion:'',days:'',wants:[],budget:'',found:'',collabModel:'',collabType:''},seq=()=>isC()?[0,1,5,2,3,4]:[0,1,2,3,4],bar=$('#ewb'),lab=$('#ewl'),back=$('#ewback'),next=$('#ewnext'),err=$('#ewerr'),f=$('#ef'),
   val=n=>(f.elements[n]&&f.elements[n].value||'').trim(),
   isC=()=>/collab/i.test(S.occasion||''),
   igFix=v=>{v=String(v||'').trim();return v&&!/^@|^https?:\/\//i.test(v)?'@'+v.replace(/\s+/g,''):v};
  let i=0,busy=false;
  const go=(n,quiet)=>{const q=seq();i=Math.max(0,Math.min(q.length-1,n));const id=q[i],c=isC();$$('.ew-step',root).forEach(x=>x.hidden=+x.dataset.s!==id);bar.style.width=(i+1)/q.length*100+'%';lab.textContent=`Step ${i+1} of ${q.length}`;back.hidden=i==0;
   next.textContent=i==q.length-1?'Send enquiry':'Continue';err.textContent='';
-  const vb=$('#ewvenueb'),db=$('#ewdaysb'),lc=$('#ewcollabloc'),igf=$('#ewinstagramfield'),cn=$('#ew-collab-note');if(vb)vb.hidden=c;if(db)db.hidden=c;if(lc)lc.hidden=!c;if(igf)igf.hidden=c;if(cn)cn.hidden=S.collabType!=='Barter';
+  const vb=$('#ewvenueb'),db=$('#ewdaysb'),lc=$('#ewcollabloc'),igf=$('#ewinstagramfield');if(vb)vb.hidden=c;if(db)db.hidden=c;if(lc)lc.hidden=!c;if(igf)igf.hidden=c;
   if(!quiet)$('.ew-top').scrollIntoView({behavior:'smooth',block:'start'});
   if(id==4)setTimeout(()=>f.elements.name.focus({preventScroll:true}),350)};
  const other=g=>{const w=root.querySelector(`.ew-other[data-for=${g}]`);if(!w)return;const on=[].concat(S[g]).includes('Other');w.hidden=!on;return on?w.querySelector('input'):null};
@@ -200,7 +200,6 @@ contact(){
   else{const was=o.classList.contains('on');$$('.ew-opt',box).forEach(x=>x.classList.remove('on'));if(was&&g!='occasion'){S[g]=''}else{o.classList.add('on');S[g]=v}}
   const oi=other(g);if(oi&&v=='Other')oi.focus();
   err.textContent='';
-  if(g==='collabType'){const cn=$('#ew-collab-note');if(cn)cn.hidden=S.collabType!=='Barter'}
   if(g=='occasion'&&v!='Other'&&S[g])setTimeout(()=>go(1),240)});
  const tbd=$('#ewtbd'),dt=f.elements.date;dt.min=new Date().toISOString().slice(0,10);
  tbd.onclick=()=>{tbd.classList.toggle('on');dt.disabled=tbd.classList.contains('on');if(dt.disabled)dt.value=''};
@@ -217,9 +216,9 @@ contact(){
  const submit=async()=>{if(busy||val('_gotcha'))return;busy=true;next.disabled=true;next.textContent='Sending…';
   const occ=S.occasion=='Other'?val('occasion_other'):S.occasion,wants=S.wants.map(w=>w=='Other'?val('wants_other'):w).filter(Boolean),found=S.found=='Other'?val('found_other'):S.found,
    date=tbd.classList.contains('on')?'Not fixed yet':val('date'),
-   q={o:occ,w:wants,d:date,y:isC()?'':S.days,v:isC()?[val('collab_area'),val('collab_city')].filter(Boolean).join(', '):val('venue'),n:val('name'),p:val('phone'),e:val('email'),i:igFix(isC()?val('collab_ig'):val('instagram')),b:isBarter()?'':(isC()?[S.collabType,S.budget].filter(Boolean).join(' · '):S.budget),br:'',f:found,m:[val('message'),isC()?'Collab as: '+(S.collabModel=='Other'?val('collab_role_other'):S.collabModel)+' | Collaboration: '+S.collabType:''].filter(Boolean).join('\n')};
+   q={o:occ,w:wants,d:date,y:isC()?'':S.days,v:isC()?[val('collab_area'),val('collab_city')].filter(Boolean).join(', '):val('venue'),n:val('name'),p:val('phone'),e:val('email'),i:igFix(isC()?val('collab_ig'):val('instagram')),b:isC()?[S.collabType,S.budget].filter(Boolean).join(' \u00b7 '):S.budget,br:'',f:found,m:[val('message'),isC()?'Collab as: '+(S.collabModel=='Other'?val('collab_role_other'):S.collabModel)+' | Collaboration: '+S.collabType:''].filter(Boolean).join('\n')};
   let link='';try{link=location.origin+'/admin/quote.html#e='+(await QCODEC.enc(q))}catch{}
-  const payload={name:q.n,phone:q.p,email:q.e||null,instagram:q.i||null,occasion:occ,looking_for:[...wants,...(isC()&&S.collabType?[S.collabType]:[])].join(', '),event_date:/^\d{4}-\d{2}-\d{2}$/.test(date)?date:null,days:(parseInt(String(q.y).match(/\d+/)?.[0]||'',10)||null),venue:q.v||null,brand:null,budget:q.b||null,found_via:found||null,message:q.m||null,source:new URLSearchParams(location.search).get('ref')||'direct link'};
+  const payload={name:q.n,phone:q.p,email:q.e||null,instagram:q.i||null,occasion:occ,looking_for:[...wants,...(isC()?['Collaboration']:[])].join(', '),event_date:/^\d{4}-\d{2}-\d{2}$/.test(date)?date:null,days:(parseInt(String(q.y).match(/\d+/)?.[0]||'',10)||null),venue:q.v||null,brand:null,budget:q.b||null,found_via:found||null,message:q.m||null,source:new URLSearchParams(location.search).get('ref')||'direct link'};
   try{if(!window.ENQDB||typeof ENQDB.submitPublic!=='function')throw new Error('Enquiry service is not available.');await ENQDB.submitPublic(payload);
    f.hidden=true;$('.ew-top').hidden=true;$('.ew-tiny').hidden=true;$('#ewok').hidden=false;$('#ewokn').innerHTML='Thank <em>you'+(q.n?', '+q.n.split(' ')[0].replace(/[<>&"]/g,''):'')+'</em>';
    const a=$('#ewokw');if(waNumber()){a.href=waHref(`Hi ${C.name||''}, I just filled the enquiry form.`);a.style.display='inline-flex'}
