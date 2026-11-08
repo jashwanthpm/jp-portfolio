@@ -225,7 +225,7 @@ function drawRev(){const r=st.rev||1,h=st.hist||[],c=calc(),box=$('#rvt');if(!bo
  rows.push(`<div class="rvr cur"><b>R${r}</b><div class="mid"><small>Current \u00b7 ${st.sent?'sent':'draft'}</small></div><div class="am">${inr(c.tot)}${prev!=null?d(c.tot,prev):''}</div></div>`);
  box.innerHTML=rows.join('');
  $('#rvh').textContent=r>1?'Revision '+r:'Client negotiating?';
- const b=$('#rv');b.textContent=r>1?'Create another revision (R'+(r+1)+')':'Create revised version';b.disabled=!(c.tot>0)}
+ const b=$('#rv');b.textContent=st.sent?(r>1?'Create another revision (R'+(r+1)+')':'Create revised version'):'Send this quotation to enable revisions';b.disabled=!(c.tot>0&&st.sent)}
 function agreedPreview(){const ag=num($('#f_ag').value),sub=st.items.reduce((s,x)=>s+num(x[2])*num(x[3]),0),gp=num(st.f.g),h=$('#agh');
  if(!ag){h.textContent="Type the price you both agreed and I'll work out the discount for you.";return null}
  if(!sub){h.textContent='Add your items and rates first.';return null}
@@ -236,8 +236,8 @@ $('#rvt').addEventListener('click',e=>{const b=e.target.closest('[data-rmrev]');
  $('#f_ag').addEventListener('input',agreedPreview);
 $('#ag').onclick=()=>{const dis=agreedPreview();if(dis==null){toast('Enter a total below your items total');return}st.f.ds=dis;$('#f_ds').value=dis;sched();toast('Discount set to '+inr(dis))};
 $('#rv').onclick=()=>{const r=st.rev||1,c=calc();
- if(!(c.tot>0))return;
- const msg0=st.sent?`Create revision R${r+1}? Version R${r} (${inr(c.tot)}) stays in the history. You can then change the prices and send R${r+1}.`:`R${r} hasn't been sent yet. Create revision R${r+1} anyway?`;
+ if(!(c.tot>0)||!st.sent)return;
+ const msg0=`Create revision R${r+1}? Version R${r} (${inr(c.tot)}) stays in the history. You can then change the prices and send R${r+1}.`;
  if(!confirm(msg0))return;
  st.hist=st.hist||[];st.hist.push({r:r,total:c.tot,at:st.f.d||today(),link:st.link||shareUrl||'',sent:!!st.sent});
  st.rev=r+1;st.sent=false;st.link='';shareUrl='';st.f.d=today();$('#f_d').value=st.f.d;$('#f_ag').value='';
