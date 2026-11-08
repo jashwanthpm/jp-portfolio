@@ -1,6 +1,6 @@
 (function(){const p=location.pathname;if(/\.html$/.test(p)){const n=p.replace(/\/index\.html$/,'/').replace(/\.html$/,'');history.replaceState(null,'',(n||'/')+location.search+location.hash)}})();
 const jpDialogReady=window.JPDialog?Promise.resolve():new Promise(resolve=>{const s=document.createElement('script');s.src='/assets/dialog.js';s.onload=resolve;s.onerror=resolve;document.head.appendChild(s)});
-const $=(s,r=document)=>r.querySelector(s),$=(s,r=document)=>[...r.querySelectorAll(s)];
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const shuf=a=>{a=[...a];for(let i=a.length;i>1;){const j=Math.random()*i--|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const NAV=[['/','Home','home'],['/portfolio','Portfolio','portfolio'],['/clients','Galleries','clients'],['/about','About','about'],['/contact','Contact','contact']];
 const NV=()=>NAV.filter(n=>n[2]=='home'||!((C.vis||{})['nav_'+n[2]]===false));
