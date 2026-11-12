@@ -195,7 +195,7 @@ $('#scroll').addEventListener('click',e=>{const b=e.target.closest('button');if(
 const drawQuick=()=>{$('#quick').innerHTML=quickList().map(q=>`<button type="button" data-q="${esc(q)}">+ ${esc(q)}</button>`).join('')};drawQuick();
 $('#add').onclick=()=>addRow();
 /* actions */
-const msg=url=>{const r=st.rev||0,h=st.hist||[],prev=h.length?h[h.length-1].total:0,nm=String(st.f.c).trim()||'there',t=String(st.f.t).trim()||'your shoot';return r>0?`Hi ${nm}, here is the revised quotation (R${r}) for ${t}: ${inr(calc().tot)}${prev?' (earlier '+inr(prev)+')':''}.\n${url}`:`Hi ${nm}, here is your quotation for ${t} (${inr(calc().tot)}):\n${url}`};
+const msg=url=>{const r=st.rev||0,nm=String(st.f.c).trim()||'there',t=String(st.f.t).trim()||'your shoot';return r>0?`Hi ${nm}, here is your revised quotation (R${r}) for ${t}:\n${url}`:`Hi ${nm}, here is your quotation for ${t}:\n${url}`};
 const copy=async t=>{try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove();return true}};
 async function makeShortLink(){if(shareUrl)return shareUrl;const r=await fetch('https://q.sakkhi.co.in/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload())});let d={};try{d=await r.json()}catch{}if(!r.ok||!d.url)throw new Error(d.error||'Could not create a short link');shareUrl=d.url;st.link=d.url;$('#lnk').value=shareUrl;LS.set('q_cur',JSON.stringify(st));upsert();return shareUrl}
  const cpl=async()=>{try{const url=await makeShortLink();await copy(url);markSent();toast('Short link copied')}catch(e){toast(e.message||'Could not create link')}};
