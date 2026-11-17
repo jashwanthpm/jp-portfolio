@@ -126,7 +126,7 @@ a.btn{color:var(--fg);text-decoration:none}a.btn.pri{color:#18120a}
    <button class="btn pri" id="rv" type="button" style="width:100%;margin-top:14px">Create revised version</button>
    <p class="hint">Your current version stays in the history. Your client's page then shows the earlier price, the revised price and what they save.</p></div>
   <div class="card"><div class="ch"><span class="num">5</span><h3>Details</h3></div>
-   <div class="fl"><label for="f_nt">What's included <span style="font-weight:400">(one point per line)</span></label><textarea id="f_nt" data-k="nt" rows="4"></textarea></div>
+   <div class="fl"><label for="f_nt">What's included <span style="font-weight:400">(one point per line)</span></label><textarea id="f_nt" data-k="nt" rows="4"></textarea><div class="hint" style="margin-top:10px">Quick add</div><div class="chips" id="includedQuick" style="margin-top:8px"></div></div>
    <div class="fl"><label for="f_upi">UPI ID</label><input id="f_upi" data-k="upi" placeholder="yourname@bank" autocomplete="off" inputmode="email"><p class="hint">Used by the Pay via UPI button. Prefilled from your Studio Editor settings.</p></div><div class="fl"><label for="f_pb">Payment details</label><textarea id="f_pb" data-k="pb" rows="3" placeholder="Account name, bank transfer details or other instructions"></textarea></div>
    <div class="fl"><label for="f_tm">Terms</label><textarea id="f_tm" data-k="tm" rows="5"></textarea><p class="hint">Payment details and terms are remembered for your next quote. Check the starting terms match your policy.</p></div></div>
  </div>
@@ -150,6 +150,7 @@ const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+Stri
 const num=v=>{v=+v;return isFinite(v)&&v>0?v:0},inr=n=>'₹'+new Intl.NumberFormat('en-IN',{maximumFractionDigits:2}).format(Math.round(n*100)/100);
 let QC={};const quickList=()=>{const a=(QC.qRates||[]).map(x=>String(x&&x.t||'').trim()).filter(Boolean);return a.length?a:QUICK},rateFor=n=>{const e=(QC.qRates||[]).find(x=>x&&String(x.t).trim()===n),er=e?+String(e.r).replace(/[^\d.]/g,''):0;return er>0?er:(rates&&rates[n])||0};
 const QUICK=['Wedding day coverage','Pre-wedding shoot','Engagement shoot','Candid photography','Traditional photography','Album','Reels / teaser','Edited photos','Travel & stay'];
+const INCLUDED_QUICK=['Raw videos','Raw images','150–200 professionally edited pictures','Instagram reels','Album','Teaser','Trailer'];
 const OCC={'Wedding':'Wedding day coverage','Pre-wedding':'Pre-wedding shoot','Engagement':'Engagement shoot','Haldi / Mehendi / Sangeet':'Haldi / Mehendi / Sangeet coverage','Collab / brand shoot':'Collab / brand shoot','Portraits':'Portrait session'};
 const DT="Booking is confirmed once the advance is received.\nBalance is due on or before the shoot date.\nThis quotation is valid until the date shown above.\nTravel and stay outside the city are charged extra unless mentioned.";
 const FK=['c','ph','t','e','l','n','d','vd','ds','g','a','nt','upi','pb','tm','th'];
@@ -217,9 +218,11 @@ $('#scroll').addEventListener('input',e=>{const t=e.target;
 $('#scroll').addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.dataset.i!=null&&+e.target.dataset.k==3&&+e.target.dataset.i==st.items.length-1){e.preventDefault();addRow()}});
 function addRow(v,r){st.items.push([v||'','',1,r||0]);drawItems();const n=$(`[data-i="${st.items.length-1}"][data-k="${v?3:0}"]`);n&&n.focus();sched()}
 $('#scroll').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
- if(b.dataset.del!=null){st.items.splice(+b.dataset.del,1);if(!st.items.length)st.items=[['','',1,0]];drawItems();sched()}
+ if(b.dataset.inc){const ta=$('#f_nt'),value=b.dataset.inc,lines=ta.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(!lines.some(x=>x.toLowerCase()===value.toLowerCase())){ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+value;st.f.nt=ta.value;sched()}}
+ else if(b.dataset.del!=null){st.items.splice(+b.dataset.del,1);if(!st.items.length)st.items=[['','',1,0]];drawItems();sched()}
  else if(b.dataset.q){const last=st.items[st.items.length-1],r=rateFor(b.dataset.q);if(last&&!String(last[0]).trim()){last[0]=b.dataset.q;last[3]=r;drawItems();sched()}else addRow(b.dataset.q,r)}});
 const drawQuick=()=>{$('#quick').innerHTML=quickList().map(q=>`<button type="button" data-q="${esc(q)}">+ ${esc(q)}</button>`).join('')};drawQuick();
+const drawIncludedQuick=()=>{$('#includedQuick').innerHTML=INCLUDED_QUICK.map(q=>`<button type="button" data-inc="${esc(q)}">+ ${esc(q)}</button>`).join('')};drawIncludedQuick();
 $('#add').onclick=()=>addRow();
 /* actions */
 const msg=url=>{const r=st.rev||0,nm=String(st.f.c).trim()||'there',t=String(st.f.t).trim()||'your shoot';return r>0?`Hi ${nm}, here is your revised quotation (R${r}) for ${t}:\n${url}`:`Hi ${nm}, here is your quotation for ${t}:\n${url}`};
