@@ -150,7 +150,7 @@ const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+Stri
 const num=v=>{v=+v;return isFinite(v)&&v>0?v:0},inr=n=>'₹'+new Intl.NumberFormat('en-IN',{maximumFractionDigits:2}).format(Math.round(n*100)/100);
 let QC={};const quickList=()=>{const a=(QC.qRates||[]).map(x=>String(x&&x.t||'').trim()).filter(Boolean);return a.length?a:QUICK},rateFor=n=>{const e=(QC.qRates||[]).find(x=>x&&String(x.t).trim()===n),er=e?+String(e.r).replace(/[^\d.]/g,''):0;return er>0?er:(rates&&rates[n])||0};
 const QUICK=['Wedding day coverage','Pre-wedding shoot','Engagement shoot','Candid photography','Traditional photography','Album','Reels / teaser','Edited photos','Travel & stay'];
-const INCLUDED_QUICK=['Raw videos','Raw images','150–200 professionally edited pictures','Instagram reels','Album','Teaser','Trailer'];
+const INCLUDED_QUICK=['Raw videos','Raw images','150–200 professionally edited pictures','Instagram reels','Wedding film','Album','Teaser','Trailer'];
 const OCC={'Wedding':'Wedding day coverage','Pre-wedding':'Pre-wedding shoot','Engagement':'Engagement shoot','Haldi / Mehendi / Sangeet':'Haldi / Mehendi / Sangeet coverage','Collab / brand shoot':'Collab / brand shoot','Portraits':'Portrait session'};
 const DT="Booking is confirmed once the advance is received.\nBalance is due on or before the shoot date.\nThis quotation is valid until the date shown above.\nTravel and stay outside the city are charged extra unless mentioned.";
 const FK=['c','ph','t','e','l','n','d','vd','ds','g','a','nt','upi','pb','tm','th'];
