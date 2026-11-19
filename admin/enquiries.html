@@ -184,8 +184,8 @@ async function quoteLink(r){const code=await QCODEC.enc({o:r.occasion||'',w:Stri
 function drawer(r){const s=SM[r.status]||SM.new,p=phone(r.phone),first=(r.name||'').trim().split(' ')[0]||'there',ig=String(r.instagram||'').replace(/^@/,'').replace(/[^\w.]/g,'');
  const occasion=String(r.occasion||'').trim().toLowerCase();const shootType=occasion?(occasion==='portraits'?'portrait':occasion==='weddings'?'wedding':occasion.replace(/\s+shoot$/,'') )+' shoot':'';
  const eventBits=[r.occasion,r.event_date?fday(r.event_date):'',r.venue].filter(Boolean);
- const eventLine=eventBits.length?'\\n\\nFor reference: '+eventBits.join(' · '):'';
- const quoteLine=r.quote_ref||r.quote_amount?'\\n\\n'+[r.quote_ref?'Quotation '+r.quote_ref:'',r.quote_amount?'Quoted amount '+inr(r.quote_amount):''].filter(Boolean).join(' · '):'';
+ const eventLine=eventBits.length?'\n\nFor reference: '+eventBits.join(' · '):'';
+ const quoteLine=r.quote_ref||r.quote_amount?'\n\n'+[r.quote_ref?'Quotation '+r.quote_ref:'',r.quote_amount?'Quoted amount '+inr(r.quote_amount):''].filter(Boolean).join(' · '):'';
  const messageForStatus=()=>{
   switch(r.status){
    case 'contacted':return `Hi ${first}, just checking in after our conversation. Have you had a chance to discuss things and decide how you'd like to proceed? If you have any questions, I'm happy to help.${eventLine}\n\n— Jashwanth | Offbeat by JP`;
