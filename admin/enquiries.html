@@ -213,7 +213,9 @@ function drawer(r){const s=SM[r.status]||SM.new,p=phone(r.phone),first=(r.name||
  $$('#dr [data-st]').forEach(b=>b.onclick=()=>setStatus(rr(),b.dataset.st));
  $$('#dr [data-fu]').forEach(b=>b.onclick=async()=>{const n=+b.dataset.fu,x=rr();if(!n){await patch(x.id,{follow_up_on:null});toast('Follow-up cleared');return}const d=plus(n);const u=await setStatus(x,'follow_up',{follow_up_on:d})});
  const fd=$('#fud');if(fd)fd.onchange=async()=>{if(!fd.value)return;const x=rr();await setStatus(x,'follow_up',{follow_up_on:fd.value})};
- const w=$('#wa');if(w)w.addEventListener('click',()=>{const x=rr();if(x.status==='new')setStatus(x,'contacted')});
+ const markContacted=()=>{const x=rr();if(x.status==='new')setStatus(x,'contacted')};
+ const w=$('#wa');if(w)w.addEventListener('click',markContacted);
+ const em=$('#em');if(em)em.addEventListener('click',markContacted);
  let nt;$('#nt').oninput=()=>{$('#sv').textContent='Saving…';clearTimeout(nt);nt=setTimeout(async()=>{try{const i=rows.findIndex(x=>x.id===r.id),v=$('#nt').value;await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(r.id),{notes:v||null});if(i>-1)rows[i].notes=v||null;$('#sv').textContent='Saved'}catch(e){$('#sv').textContent=e.message}},700)};
  $('#mq').onclick=async()=>{window.open(await quoteLink(rr()),'_blank')};
  const bk=$('#bk');if(bk)bk.onclick=async()=>{if(await JPDialog.confirm('Their existing enquiries will be hidden, and future enquiries from this number will arrive as Blocked.',{title:'Block this number?',confirmText:'Block number',danger:true})){await setStatus(rr(),'blocked');closeDr()}};
