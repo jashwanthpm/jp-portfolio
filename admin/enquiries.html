@@ -83,6 +83,12 @@ select option{background:#1a1714}
  .dh{padding-top:14px}.dh::before{content:"";position:absolute;left:50%;top:7px;width:38px;height:4px;border-radius:2px;background:var(--l2);transform:translateX(-50%)}
  .dl{grid-template-columns:92px 1fr}.g2{grid-template-columns:1fr}.md{align-items:end;padding:0}.mb{max-width:none;border-radius:22px 22px 0 0;padding-bottom:calc(22px + var(--sa))}
 }
+.stat{display:flex;gap:16px;padding:0 16px 8px;color:var(--m);font-size:12px;flex-wrap:wrap}.stat b{color:var(--fg);font-weight:600}
+.srt{width:auto;min-height:40px;padding:0 30px 0 12px;font-size:13px}.la{font-size:11.5px!important}
+.qk{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.lg{display:flex;gap:7px;margin-bottom:14px}.lg select{width:auto;flex:none;padding:0 28px 0 10px;min-height:40px;font-size:14px}.lg input{min-height:40px;min-width:0}
+.tl{list-style:none;padding:0}.tl li{display:flex;gap:12px;padding:0 0 14px;position:relative;font-size:13.5px}.tl li:not(:last-child)::before{content:"";position:absolute;left:4px;top:14px;bottom:-2px;width:1px;background:var(--l2)}.tl li>i{width:9px;height:9px;border-radius:50%;margin-top:6px;flex:none;position:relative;z-index:1}.tl li small{display:block;color:var(--m);font-size:11.5px}.tl b{font-weight:600}
+@media(max-width:800px){.stat{padding:0 12px 8px;gap:12px}.srt{flex:1}.lg{flex-wrap:wrap}.lg input{flex:1 1 100%;order:-1}.lg select{flex:1}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
 <header class="top">
@@ -99,8 +105,8 @@ select option{background:#1a1714}
 
 <div class="app" id="app" hidden>
  <div class="kpis" id="kpis"></div>
- <div class="bar"><div class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search name, phone, venue…" autocomplete="off" enterkeyhint="search"></div><div class="seg" id="vw"><button data-v="list" class="on">List</button><button data-v="board">Board</button></div></div>
- <div class="chips" id="chips"></div>
+ <div class="bar"><div class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search name, phone, venue…" autocomplete="off" enterkeyhint="search"></div><select id="srt" class="srt" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="stale">Longest quiet</option><option value="event">Event date</option></select><div class="seg" id="vw"><button data-v="list" class="on">List</button><button data-v="board">Board</button></div></div>
+ <div class="stat" id="stat"></div><div class="chips" id="chips"></div>
  <div class="body" id="body"></div>
 </div>
 
@@ -124,6 +130,26 @@ let rows=[],flt='all',view=(()=>{try{return localStorage.getItem('jp_enq_view')|
 const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),2200)};
 const due=r=>!!r.follow_up_on&&!DONE.includes(r.status)&&r.follow_up_on<=today();
 const late=r=>!!r.follow_up_on&&!DONE.includes(r.status)&&r.follow_up_on<today();
+/* ---------- activity log (stored inside notes, so no backend change) ---------- */
+const RE=/\s*<!--JPLOG:([\s\S]*?)-->\s*$/;
+const norm=r=>{const s=String(r.notes||''),m=s.match(RE);let l=[];if(m){try{l=JSON.parse(m[1])}catch(e){}}r._log=Array.isArray(l)?l:[];r._n=s.replace(RE,'').trim();return r};
+const pack=(n,l)=>{l=l.slice(-80);const j=JSON.stringify(l).replace(/-->/g,'--\\u003e');const o=((n||'')+(l.length?'\n\n<!--JPLOG:'+j+'-->':'')).trim();return o||null};
+const EV={status:['Status','#c9a46a'],call:['Call','#6aa8d6'],whatsapp:['WhatsApp','#7fc29b'],email:['Email','#6aa8d6'],meeting:['Meeting','#b58be0'],note:['Note','#9a8f82'],followup:['Follow-up','#e5a24a'],quote:['Quotation','#b58be0'],reply:['Reply','#7fc29b']};
+const entry=(k,x)=>({t:new Date().toISOString(),k,x:String(x||'').slice(0,300)});
+const lastAct=r=>r._log.length?r._log[r._log.length-1].t:r.created_at;
+const dAgo=t=>(Date.now()-new Date(t))/864e5;
+const dTo=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?Math.round((new Date(s+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5):null;
+const stale=r=>!DONE.includes(r.status)&&r.status!=='new'&&!(r.follow_up_on&&r.follow_up_on>today())&&dAgo(lastAct(r))>=5;
+const untouched=r=>r.status==='new'&&!r._log.length&&dAgo(r.created_at)>=0.5;
+const attn=r=>r.status!=='blocked'&&(late(r)||due(r)||stale(r)||untouched(r));
+const why=r=>late(r)?'Follow-up overdue':due(r)?'Follow up today':untouched(r)?'Not contacted yet':stale(r)?'Quiet for '+Math.floor(dAgo(lastAct(r)))+' days':'';
+const soon=r=>r.status==='booked'&&dTo(r.event_date)!==null&&dTo(r.event_date)>=0;
+const lastLine=r=>{const l=r._log[r._log.length-1];return l?'Last: <b>'+esc(l.x||(EV[l.k]||EV.note)[0])+'</b> · '+ago(l.t):'No activity logged yet'};
+const tags2=r=>{let h='';const n=r.phone?rows.filter(x=>x.status!=='blocked'&&phone(x.phone)===phone(r.phone)).length:0;if(n>1)h+='<span class="tag">Repeat ×'+n+'</span>';if(soon(r)){const d=dTo(r.event_date);h+='<span class="tag amt">'+(d?'Shoot in '+d+' d':'Shoot today')+'</span>'}if(attn(r)&&!late(r)&&!due(r))h+='<span class="tag late">'+esc(why(r))+'</span>';return h};
+async function act(r,en,extra){try{return await patch(r.id,Object.assign({notes:pack(r._n,r._log.concat(en))},extra||{}))}catch(e){if(e.auth)showLogin(e.message);else toast(e.message);return null}}
+async function autoQuote(){for(const r of rows){if(!r.quote_ref||r.status==='blocked'||r._log.some(e=>e.k==='quote'&&e.x.includes(r.quote_ref)))continue;await act(r,entry('quote','Quotation '+r.quote_ref+(r.quote_amount?' · '+inr(r.quote_amount):'')+' saved'))}}
+const tlHtml=r=>{const items=r._log.slice().reverse().map(e=>{const v=EV[e.k]||EV.note;return `<li><i style="background:${v[1]}"></i><div><b>${v[0]}</b> ${esc(e.x)}<small title="${esc(fdt(e.t))}">${esc(fdt(e.t))} · ${ago(e.t)}</small></div></li>`}).join('');
+ return `<div class="sec"><h4>Activity timeline</h4><div class="qk">${[['call','Spoke on call'],['call','No answer'],['reply','Client replied'],['whatsapp','Sent details']].map(([k,t])=>`<button class="chip" data-q="${k}|${t}">${t}</button>`).join('')}</div><div class="lg"><select id="lk" aria-label="Type">${['note','call','whatsapp','email','meeting','reply'].map(k=>`<option value="${k}">${EV[k][0]}</option>`).join('')}</select><button class="btn pri sm" id="la" style="min-height:40px">Add</button><input id="lt" placeholder="What happened? e.g. wants candid + album" enterkeyhint="send"></div><ul class="tl">${items}<li><i style="background:var(--l2)"></i><div><b>Enquiry received</b>${r.source?' via '+esc(r.source):''}<small>${esc(fdt(r.created_at))}</small></div></li></ul></div>`};
 /* ---------- auth ---------- */
 function showLogin(msg){$('#login').hidden=false;$('#app').hidden=true;$('#le').textContent=msg||'Open Studio Admin to continue with your existing GitHub access.';closeDr();setTop(false)}
 function setTop(on){['#upd','#rf','#add','.menu'].forEach(s=>{const e=$(s);if(e)e.style.display=on?'':'none'})}
@@ -133,24 +159,25 @@ async function load(manual){if(busy)return;busy=true;
  try{const data=await ENQDB.rest('GET','?select=*&order=created_at.desc&limit=1000');
   const newest=data.length?data[0].created_at:'';
   if(!first&&maxSeen){const n=data.filter(r=>r.created_at>maxSeen&&r.status==='new').length;if(n)toast(n+(n==1?' new enquiry':' new enquiries'))}
-  maxSeen=newest||maxSeen;first=false;rows=data;$('#upd').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});render();if(cur){const r=rows.find(x=>x.id===cur);if(r&&$('#dr').classList.contains('on')&&!document.activeElement.closest('#dr'))drawer(r)}
-  if(manual)toast('Up to date')}
+  maxSeen=newest||maxSeen;first=false;rows=data.map(norm);$('#upd').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});render();if(cur){const r=rows.find(x=>x.id===cur);if(r&&$('#dr').classList.contains('on')&&!document.activeElement.closest('#dr'))drawer(r)}
+  autoQuote();if(manual)toast('Up to date')}
  catch(e){if(e.auth){ENQDB.signOut();showLogin(e.message)}else toast(e.message||'Could not load')}
  busy=false}
-async function patch(id,body){const r=await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(id),body,'return=representation');const u=r&&r[0];if(u){const i=rows.findIndex(x=>x.id===id);if(i>-1)rows[i]=u;render();if(cur===id&&$('#dr').classList.contains('on')){const keep=$('#nt')?$('#nt').value:null;drawer(u);if(keep!=null&&keep!==(u.notes||'')&&$('#nt'))$('#nt').value=keep}}return u}
+async function patch(id,body){const r=await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(id),body,'return=representation');const u=r&&r[0];if(u){norm(u);const i=rows.findIndex(x=>x.id===id);if(i>-1)rows[i]=u;render();if(cur===id&&$('#dr').classList.contains('on')){const keep=$('#nt')?$('#nt').value:null;drawer(u);if(keep!=null&&keep!==(u._n||'')&&$('#nt'))$('#nt').value=keep}}return u}
 /* ---------- render ---------- */
-function counts(){const c={all:0};ST.forEach(s=>c[s[0]]=0);rows.forEach(r=>{c[r.status]=(c[r.status]||0)+1;if(r.status!=='blocked')c.all++});c.due=rows.filter(due).length;return c}
-function visible(){const q=$('#q').value.trim().toLowerCase();let a=rows.filter(r=>flt==='all'?r.status!=='blocked':flt==='due'?due(r):r.status===flt);
+function counts(){const c={all:0};ST.forEach(s=>c[s[0]]=0);rows.forEach(r=>{c[r.status]=(c[r.status]||0)+1;if(r.status!=='blocked')c.all++});c.due=rows.filter(due).length;c.attn=rows.filter(attn).length;c.soon=rows.filter(soon).length;return c}
+function visible(){const q=$('#q').value.trim().toLowerCase();let a=rows.filter(r=>flt==='all'?r.status!=='blocked':flt==='due'?due(r):flt==='attn'?attn(r):flt==='soon'?soon(r):r.status===flt);
  if(q)a=a.filter(r=>[r.name,r.phone,r.email,r.venue,r.occasion,r.instagram,r.brand,r.message,r.notes,r.looking_for].join(' ').toLowerCase().includes(q));
- if(flt==='follow_up'||flt==='due')a.sort((x,y)=>String(x.follow_up_on||'9').localeCompare(String(y.follow_up_on||'9')));return a}
+ const S=$('#srt').value;if(S==='old')a.sort((x,y)=>x.created_at.localeCompare(y.created_at));else if(S==='stale')a.sort((x,y)=>lastAct(x).localeCompare(lastAct(y)));else if(S==='event'||flt==='soon')a.sort((x,y)=>String(x.event_date||'9').localeCompare(String(y.event_date||'9')));if(flt==='follow_up'||flt==='due')a.sort((x,y)=>String(x.follow_up_on||'9').localeCompare(String(y.follow_up_on||'9')));return a}
 function cardHtml(r){const s=SM[r.status]||SM.new,bits=[r.occasion,r.event_date&&(/^\d{4}-/.test(r.event_date)?fday(r.event_date):r.event_date),r.venue].filter(Boolean).map(esc).join(' · ');
  return `<div class="card" role="button" tabindex="0" data-id="${esc(r.id)}" draggable="true"><div class="r1"><div class="nm"><span class="av" style="color:${s[2]}">${esc((r.name||'?').trim().charAt(0).toUpperCase())}</span><span style="overflow:hidden;text-overflow:ellipsis">${esc(r.name)}</span></div><span class="sb"><i style="background:${s[2]}"></i>${s[1]}</span></div>
  ${bits?`<div class="ln"><b>${bits}</b></div>`:''}${r.budget?`<div class="ln">Budget ${esc(r.budget)}</div>`:''}
- <div class="ft"><span>${ago(r.created_at)}</span>${r.source?`<span class="tag">${esc(r.source)}</span>`:''}${late(r)?`<span class="tag late">Follow-up overdue</span>`:due(r)?`<span class="tag due">Follow up today</span>`:r.follow_up_on&&!DONE.includes(r.status)?`<span class="tag">Follow up ${esc(fday(r.follow_up_on))}</span>`:''}${r.quote_amount?`<span class="tag amt">${esc(r.quote_ref||'Quote')} · ${inr(r.quote_amount)}</span>`:''}</div></div>`}
+ <div class="ln la">${lastLine(r)}</div><div class="ft"><span>${ago(r.created_at)}</span>${tags2(r)}${r.source?`<span class="tag">${esc(r.source)}</span>`:''}${late(r)?`<span class="tag late">Follow-up overdue</span>`:due(r)?`<span class="tag due">Follow up today</span>`:r.follow_up_on&&!DONE.includes(r.status)?`<span class="tag">Follow up ${esc(fday(r.follow_up_on))}</span>`:''}${r.quote_amount?`<span class="tag amt">${esc(r.quote_ref||'Quote')} · ${inr(r.quote_amount)}</span>`:''}</div></div>`}
 function render(){if($('#app').hidden)return;const c=counts();
- const K=[['new','New'],['contacted','Contacted'],['quoted','Quotation sent'],['due','Follow-ups due'],['booked','Booked']];
- $('#kpis').innerHTML=K.map(([k,t])=>{const col=k==='due'?'#e5a24a':SM[k][2];return `<button class="k${flt===k?' on':''}" data-f="${k}"><small><i style="background:${col}"></i>${t}</small><b>${c[k]||0}</b></button>`}).join('');
- $('#chips').innerHTML=[['all','All']].concat(ST.map(s=>[s[0],s[1]])).map(([k,t])=>`<button class="chip${flt===k?' on':''}" data-f="${k}">${t}<em>${c[k]||0}</em></button>`).join('');
+ const K=[['new','New'],['contacted','Contacted'],['quoted','Quotation sent'],['attn','Needs attention'],['booked','Booked']];
+ $('#kpis').innerHTML=K.map(([k,t])=>{const col=(k==='due'||k==='attn')?'#e5a24a':SM[k][2];return `<button class="k${flt===k?' on':''}" data-f="${k}"><small><i style="background:${col}"></i>${t}</small><b>${c[k]||0}</b></button>`}).join('');
+ $('#chips').innerHTML=[['all','All'],['attn','Needs attention']].concat(ST.map(s=>[s[0],s[1]])).concat([['soon','Upcoming shoots']]).map(([k,t])=>`<button class="chip${flt===k?' on':''}" data-f="${k}">${t}<em>${c[k]||0}</em></button>`).join('');
+ {const sum=l=>l.reduce((t,r)=>t+(+r.quote_amount||0),0),w=c.booked||0,l=c.lost||0;$('#stat').innerHTML='<span>Open quotes <b>'+inr(sum(rows.filter(r=>['quoted','follow_up'].includes(r.status))))+'</b></span><span>Booked <b>'+inr(sum(rows.filter(r=>r.status==='booked')))+'</b></span>'+(w+l?'<span>Win rate <b>'+Math.round(w/(w+l)*100)+'%</b></span>':'')}
  document.title=(c.new?`(${c.new}) `:'')+'Enquiries';
  const a=visible(),body=$('#body');
  $$('#vw button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
@@ -162,7 +189,7 @@ document.addEventListener('click',e=>{const k=e.target.closest('[data-f]');if(k&
  const c=e.target.closest('.card[data-id]');if(c&&!e.target.closest('#dr')){openDr(c.dataset.id);return}
  if(!e.target.closest('.menu'))$('#pop').hidden=true});
 $('#mn').onclick=()=>{$('#pop').hidden=!$('#pop').hidden};
-$('#rf').onclick=()=>load(true);$('#q').oninput=()=>render();
+$('#rf').onclick=()=>load(true);$('#q').oninput=()=>render();$('#srt').onchange=render;
 $('#vw').onclick=e=>{const b=e.target.closest('button');if(!b)return;view=b.dataset.v;try{localStorage.setItem('jp_enq_view',view)}catch(x){}render()};
 addEventListener('resize',()=>{clearTimeout(tmr);tmr=setTimeout(render,150)});
 document.addEventListener('keydown',e=>{const cd=e.target.closest&&e.target.closest('.card[data-id]');if(cd&&(e.key==='Enter'||e.key===' ')&&!e.target.closest('#dr')){e.preventDefault();openDr(cd.dataset.id);return}if(e.key==='Escape'){if(!$('#md').hidden)$('#md').hidden=true;else closeDr()}if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&!$('#app').hidden){e.preventDefault();$('#q').focus()}});
@@ -175,6 +202,10 @@ document.addEventListener('drop',async e=>{const c=e.target.closest&&e.target.cl
  const r=rows.find(x=>x.id===id);if(!r||r.status===c.dataset.s)return;await setStatus(r,c.dataset.s)});
 /* ---------- status ---------- */
 async function setStatus(r,s,extra){const body=Object.assign({status:s},extra||{});if(s==='follow_up'&&!r.follow_up_on&&!(extra&&extra.follow_up_on))body.follow_up_on=plus(3);if(['booked','lost','blocked'].includes(s)&&!(extra&&'follow_up_on' in extra))body.follow_up_on=null;
+ const ev=[];if(r.status!==s)ev.push(entry('status',(SM[r.status]||SM.new)[1]+' → '+SM[s][1]));
+ if(s==='lost'&&r.status!=='lost'){const rs=await JPDialog.prompt('Why was this enquiry lost? (budget, date clash, went elsewhere…)',{title:'Reason',placeholder:'Optional',confirmText:'Mark lost'});if(rs===null)return null;if(rs.trim())ev[0].x+=' — '+rs.trim()}
+ if(body.follow_up_on&&body.follow_up_on!==r.follow_up_on)ev.push(entry('followup','Follow-up set for '+fday(body.follow_up_on)));
+ if(ev.length)body.notes=pack(r._n,r._log.concat(ev));
  try{const u=await patch(r.id,body);toast(SM[s][1]+(s==='follow_up'&&u&&u.follow_up_on?' · '+fday(u.follow_up_on):''));return u}catch(e){if(e.auth){showLogin(e.message)}else toast(e.message);return null}}
 /* ---------- drawer ---------- */
 const openDr=id=>{const r=rows.find(x=>x.id===id);if(!r)return;cur=id;drawer(r);$('#dr').classList.add('on');$('#ov').classList.add('on')};
@@ -203,21 +234,22 @@ function drawer(r){const s=SM[r.status]||SM.new,p=phone(r.phone),first=(r.name||
  <div class="db"><div class="sec"><div class="acts">${r.status!=='blocked'&&p?`<a class="btn pri" id="wa" target="_blank" rel="noopener" href="https://wa.me/${esc(p)}?text=${encodeURIComponent(message)}">WhatsApp</a><a class="btn" id="cl" href="tel:+${esc(p)}">Call</a>`:''}${r.status!=='blocked'&&r.email?`<a class="btn" id="em" href="mailto:${esc(r.email)}?subject=${encodeURIComponent(subjectForStatus())}&body=${encodeURIComponent(message)}">Email</a>`:''}${ig?`<a class="btn" target="_blank" rel="noopener" href="https://instagram.com/${esc(ig)}">Instagram</a>`:''}</div>${r.status==='blocked'?'<p style="color:var(--m);font-size:12px;margin-top:9px">This number is blocked. Unblock it before contacting this person.</p>':`<p style="color:var(--m);font-size:12px;margin-top:9px">Ready-to-send ${esc(s[1])} message · review it in WhatsApp or email before sending.</p>`}</div>
  <div class="sec"><h4>Status</h4><div class="stg">${ST.map(x=>`<button data-st="${x[0]}" class="${r.status===x[0]?'on':''}"><i style="background:${x[2]}"></i>${x[1]}</button>`).join('')}</div>
   ${!DONE.includes(r.status)?`<div class="fu"><span style="color:var(--m);font-size:12.5px">Follow up</span><button class="btn sm" data-fu="1">Tomorrow</button><button class="btn sm" data-fu="3">3 days</button><button class="btn sm" data-fu="7">Next week</button><input type="date" id="fud" value="${esc(r.follow_up_on||'')}" aria-label="Follow-up date">${r.follow_up_on?`<button class="btn sm ghost" data-fu="0">Clear</button>`:''}</div>`:''}</div>
- <div class="sec"><h4>Quotation</h4><div class="acts"><button class="btn pri" id="mq">Create quotation</button></div>${r.quote_amount?`<p style="margin-top:10px;color:var(--m);font-size:13px">Last quote <b style="color:var(--fg)">${esc(r.quote_ref||'')}</b> · ${inr(r.quote_amount)}</p>`:''}</div>
+ ${tlHtml(r)}<div class="sec"><h4>Quotation</h4><div class="acts"><button class="btn pri" id="mq">Create quotation</button></div>${r.quote_amount?`<p style="margin-top:10px;color:var(--m);font-size:13px">Last quote <b style="color:var(--fg)">${esc(r.quote_ref||'')}</b> · ${inr(r.quote_amount)}</p>`:''}</div>
  ${r.message?`<div class="sec"><h4>Their message</h4><div class="msg">${esc(r.message)}</div></div>`:''}
  <div class="sec"><h4>Details</h4><dl class="dl">${rowsDl.map(([a,b])=>`<dt>${a}</dt><dd>${esc(b)}</dd>`).join('')}</dl></div>
- <div class="sec"><h4>My notes <span class="saved" id="sv"></span></h4><textarea id="nt" rows="4" placeholder="Call notes, what they asked for, next step…">${esc(r.notes||'')}</textarea></div>
+ <div class="sec"><h4>My notes <span class="saved" id="sv"></span></h4><textarea id="nt" rows="4" placeholder="Call notes, what they asked for, next step…">${esc(r._n||'')}</textarea></div>
  <div class="sec"><h4>More</h4><div class="dz">${r.status!=='blocked'?`<button class="btn sm danger" id="bk">Block this number</button>`:`<button class="btn sm" id="ub">Unblock</button>`}<button class="btn sm danger" id="dl">Delete</button></div>${r.status==='blocked'?'':'<p style="color:var(--m);font-size:12px;margin-top:8px">Blocked numbers are hidden from your lists, and any new enquiry from the same number arrives as Blocked.</p>'}</div></div>`;
  const rr=()=>rows.find(x=>x.id===r.id)||r;
  $('#dx').onclick=closeDr;
+ $$('#dr [data-q]').forEach(b=>b.onclick=()=>{const [k,t]=b.dataset.q.split('|');act(rr(),entry(k,t))});
+ const addLg=()=>{const t=$('#lt').value.trim();if(t)act(rr(),entry($('#lk').value,t))};$('#la').onclick=addLg;$('#lt').onkeydown=e=>{if(e.key==='Enter')addLg()};
  $$('#dr [data-st]').forEach(b=>b.onclick=()=>setStatus(rr(),b.dataset.st));
  $$('#dr [data-fu]').forEach(b=>b.onclick=async()=>{const n=+b.dataset.fu,x=rr();if(!n){await patch(x.id,{follow_up_on:null});toast('Follow-up cleared');return}const d=plus(n);const u=await setStatus(x,'follow_up',{follow_up_on:d})});
  const fd=$('#fud');if(fd)fd.onchange=async()=>{if(!fd.value)return;const x=rr();await setStatus(x,'follow_up',{follow_up_on:fd.value})};
- const markContacted=()=>{const x=rr();if(x.status==='new')setStatus(x,'contacted')};
- const w=$('#wa');if(w)w.addEventListener('click',markContacted);
- const em=$('#em');if(em)em.addEventListener('click',markContacted);
- let nt;$('#nt').oninput=()=>{$('#sv').textContent='Saving…';clearTimeout(nt);nt=setTimeout(async()=>{try{const i=rows.findIndex(x=>x.id===r.id),v=$('#nt').value;await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(r.id),{notes:v||null});if(i>-1)rows[i].notes=v||null;$('#sv').textContent='Saved'}catch(e){$('#sv').textContent=e.message}},700)};
- $('#mq').onclick=async()=>{window.open(await quoteLink(rr()),'_blank')};
+ const touch=(k,t)=>async()=>{const x=rr();if(x.status==='new')await setStatus(x,'contacted');act(rr(),entry(k,t))};
+ [['#wa','whatsapp','Opened WhatsApp'],['#cl','call','Started a call'],['#em','email','Opened email']].forEach(([q,k,t])=>{const el=$(q);if(el)el.addEventListener('click',touch(k,t))});
+ let nt;$('#nt').oninput=()=>{$('#sv').textContent='Saving…';clearTimeout(nt);nt=setTimeout(async()=>{try{const i=rows.findIndex(x=>x.id===r.id),v=$('#nt').value,pk=pack(v.trim(),rr()._log);await ENQDB.rest('PATCH','?id=eq.'+encodeURIComponent(r.id),{notes:pk});if(i>-1){rows[i].notes=pk;norm(rows[i])}$('#sv').textContent='Saved'}catch(e){$('#sv').textContent=e.message}},700)};
+ $('#mq').onclick=async()=>{window.open(await quoteLink(rr()),'_blank');act(rr(),entry('quote','Opened quotation studio'))};
  const bk=$('#bk');if(bk)bk.onclick=async()=>{if(await JPDialog.confirm('Their existing enquiries will be hidden, and future enquiries from this number will arrive as Blocked.',{title:'Block this number?',confirmText:'Block number',danger:true})){await setStatus(rr(),'blocked');closeDr()}};
  const ub=$('#ub');if(ub)ub.onclick=()=>setStatus(rr(),'new');
  $('#dl').onclick=async()=>{if(!await JPDialog.confirm('This enquiry and its notes will be permanently deleted. This cannot be undone.',{title:'Delete enquiry?',confirmText:'Delete permanently',danger:true}))return;try{await ENQDB.rest('DELETE','?id=eq.'+encodeURIComponent(r.id));rows=rows.filter(x=>x.id!==r.id);closeDr();render();toast('Deleted')}catch(e){toast(e.message)}}}
@@ -230,12 +262,12 @@ $('#add').onclick=()=>{$('#mb').innerHTML=`<h3>Add an enquiry</h3><p style="colo
  $('#a_c').onclick=()=>$('#md').hidden=true;
  $('#a_k').onclick=async()=>{const n=$('#a_n').value.trim();if(!n){$('#a_e').textContent='Please add a name.';return}
   const body={name:n,phone:$('#a_p').value.trim()||null,source:$('#a_s').value,occasion:$('#a_o').value.trim()||null,event_date:$('#a_d').value||null,venue:$('#a_v').value.trim()||null,notes:$('#a_m').value.trim()||null};
-  try{const r=await ENQDB.rest('POST','',body,'return=representation');$('#md').hidden=true;if(r&&r[0]){rows.unshift(r[0]);render();openDr(r[0].id)}toast('Added')}catch(e){$('#a_e').textContent=e.message}}};
+  try{const r=await ENQDB.rest('POST','',body,'return=representation');$('#md').hidden=true;if(r&&r[0]){rows.unshift(norm(r[0]));render();openDr(r[0].id)}toast('Added')}catch(e){$('#a_e').textContent=e.message}}};
 $('#md').onclick=e=>{if(e.target.id==='md')$('#md').hidden=true};
 /* ---------- csv ---------- */
-$('#csv').onclick=()=>{$('#pop').hidden=true;const cols=['created_at','status','name','phone','email','instagram','occasion','looking_for','event_date','days','venue','brand','budget','found_via','source','message','notes','follow_up_on','quote_ref','quote_amount'];
+$('#csv').onclick=()=>{$('#pop').hidden=true;const cols=['created_at','status','name','phone','email','instagram','occasion','looking_for','event_date','days','venue','brand','budget','found_via','source','message','notes','follow_up_on','quote_ref','quote_amount','last_activity'];
  const q=v=>{v=v==null?'':String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
- const csv=[cols.join(',')].concat(rows.map(r=>cols.map(c=>q(r[c])).join(','))).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='enquiries-'+today()+'.csv';document.body.append(a);a.click();a.remove();toast('Exported '+rows.length+' enquiries')};
+ const csv=[cols.join(',')].concat(rows.map(r=>cols.map(c=>q(c==='notes'?r._n:c==='last_activity'?lastAct(r):r[c])).join(','))).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='enquiries-'+today()+'.csv';document.body.append(a);a.click();a.remove();toast('Exported '+rows.length+' enquiries')};
 /* ---------- boot ---------- */
 function start(){$('#login').hidden=true;$('#app').hidden=false;setTop(true);first=true;load()}
 setInterval(()=>{if(document.visibilityState==='visible'&&!$('#app').hidden)load()},45000);
