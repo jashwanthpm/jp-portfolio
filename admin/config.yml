@@ -41,3 +41,31 @@ collections:
           - {name: phone, label: "WhatsApp number (country code, no +)", widget: string, required: false}
           - {name: instagram, label: Instagram URL, widget: string}
           - {name: formEndpoint, label: Formspree URL, widget: string}
+  - name: equipment
+    label: Equipment
+    files:
+      - name: equipment
+        label: Equipment collection
+        file: equipments.json
+        fields:
+          - {name: eyebrow, label: Small heading, widget: string}
+          - {name: title, label: Main heading (use a new line for line break), widget: string}
+          - {name: intro, label: Intro text, widget: text}
+          - {name: note, label: Closing note, widget: string}
+          - name: categories
+            label: Equipment categories
+            widget: list
+            fields:
+              - {name: name, label: Category name, widget: string}
+              - {name: eyebrow, label: Small category heading, widget: string, required: false}
+              - name: items
+                label: Equipment items
+                widget: list
+                fields:
+                  - {name: name, label: Equipment name, widget: string}
+                  - {name: tag, label: Short label, widget: string, required: false}
+                  - {name: description, label: Description, widget: text, required: false}
+                  - {name: specs, label: Specification chips, widget: list}
+                  - {name: kind, label: Illustration type, widget: select, options: [camera, lens, light, flash, cards]}
+                  - {name: image, label: Product image (optional), widget: image, required: false}
+                  - {name: featured, label: Feature this item, widget: boolean, required: false}
