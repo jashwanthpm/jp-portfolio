@@ -101,7 +101,7 @@ h1{font:400 clamp(2.5rem,8.5vw,5.2rem)/1 var(--d);letter-spacing:-.01em;margin-b
 .tl li.cur{color:var(--fg)}.tl li.cur::before{background:var(--acc)}
 .tl b{min-width:26px;color:var(--acc);font-weight:600}.tl em{font-style:normal;margin-left:auto;font-variant-numeric:tabular-nums}
 @media(max-width:640px){.cmp{grid-template-columns:1fr}.cmp .ar{transform:rotate(90deg);justify-self:start;margin:-4px 0}}
-</style></head><body data-theme="noir"><div class="wrap" id="qp"></div>
+</style><link rel="stylesheet" href="/assets/interface.css?v=20261124-studio"></head><body data-theme="noir"><div class="wrap" id="qp"></div>
 <script src="assets/quote.js?v=20261108-revision-state"></script>
 <script>
 (()=>{
@@ -176,4 +176,4 @@ addEventListener('hashchange',async()=>{try{cur=await QCODEC.dec(location.hash);
 if(PV)addEventListener('message',e=>{if(e.origin!==location.origin||!e.data||e.data.type!=='content'||!e.data.data)return;C=e.data.data;if(!location.hash||location.hash==='#')cur=SAMPLE;draw()});
 load();
 })();
-</script></body></html>
+</script><script src="/assets/interface.js?v=20261124-studio"></script></body></html>
