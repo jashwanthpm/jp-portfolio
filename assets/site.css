@@ -171,7 +171,6 @@ footer.f-minimal{padding:34px 0}footer.f-minimal .fm{display:flex;justify-conten
 .mas.stripl{display:block;overflow:hidden;padding:0;align-items:stretch;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent 0,#000 3%,#000 97%,transparent 100%)}.mas.stripl::-webkit-scrollbar{display:none}
 .stripl .film-track{display:flex;align-items:stretch;gap:var(--g,14px);width:max-content;will-change:transform;animation-name:galleryFilmMoveRTL!important;animation-duration:var(--film-duration,36s);animation-timing-function:linear;animation-iteration-count:infinite;animation-direction:normal!important;animation-fill-mode:both}
 .stripl .t{flex:none;height:min(70vh,540px);width:auto;scroll-snap-align:none}.stripl .t img{width:auto;height:100%}
-.stripl:hover .film-track{animation-play-state:paused}
 @keyframes galleryFilmMoveRTL{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-50%,0,0)}}
 @media(prefers-reduced-motion:reduce){.stripl .film-track{animation:none;transform:none}}
 #gallery-nav{display:flex;justify-content:space-between;align-items:stretch;gap:18px;width:100%;margin:clamp(42px,7vw,84px) 0 24px;padding-top:22px;border-top:1px solid var(--line);position:relative;z-index:2;clear:both}
