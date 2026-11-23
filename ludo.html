@@ -55,7 +55,7 @@
 const SUPABASE_URL='https://smyupcjfusgduaoxqfvu.supabase.co';
 const SUPABASE_KEY='sb_publishable_TKEOxVT1aP_mW78TdPE7KQ_zKkk8WoN';
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY),$=id=>document.getElementById(id);
-let room='',token='',player=-1,state=null,channel=null,legal=[],myView=false;
+let room='',token='',player=-1,state=null,channel=null,pollTimer=null,refreshBusy=false,legal=[],myView=false;
 const colors=['red','green','yellow','blue'],names=['Red','Green','Yellow','Blue'];
 const track=[[6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],[0,7],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,9],[6,10],[6,11],[6,12],[6,13],[6,14],[7,14],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9],[9,8],[10,8],[11,8],[12,8],[13,8],[14,8],[14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0],[7,0],[6,0]];
 const safe=[0,8,13,21,26,34,39,47],starts=[0,13,26,39];
@@ -98,8 +98,8 @@ function render(){
  rotateBoard();
 }
 function showError(e){const msg=e?.message||String(e);if(!$('lobby').classList.contains('hidden')){$('lobbyerror').textContent=msg;$('lobbyerror').classList.add('show')}else{$('status').textContent=msg}}
-async function refresh(){const {data,error}=await db.rpc('jp_ludo_get_room',{p_code:room,p_token:token});if(error)throw error;state=data.state;player=Number(data.player_index);legal=(state.legal||[]).map(Number);render()}
-async function subscribeRoom(){if(channel)await db.removeChannel(channel);channel=db.channel('jp-ludo:'+room).on('broadcast',{event:'game_update'},()=>refresh().catch(showError)).subscribe();await refresh()}
+async function refresh(){if(refreshBusy||!room||!token)return;refreshBusy=true;try{const {data,error}=await db.rpc('jp_ludo_get_room',{p_code:room,p_token:token});if(error)throw error;if(!data?.state)throw new Error('The server returned an empty game state.');state=data.state;player=Number(data.player_index);legal=(state.legal||[]).map(Number);render()}finally{refreshBusy=false}}
+async function subscribeRoom(){if(channel){await db.removeChannel(channel);channel=null}if(pollTimer){clearInterval(pollTimer);pollTimer=null}channel=db.channel('jp-ludo:'+room).on('broadcast',{event:'game_update'},()=>refresh().catch(showError)).subscribe((status,err)=>{if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){console.warn('Ludo realtime issue; automatic sync is active.',err);if($('status'))$('status').textContent='Reconnecting… game state is syncing automatically.'}});await refresh();pollTimer=setInterval(()=>{if(document.visibilityState==='visible')refresh().catch(err=>{console.warn('Ludo sync retry:',err)})},2000)}
 function normalizeRoomCode(raw){let value=String(raw||'').trim();if(!value)return '';try{if(/^https?:\/\//i.test(value)){const u=new URL(value);value=u.searchParams.get('room')||value}}catch{}const match=value.toUpperCase().match(/[A-F0-9]{6}(?!.*[A-F0-9])/);return match?match[0]:value.toUpperCase().replace(/[^A-F0-9]/g,'').slice(0,6)}
 async function enterRoom(kind){
  const name=$('name').value.trim();if(!name){$('name').focus();showError(new Error('Add your name first.'));return}
@@ -108,12 +108,12 @@ async function enterRoom(kind){
  $('lobby').classList.add('hidden');$('game').classList.remove('hidden');$('roomcode').textContent=room;history.replaceState({},'',location.pathname+'?room='+room);await subscribeRoom();$('board-card')?.scrollIntoView({behavior:'smooth',block:'start'});
  }catch(e){showError(e)}finally{$('create').disabled=false;$('join').disabled=false}
 }
-async function startGame(){try{$('start').disabled=true;const {error}=await db.rpc('jp_ludo_start_game',{p_code:room,p_token:token});if(error)throw error;await refresh()}catch(e){showError(e)}}
-async function rollDice(){try{$('roll').disabled=true;$('die').classList.remove('rolling');void $('die').offsetWidth;$('die').classList.add('rolling');setTimeout(()=>$('die').classList.remove('rolling'),650);let {error}=await db.rpc('jp_ludo_roll',{p_code:room,p_token:token});if(error)throw error;await refresh()}catch(e){showError(e)}}
-async function moveToken(index){try{let {error}=await db.rpc('jp_ludo_move',{p_code:room,p_token:token,p_token_index:index});if(error)throw error;await refresh()}catch(e){showError(e)}}
+async function startGame(){try{$('start').disabled=true;const {error}=await db.rpc('jp_ludo_start_game',{p_code:room,p_token:token});if(error)throw error;await refresh()}catch(e){showError(e);await refresh().catch(()=>{})}}
+async function rollDice(){try{$('roll').disabled=true;$('die').classList.remove('rolling');void $('die').offsetWidth;$('die').classList.add('rolling');setTimeout(()=>$('die').classList.remove('rolling'),650);let {error}=await db.rpc('jp_ludo_roll',{p_code:room,p_token:token});if(error)throw error;await refresh()}catch(e){showError(e);await refresh().catch(()=>{})}finally{if(state)render()}}
+async function moveToken(index){try{let {error}=await db.rpc('jp_ludo_move',{p_code:room,p_token:token,p_token_index:index});if(error)throw error;await refresh()}catch(e){showError(e);await refresh().catch(()=>{})}}
 async function copyInvite(){let url=location.origin+location.pathname+'?room='+room;try{await navigator.clipboard.writeText('Join my JP Ludo game ❤️\n'+url+'\nRoom code: '+room);$('copy').textContent='Copied!';setTimeout(()=>$('copy').textContent='Copy invite',1600)}catch(e){showError(new Error('Copy unavailable. Share this link: '+url))}}
 async function copyCode(){try{await navigator.clipboard.writeText(room);$('copycode').textContent='COPIED';setTimeout(()=>$('copycode').textContent='COPY',1400)}catch(e){showError(e)}}
-async function leaveRoom(){if(channel)await db.removeChannel(channel);room='';token='';state=null;player=-1;legal=[];history.replaceState({},'',location.pathname);$('game').classList.add('hidden');$('lobby').classList.remove('hidden');$('status').textContent='You left the room.';buildBoard();rotateBoard()}
+async function leaveRoom(){if(pollTimer){clearInterval(pollTimer);pollTimer=null}if(channel){await db.removeChannel(channel);channel=null}room='';token='';state=null;player=-1;legal=[];history.replaceState({},'',location.pathname);$('game').classList.add('hidden');$('lobby').classList.remove('hidden');$('status').textContent='You left the room.';buildBoard();rotateBoard()}
 $('create').addEventListener('click',()=>enterRoom('create'));$('join').addEventListener('click',()=>enterRoom('join'));$('start').addEventListener('click',startGame);$('roll').addEventListener('click',rollDice);$('copy').addEventListener('click',copyInvite);$('copycode').addEventListener('click',copyCode);$('leave').addEventListener('click',leaveRoom);
 $('rotate').addEventListener('click',()=>{myView=!myView;rotateBoard()});$('code').addEventListener('input',e=>{const v=e.target.value;if(!/^https?:\/\//i.test(v))e.target.value=v.toUpperCase().replace(/[^A-F0-9]/g,'').slice(0,6)});$('code').addEventListener('paste',e=>{const pasted=(e.clipboardData||window.clipboardData).getData('text');if(/https?:\/\//i.test(pasted)){e.preventDefault();$('code').value=normalizeRoomCode(pasted)}});
 buildBoard();const roomFromUrl=new URLSearchParams(location.search).get('room');
