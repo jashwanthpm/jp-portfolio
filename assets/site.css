@@ -174,7 +174,7 @@ footer.f-minimal{padding:34px 0}footer.f-minimal .fm{display:flex;justify-conten
 .stripl:hover .film-track{animation-play-state:paused}
 @keyframes galleryFilmMove{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){.stripl .film-track{animation:none;transform:none}}
-#gallery-nav{display:flex;justify-content:space-between;align-items:stretch;gap:18px;margin:clamp(42px,7vw,84px) 0 24px;padding-top:22px;border-top:1px solid var(--line)}
+#gallery-nav{display:flex;justify-content:space-between;align-items:stretch;gap:18px;width:100%;margin:clamp(42px,7vw,84px) 0 24px;padding-top:22px;border-top:1px solid var(--line);position:relative;z-index:2;clear:both}
 #gallery-nav[hidden]{display:none}
 .gallery-step{display:flex;flex-direction:column;gap:8px;max-width:min(48%,460px);padding:18px 22px;border:1px solid var(--line);border-radius:12px;transition:border-color .25s,transform .25s;background:var(--bg2)}
 .gallery-step:hover{border-color:var(--acc);transform:translateY(-3px)}
