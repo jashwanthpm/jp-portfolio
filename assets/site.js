@@ -29,7 +29,8 @@ async function mason(el,all,lay){const gen=el._g=(el._g||0)+1;el._items=all;el._
  if(L.s=='grid')html=items.map((p,i)=>tile(p,i,1)).join('');
  else if(L.s=='portrait')html=items.map((p,i)=>tile(p,i,'2/3')).join('');
  else if(L.s=='story'){const m=innerWidth<700;html=items.map((p,i)=>tile(p,i).replace('style="','style="--w:'+(p.r>1?(m?92:68):(m?68:42))+'%;')).join('')}
- else if(L.s=='stack'||L.s=='strip')html=items.map((p,i)=>tile(p,i)).join('');
+ else if(L.s=='stack')html=items.map((p,i)=>tile(p,i)).join('');
+ else if(L.s=='strip'){const row=items.map((p,i)=>tile(p,i)).join('');html=`<div class="film-track" style="--film-duration:${Math.max(24,items.length*6)}s">${row}${row}</div>`}
  else if(L.s=='rows'||L.s=='pair'){const W=el.clientWidth||1000,avg=items.reduce((s,p)=>s+p.r,0)/(items.length||1)||1,th=W/(n*avg),rows=[];let cur=[],sum=0;
   items.forEach((p,i)=>{cur.push([p,i]);sum+=p.r;if(sum*th+L.g*(cur.length-1)>=W){rows.push({a:cur,s:sum,last:0});cur=[];sum=0}});if(cur.length)rows.push({a:cur,s:sum,last:1});
   html=rows.map(r=>{const w=Math.round(r.s*th+L.g*(r.a.length-1)),full=!r.last||w>=W*.7;return `<div class="fr2"${full?'':` style="max-width:${w}px"`}>${r.a.map(([p,i])=>tile(p,i).replace('style="','style="flex:'+p.r+' 1 0;')).join('')}</div>`}).join('')}
@@ -161,6 +162,10 @@ gallery(){
   window.__dlc=c;window.__dlon=!!c.download&&c.download!='off';
   if((c.private||c.pinHash)&&!document.querySelector('meta[name=robots]'))document.head.insertAdjacentHTML('beforeend','<meta name="robots" content="noindex,nofollow">');
   const ps=(c.photos||[]).length?c.photos.map(src=>({src,client:c.name})):demo(9);mason($('#grid'),ps,c.lay);
+  const publicGalleries=(C.clients||[]).filter(x=>!x.private&&x.slug),currentIndex=publicGalleries.findIndex(x=>x.slug===c.slug),prevGallery=currentIndex>0?publicGalleries[currentIndex-1]:null,nextGallery=currentIndex>=0?publicGalleries[currentIndex+1]:null;
+  let gnav=$('#gallery-nav');if(!gnav){gnav=document.createElement('nav');gnav.id='gallery-nav';$('#grid').insertAdjacentElement('afterend',gnav)}
+  gnav.innerHTML=(prevGallery?'<a class="gallery-step prev" href="/g/'+encodeURIComponent(prevGallery.slug)+'/"><small>← Previous gallery</small><b>'+prevGallery.name+'</b></a>':'<span class="gallery-step-spacer"></span>')+(nextGallery?'<a class="gallery-step next" href="/g/'+encodeURIComponent(nextGallery.slug)+'/"><small>Next gallery →</small><b>'+nextGallery.name+'</b></a>':'');
+  gnav.hidden=!prevGallery&&!nextGallery;
   let ga=$('#gact');if(!ga){$('#gs').insertAdjacentHTML('afterend','<div id="gact"></div>');ga=$('#gact')}
   ga.innerHTML=window.__dlon&&(c.photos||[]).length?`<span id="dlp"></span><button class="ibtn" id="dlall" title="Download all pictures" aria-label="Download all pictures">${DLI}</button>`:'';
   if($('#dlall'))$('#dlall').onclick=()=>zipAll(c,$('#dlall'));
