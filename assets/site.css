@@ -301,3 +301,36 @@ footer.f-minimal{padding:34px 0}footer.f-minimal .fm{display:flex;justify-conten
 @media(min-width:700px){.ew-wrap{padding-top:130px}.ew-grid{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){.ew-step,.ew-ok{animation:none}.ew-prog i{transition:none}}
 .ew [hidden],.ew-wrap [hidden]{display:none!important}
+
+/* Interface preset: Equipment */
+body.ui-equipment{--bg:#f2f0eb;--bg2:#e9e7df;--fg:#191a18;--mute:#777871;--acc:#b28a54;--line:#dfddd6;background:var(--bg);color:var(--fg)}
+body.ui-equipment header#hd.s{background:#f2f0ebeb;border-bottom-color:var(--line)}
+body.ui-equipment nav a,body.ui-equipment #mb{color:#55574f}
+body.ui-equipment nav a::after{background:var(--acc)}
+body.ui-equipment .hero::after{background:linear-gradient(#191a1840,#191a1800 35%,#191a18a8)}
+body.ui-equipment .hero p{color:#f2f0eb}
+body.ui-equipment .sc{color:#fff}
+body.ui-equipment .btn{border-color:var(--acc);color:#8d693b}
+body.ui-equipment .btn:hover,body.ui-equipment .btn.f{background:var(--acc);color:#fff}
+body.ui-equipment .ph{background:radial-gradient(120% 90% at 20% 10%,#d9d5ca,#aaa99d)}
+body.ui-equipment .frame::before{border-color:#191a1840}
+body.ui-equipment .stats,body.ui-equipment .stats div,body.ui-equipment .pts>div,body.ui-equipment .cc,body.ui-equipment details,body.ui-equipment footer#ft{border-color:var(--line)}
+body.ui-equipment .stats span,body.ui-equipment .lead,body.ui-equipment .pts p,body.ui-equipment .story p,body.ui-equipment .nx p,body.ui-equipment details p,body.ui-equipment footer#ft{color:var(--mute)}
+body.ui-equipment .mq{background:#20221f;color:#f5f3ed;border-color:#3b3e37}
+body.ui-equipment .mq span{color:#d4d1c8}
+body.ui-equipment .fc{background:#faf9f6;border-color:var(--line)}
+body.ui-equipment .svc>div{background:linear-gradient(160deg,#e9e7df,#f2f0eb);border-color:var(--line)}
+body.ui-equipment .svc p{color:#62635c}
+body.ui-equipment .svc .si img{filter:brightness(.78)}
+body.ui-equipment .cc:hover{border-color:var(--acc)}
+body.ui-equipment .cc span,body.ui-equipment .ci a{color:var(--fg)}
+body.ui-equipment .cc:hover span,body.ui-equipment .ci a:hover{color:#8d693b}
+body.ui-equipment input,body.ui-equipment select,body.ui-equipment textarea{color:var(--fg);border-color:var(--line)}
+body.ui-equipment select option{background:#faf9f6;color:#191a18}
+body.ui-equipment #lb{background:#f2f0ebf5}
+body.ui-equipment #lb button{color:#191a18}
+body.ui-equipment .itb button{background:#faf9f6;color:#191a18;border-color:var(--acc)}
+body.ui-equipment .pv [data-f]:focus{background:#b28a5414}
+body.ui-equipment #gate{background:var(--bg)}
+body.ui-equipment #gate input{background:#faf9f6;color:#191a18;border-color:var(--line)}
+@media(max-width:860px){body.ui-equipment nav{background:#f2f0ebf8;border-color:var(--line)}}
