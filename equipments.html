@@ -134,7 +134,7 @@ function render(d){
  document.querySelector('#count-items').textContent=String(items.length).padStart(2,'0');
  document.querySelector('#collections').innerHTML=cats.map((c,ci)=>`<section class="collection reveal"><div class="collection-top"><small>${esc(c.eyebrow||'Collection')}</small><h2>${esc(c.name)}</h2><span class="count">${String((c.items||[]).length).padStart(2,'0')} ITEMS</span></div><div class="grid">${(c.items||[]).map((it,i)=>`<article class="item ${it.featured?'featured':''}"><span class="index">${String(i+1).padStart(2,'0')}</span><div class="visual"><div class="product-canvas" data-kind="${esc(it.kind||'lens')}" data-name="${esc(it.name)}" aria-label="Interactive 3D model of ${esc(it.name)}"></div><span class="product-chip">INTERACTIVE 3D · DRAG TO ROTATE</span></div><div class="item-copy"><div class="item-tag">${esc(it.tag||c.name)}</div><h3>${esc(it.name)}</h3><p>${esc(it.description||'')}</p><div class="specs">${(it.specs||[]).map(s=>`<span>${esc(s)}</span>`).join('')}</div></div></article>`).join('')}</div></section>`).join('');
  document.querySelector('#year').textContent=new Date().getFullYear();
- window.dispatchEvent(new CustomEvent('equipment:rendered',{detail:d}));
+ window.__equipmentData=d;window.dispatchEvent(new CustomEvent('equipment:rendered',{detail:d}));
  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 }
@@ -193,7 +193,7 @@ function makeAccessory(kind){
    mesh(card,new THREE.BoxGeometry(.72,1.18,.08),M.rubber);mesh(card,new THREE.BoxGeometry(.58,.82,.025),M.body,[0,.08,.055]);mesh(card,new THREE.BoxGeometry(.34,.07,.02),M.gold,[0,-.42,.07]);
    for(let x=-.22;x<=.23;x+=.15)mesh(card,new THREE.BoxGeometry(.07,.08,.025),M.edge,[x,.53,.055]);
   }
- }else if(kind==='camera'){return makeCameraRig().root}
+ }else if(kind==='camera'){const c=makeCameraRig();addLensShape(c.lens,'zoom');return c.root}
  else {const l=new THREE.Group();addLensShape(l,'zoom');return l}
  return g;
 }
@@ -228,5 +228,16 @@ function buildHeroOptions(d){
  if(lensItems.length){currentLens=Math.min(currentLens,lensItems.length-1);chooseLens(currentLens<0?0:currentLens)}
  const body=(d.categories||[]).flatMap(c=>c.items||[]).find(x=>x.kind==='camera');if(body&&currentLens<0){$('#selectedTag').textContent=body.tag||'PRIMARY CAMERA';$('#selectedName').textContent=body.name;$('#selectedSpecs').textContent=(body.specs||[]).join(' · ')}
 }
-if(heroHost){hero=setup(heroHost,'camera',true);window.addEventListener('equipment:rendered',e=>{buildHeroOptions(e.detail);document.querySelectorAll('.product-canvas').forEach(host=>{if(host.dataset.ready)return;host.dataset.ready='1';setup(host,host.dataset.kind||'lens',false)})});}
+const cardViewers=new Map();
+function syncProductViewers(){
+ const hosts=[...document.querySelectorAll('.product-canvas')],live=new Set(hosts);
+ for(const [host,viewer] of cardViewers){if(!live.has(host)){viewer.dispose();cardViewers.delete(host)}}
+ for(const host of hosts){if(cardViewers.has(host))continue;cardViewers.set(host,setup(host,host.dataset.kind||'lens',false))}
+}
+function onEquipmentRendered(d){buildHeroOptions(d);syncProductViewers()}
+if(heroHost){
+ hero=setup(heroHost,'camera',true);
+ window.addEventListener('equipment:rendered',e=>onEquipmentRendered(e.detail));
+ if(window.__equipmentData)onEquipmentRendered(window.__equipmentData);
+}
 </script></body></html>
