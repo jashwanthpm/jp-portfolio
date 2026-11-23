@@ -86,3 +86,167 @@ body.ui-studio .foot,body.ui-studio .foot .c a{color:#777871}
 body.ui-studio #hd,body.ui-studio #hd.s{background:#f2f0eb!important}
 @media(max-width:600px){body.ui-studio .ew-wrap{padding-top:104px}}
 @media print{body.ui-studio{background:#fff!important;color:#191a18!important}body.ui-studio .cover,body.ui-studio .sec{box-shadow:none}}
+
+
+/* Studio v2 — bring the Equipment page's full design language to every site page. */
+body.ui-studio{
+ --bg:#f2f0eb;--bg2:#e9e7df;--fg:#191a18;--mute:#777871;--acc:#b28a54;--line:#dfddd6;
+ --paper:#f2f0eb;--paper2:#faf9f6;--ink:#191a18;--white:#faf9f6;--green:#697b68;
+ --d:Manrope,'DM Sans',Arial,sans-serif;--b:'DM Sans',Arial,sans-serif;
+ background:#f2f0eb!important;color:#191a18!important;color-scheme:light;
+ font-family:'DM Sans',Arial,sans-serif;
+}
+body.ui-studio h1,body.ui-studio h2,body.ui-studio h3,body.ui-studio .lg{
+ font-family:Manrope,'DM Sans',Arial,sans-serif!important;font-weight:650;letter-spacing:-.055em;
+}
+body.ui-studio h1{line-height:1.02}
+body.ui-studio h1 em,body.ui-studio h2 em{color:#697b68!important;font-style:normal}
+body.ui-studio .eb,body.ui-studio .eyebrow{color:#697b68!important;font-weight:700;letter-spacing:.16em}
+body.ui-studio #hd,body.ui-studio #hd.s{
+ background:rgba(242,240,235,.94)!important;color:#191a18!important;
+ border-bottom:1px solid #dfddd6!important;box-shadow:0 8px 28px #25251f08;
+ backdrop-filter:blur(16px);
+}
+body.ui-studio #hd .logo{font-family:Manrope,'DM Sans',sans-serif!important;font-weight:800;letter-spacing:-.06em}
+body.ui-studio #hd nav a,body.ui-studio #mb{color:#55574f!important}
+body.ui-studio #hd nav a::after{height:2px;background:#b28a54!important}
+body.ui-studio nav.o{background:#f2f0ebf7!important;border-color:#dfddd6!important}
+body.ui-studio .pg{padding-top:clamp(130px,15vw,190px);padding-bottom:clamp(64px,9vw,110px)}
+body.ui-studio .pg h1{font-size:clamp(3rem,7vw,6rem);letter-spacing:-.075em}
+body.ui-studio .pg>.wrap>h1,body.ui-studio .pg .wrap>h1{max-width:900px}
+body.ui-studio .sec{position:relative}
+body.ui-studio .sec:not(.cta){background:transparent}
+body.ui-studio .sec:nth-of-type(even){background:#eeece6}
+body.ui-studio .lead,body.ui-studio .story p,body.ui-studio .nx p,
+body.ui-studio .pts p,body.ui-studio .svc p,body.ui-studio .stats span{color:#777871!important}
+body.ui-studio .btn{
+ border:1px solid #b28a54!important;border-radius:999px!important;
+ color:#8d693b!important;background:transparent!important;padding:13px 23px;
+ font:600 .72rem 'DM Sans',sans-serif!important;letter-spacing:.08em!important;
+ transition:background .22s,border-color .22s,transform .22s;
+}
+body.ui-studio .btn:hover,body.ui-studio .btn.f{
+ background:#b28a54!important;border-color:#b28a54!important;color:#fff!important;
+ transform:translateY(-2px);
+}
+body.ui-studio .btn.f:hover{background:#697b68!important;border-color:#697b68!important}
+body.ui-studio .frame{
+ border-radius:22px!important;overflow:hidden;background:radial-gradient(120% 90% at 20% 10%,#d9d5ca,#aaa99d);
+}
+body.ui-studio .frame::before{border:1px solid #191a1820!important;border-radius:22px}
+body.ui-studio .stats{
+ border:1px solid #dfddd6!important;border-radius:18px!important;background:#faf9f6;
+ overflow:hidden;margin-top:28px;margin-bottom:28px;
+}
+body.ui-studio .stats>div{padding:24px!important;border-color:#dfddd6!important}
+body.ui-studio .stats b{font:750 clamp(1.5rem,3vw,2.2rem) Manrope,sans-serif!important;letter-spacing:-.06em}
+body.ui-studio .pts{gap:12px!important}
+body.ui-studio .pts>div{
+ background:#faf9f6!important;border:1px solid #dfddd6!important;border-radius:16px!important;
+ padding:25px!important;transition:transform .25s,border-color .25s,box-shadow .25s;
+}
+body.ui-studio .pts>div:hover{transform:translateY(-4px);border-color:#b28a54!important;box-shadow:0 16px 34px #25251f0c}
+body.ui-studio .pts>div>b{color:#697b68!important}
+body.ui-studio .svc>div{
+ background:linear-gradient(145deg,#faf9f6,#e9e7df)!important;
+ border:1px solid #dfddd6!important;border-radius:18px!important;
+}
+body.ui-studio .svc .si{border-radius:12px;overflow:hidden}
+body.ui-studio .svc p{color:#62635c!important}
+body.ui-studio .cc{
+ background:#faf9f6!important;border:1px solid #dfddd6!important;border-radius:16px!important;
+ padding:22px 24px!important;margin-bottom:12px;transition:transform .22s,border-color .22s,box-shadow .22s;
+}
+body.ui-studio .cc:hover{transform:translateY(-3px);border-color:#b28a54!important;box-shadow:0 14px 30px #25251f0c}
+body.ui-studio .cc small{color:#697b68!important;letter-spacing:.14em}
+body.ui-studio .cc span,body.ui-studio .ci a{color:#191a18!important}
+body.ui-studio .nx{
+ margin-top:34px;padding:25px;background:#20221f!important;color:#f5f3ed;
+ border:1px solid #3b3e37!important;border-radius:18px!important;
+}
+body.ui-studio .nx .eb{color:#c5a477!important}
+body.ui-studio .nx p{color:#d4d1c8!important}
+body.ui-studio .nx b{color:#b28a54!important}
+body.ui-studio .fc{
+ background:#faf9f6!important;border:1px solid #dfddd6!important;border-radius:20px!important;
+ padding:clamp(22px,4vw,38px)!important;box-shadow:0 18px 46px #26231b0a;
+}
+body.ui-studio .fc h3{font-size:clamp(1.7rem,3vw,2.2rem)}
+body.ui-studio input,body.ui-studio select,body.ui-studio textarea{
+ background:#fffefa!important;color:#191a18!important;border:1px solid #d8d5cc!important;
+ border-radius:10px!important;box-shadow:none!important;color-scheme:light!important;
+}
+body.ui-studio input:focus,body.ui-studio select:focus,body.ui-studio textarea:focus{
+ border-color:#b28a54!important;box-shadow:0 0 0 3px #b28a5418!important;outline:0;
+}
+body.ui-studio .chips button,body.ui-studio .chips a{
+ background:#e9e7df!important;border:1px solid #dfddd6!important;border-radius:999px!important;
+ color:#55574f!important;padding:9px 15px;transition:.2s;
+}
+body.ui-studio .chips button.on,body.ui-studio .chips button:hover,
+body.ui-studio .chips a.on,body.ui-studio .chips a:hover{
+ background:#697b6818!important;border-color:#697b68!important;color:#343f33!important;
+}
+body.ui-studio .mas .t{border-radius:14px!important;overflow:hidden}
+body.ui-studio .mas .t img{border-radius:14px!important;transition:transform .5s}
+body.ui-studio .mas .t:hover img{transform:scale(1.025)}
+body.ui-studio .mq{
+ background:#20221f!important;color:#f5f3ed!important;border:1px solid #3b3e37;
+}
+body.ui-studio .mq span{color:#d4d1c8!important}
+body.ui-studio .mq b{color:#b28a54!important}
+body.ui-studio footer#ft{
+ background:#eeece6!important;color:#191a18!important;border-top:1px solid #dfddd6!important;
+}
+body.ui-studio footer#ft .logo{color:#191a18!important}
+body.ui-studio footer#ft a{color:#55574f!important}
+body.ui-studio footer#ft a:hover{color:#8d693b!important}
+body.ui-studio #lb{background:#f2f0ebf5!important}
+body.ui-studio #lb button{color:#191a18!important}
+body.ui-studio #gate{background:#20221f!important;color:#f5f3ed!important}
+body.ui-studio #gate input{background:#faf9f6!important;color:#191a18!important}
+body.ui-studio .hero::after{background:linear-gradient(#191a1840,#191a1800 35%,#191a18b8)!important}
+body.ui-studio .hero .eb{color:#d0b184!important}
+body.ui-studio .hero h1 em{color:#d0b184!important}
+body.ui-studio .hero .btn{border-color:#d0b184!important;color:#fff!important}
+body.ui-studio .hero .btn.f{background:#b28a54!important;border-color:#b28a54!important}
+body.ui-studio .hero p,body.ui-studio .sc{color:#f2f0eb!important}
+body.ui-studio .cta{
+ background:#20221f!important;color:#f5f3ed!important;border-radius:22px!important;
+ margin:0 clamp(18px,4vw,54px) 70px;padding:clamp(48px,8vw,90px) 24px!important;
+}
+body.ui-studio .cta .eb{color:#d0b184!important}
+body.ui-studio .cta h2 em{color:#d0b184!important}
+body.ui-studio .cta .btn{color:#fff!important;border-color:#d0b184!important}
+body.ui-studio .cta .btn.f{background:#b28a54!important}
+body.ui-studio .ew-wrap{background:#f2f0eb!important}
+body.ui-studio .ew{color:#191a18!important}
+body.ui-studio .ew h1{font-family:Manrope,'DM Sans',sans-serif!important;font-weight:650!important;letter-spacing:-.055em}
+body.ui-studio .ew h1 em{color:#697b68!important}
+body.ui-studio .ew-sub,body.ui-studio #ewl,body.ui-studio .ew-cnt{color:#777871!important}
+body.ui-studio .ew-l{color:#55574f!important}
+body.ui-studio .ew input,body.ui-studio .ew textarea{background:#fffefa!important;color:#191a18!important;border:1px solid #d8d5cc!important;border-radius:10px!important}
+body.ui-studio .ew-opt{background:#e9e7df!important;color:#191a18!important;border:1px solid #dfddd6!important;border-radius:12px!important}
+body.ui-studio .ew-opt.on{background:#697b6818!important;border-color:#697b68!important}
+body.ui-studio .ew-prog{background:#dfddd6!important}
+body.ui-studio .ew-prog i{background:#b28a54!important}
+body.ui-studio .ew-tag{color:#697b68!important;border-color:#697b6877!important}
+body.ui-studio .ew-note{background:#697b6814!important;color:#55574f!important;border-left-color:#697b68!important}
+body.ui-studio .ew-next{background:#b28a54!important;border-color:#b28a54!important;color:#fff!important;border-radius:999px!important}
+body.ui-studio .ew-back{color:#191a18!important;border-color:#dfddd6!important;border-radius:999px!important}
+body.ui-studio .cover{background-color:#faf9f6!important;border-color:#dfddd6!important;border-radius:22px!important}
+body.ui-studio .cover .eb,body.ui-studio .sec>h2{color:#697b68!important}
+body.ui-studio .sec{border-color:#dfddd6!important}
+body.ui-studio .chip{background:#e9e7df!important;border-color:#dfddd6!important;color:#191a18!important;border-radius:10px!important}
+body.ui-studio .adv{background:#697b6814!important;border-color:#697b6877!important}
+body.ui-studio .foot{color:#777871!important}
+body.ui-studio[data-theme],body.ui-studio[data-theme=noir],body.ui-studio[data-theme=ivory],body.ui-studio[data-theme=blush],body.ui-studio[data-theme=editorial]{
+ --bg:#f2f0eb;--paper:#faf9f6;--paper2:#e9e7df;--fg:#191a18;--mute:#777871;--line:#dfddd6;--acc:#b28a54;--ink:#191a18;
+ background:#f2f0eb!important;color:#191a18!important;
+}
+@media(max-width:700px){
+ body.ui-studio .pg{padding-top:112px}
+ body.ui-studio .fc{padding:22px!important}
+ body.ui-studio .stats>div{padding:17px!important}
+ body.ui-studio .cta{margin-inline:14px}
+}
