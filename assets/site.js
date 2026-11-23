@@ -162,10 +162,15 @@ gallery(){
   window.__dlc=c;window.__dlon=!!c.download&&c.download!='off';
   if((c.private||c.pinHash)&&!document.querySelector('meta[name=robots]'))document.head.insertAdjacentHTML('beforeend','<meta name="robots" content="noindex,nofollow">');
   const ps=(c.photos||[]).length?c.photos.map(src=>({src,client:c.name})):demo(9);mason($('#grid'),ps,c.lay);
-  const publicGalleries=(C.clients||[]).filter(x=>!x.private&&x.slug),currentIndex=publicGalleries.findIndex(x=>x.slug===c.slug),prevGallery=currentIndex>0?publicGalleries[currentIndex-1]:null,nextGallery=currentIndex>=0?publicGalleries[currentIndex+1]:null;
-  let gnav=$('#gallery-nav');if(!gnav){gnav=document.createElement('nav');gnav.id='gallery-nav';$('#grid').insertAdjacentElement('afterend',gnav)}
-  gnav.innerHTML=(prevGallery?'<a class="gallery-step prev" href="/g/'+encodeURIComponent(prevGallery.slug)+'/"><small>← Previous gallery</small><b>'+prevGallery.name+'</b></a>':'<span class="gallery-step-spacer"></span>')+(nextGallery?'<a class="gallery-step next" href="/g/'+encodeURIComponent(nextGallery.slug)+'/"><small>Next gallery →</small><b>'+nextGallery.name+'</b></a>':'');
-  gnav.hidden=!prevGallery&&!nextGallery;
+  const publicGalleries=(C.clients||[]).filter(x=>!x.private&&x.slug),currentIndex=publicGalleries.findIndex(x=>x.slug===s||x.slug===c.slug),prevGallery=currentIndex>0?publicGalleries[currentIndex-1]:null,nextGallery=currentIndex>=0?publicGalleries[currentIndex+1]:null;
+  const gnav=$('#gallery-nav');
+  if(gnav){
+   gnav.replaceChildren();
+   const addStep=(item,kind,label)=>{if(!item)return;const a=document.createElement('a');a.className='gallery-step '+kind;a.href='/g/'+encodeURIComponent(item.slug)+'/';const small=document.createElement('small');small.textContent=label;const name=document.createElement('b');name.textContent=item.name||'View gallery';a.append(small,name);gnav.appendChild(a)};
+   addStep(prevGallery,'prev','← Previous gallery');
+   addStep(nextGallery,'next','Next gallery →');
+   gnav.hidden=!prevGallery&&!nextGallery;
+  }
   let ga=$('#gact');if(!ga){$('#gs').insertAdjacentHTML('afterend','<div id="gact"></div>');ga=$('#gact')}
   ga.innerHTML=window.__dlon&&(c.photos||[]).length?`<span id="dlp"></span><button class="ibtn" id="dlall" title="Download all pictures" aria-label="Download all pictures">${DLI}</button>`:'';
   if($('#dlall'))$('#dlall').onclick=()=>zipAll(c,$('#dlall'));
