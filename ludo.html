@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f1e9">
+<meta name="description" content="A private two-player Ludo room. Roll the dice, make your moves and play together online.">
+<meta property="og:title" content="JP Ludo — Play Together">
+<meta property="og:description" content="A little game for two. Create a room and invite someone to play.">
+<title>JP Ludo — Play Together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f5f1e9;--paper:#fffdf9;--ink:#292720;--muted:#8b8579;--line:#e8e1d5;--gold:#b88c48;--red:#d95752;--red-soft:#f7deda;--green:#29936a;--green-soft:#d9eee3;--shadow:0 24px 70px #40331d12}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#fff 0,var(--bg) 64%);color:var(--ink);font-family:"DM Sans",sans-serif;min-height:100vh}
+button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}
+.shell{max-width:1240px;margin:auto;padding:26px 26px 42px}.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}.logo{font-size:20px;font-weight:800;letter-spacing:-1.2px}.logo em{font-style:normal;color:var(--gold)}.nav-note{font-size:10px;letter-spacing:2.3px;text-transform:uppercase;color:var(--muted)}
+.intro{display:flex;justify-content:space-between;align-items:end;margin:0 0 22px;gap:20px}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:2.6px;color:var(--gold);font-weight:800}.intro h1{font-family:"Playfair Display",serif;font-size:clamp(34px,5vw,54px);letter-spacing:-1.7px;line-height:1.05;margin:8px 0 7px;font-weight:700}.intro p{margin:0;color:var(--muted);font-size:14px}.live-pill{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:30px;background:#ffffffa8;font-size:11px;color:#6d675d;white-space:nowrap}.live-dot{width:7px;height:7px;background:#52a77b;border-radius:50%;box-shadow:0 0 0 4px #52a77b18}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:22px;align-items:start}.board-card{background:var(--paper);border:1px solid #e9e1d4;border-radius:26px;padding:clamp(10px,2vw,20px);box-shadow:var(--shadow)}.board-top{display:flex;justify-content:space-between;align-items:center;padding:1px 4px 13px}.board-caption{font-size:11px;color:var(--muted);letter-spacing:.4px}.board-caption strong{color:var(--ink);font-weight:800}.board-frame{padding:8px;border-radius:18px;background:#f2ede3;border:1px solid #e9e1d4}.board{position:relative;display:grid;grid-template-columns:repeat(15,minmax(0,1fr));grid-template-rows:repeat(15,minmax(0,1fr));aspect-ratio:1;width:100%;overflow:hidden;border:1px solid #d9d0c1;border-radius:10px;background:#fffdf9}
+.cell{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;border:1px solid #eee9df;background:#fffdf9;z-index:1}
+.cell.track{background:#fffdf9}.cell.safe:after{content:"✦";font-size:clamp(7px,1.1vw,13px);color:#b69a62;opacity:.95}.cell.start-red{background:#f1b4ae}.cell.start-green{background:#a9d9bf}
+.zone{position:relative;z-index:0;margin:3px;border-radius:9px;border:1px solid #ffffffa8;display:flex;align-items:center;justify-content:center;pointer-events:none}.zone.red{background:linear-gradient(145deg,#f5d4d0,#f0c6c1)}.zone.green{background:linear-gradient(145deg,#d8eee1,#c5e5d3)}.zone.inactive{background:linear-gradient(145deg,#f1eee8,#e8e3da);opacity:.65}
+.nest{position:absolute;width:72%;height:72%;border-radius:8px;background:#fffdf9;box-shadow:inset 0 1px 4px #0000000c;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:9%;padding:12%}
+.nest-dot{border-radius:50%;background:#f2e9df;border:1px solid #e8ddce}.nest.red .nest-dot{background:#f4c9c4;border-color:#eab5ae}.nest.green .nest-dot{background:#c2e5d1;border-color:#a6d7bc}
+.home-lane.red{background:#f0aaa4}.home-lane.green{background:#9bd5b6}.home-lane:after{content:"";width:38%;height:38%;border-radius:50%;background:#ffffff8a}
+.center{z-index:3;grid-row:7/10;grid-column:7/10;background:conic-gradient(from 45deg,#e7b7b0 0 25%,#c9e6d5 0 50%,#e8e3d9 0 75%,#f0d7d1 0);display:flex;align-items:center;justify-content:center;font-family:"Playfair Display",serif;color:#fff;font-size:clamp(15px,3vw,30px);text-shadow:0 1px 5px #76634a55;border:1px solid #fff}
+.token{position:relative;z-index:8;width:78%;height:78%;min-width:0;min-height:0;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 5px #35271935,inset 0 1px 2px #ffffff85;display:grid;place-items:center;color:#fff;font-size:clamp(7px,1.05vw,12px);font-weight:800;padding:0;transition:transform .16s,box-shadow .16s}
+.token.red{background:linear-gradient(145deg,#ee8178,#c53f40)}.token.green{background:linear-gradient(145deg,#55bc8b,#21825c)}.token.legal{outline:3px solid #d4a94f;outline-offset:1px;box-shadow:0 0 0 5px #d4a94f26,0 3px 8px #35271938;animation:glow 1.1s ease-in-out infinite}.token.legal:hover{transform:scale(1.1)}@keyframes glow{50%{outline-offset:4px}}
+.side{display:flex;flex-direction:column;gap:14px}.card{background:#fffdf9;border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 10px 35px #40331d08}.card h2{font-size:17px;letter-spacing:-.5px;margin:0 0 5px}.muted{font-size:12px;color:var(--muted);line-height:1.55}.field-label{display:block;margin:16px 0 6px;color:#777064;font-size:11px;font-weight:700;letter-spacing:.4px}.field{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:#fff;font-size:14px;outline:none;color:var(--ink);transition:border .15s,box-shadow .15s}.field:focus{border-color:#c4a36a;box-shadow:0 0 0 3px #c4a36a20}.btn{border:0;border-radius:12px;padding:13px 15px;font-size:13px;font-weight:800;transition:transform .15s,filter .15s}.btn:active{transform:scale(.985)}.btn-dark{background:#292720;color:#fff}.btn-gold{background:linear-gradient(135deg,#d9b36e,#c3974e);color:#2e2518}.btn-light{background:#f2eee6;color:#4b453b}.btn-full{width:100%}.button-stack{display:grid;gap:9px;margin-top:11px}.or{display:flex;align-items:center;gap:10px;color:#b1a99d;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin:16px 0}.or:before,.or:after{content:"";height:1px;background:var(--line);flex:1}
+.room-code{font-size:26px;font-weight:800;letter-spacing:7px;text-align:center;padding:13px 8px;background:#f6f1e8;border:1px dashed #d9c8a8;border-radius:14px;margin:14px 0 6px}.copyline{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--muted)}.copyline button{border:0;background:none;color:#9a7337;font-size:11px;font-weight:800;padding:2px}
+.players{display:grid;gap:8px;margin:15px 0}.player{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:13px;background:#fff}.player.active{border-color:#d7bd8d;background:#fffcf5}.player-dot{width:11px;height:11px;border-radius:50%;flex:none}.player-dot.red{background:var(--red)}.player-dot.green{background:var(--green)}.player-name{font-size:12px;font-weight:800}.player-meta{font-size:10px;color:var(--muted);margin-top:2px}.turn-mark{margin-left:auto;font-size:9px;color:#9a7337;font-weight:800;letter-spacing:1px}
+.dice-area{display:flex;align-items:center;gap:13px;padding:13px;border:1px solid var(--line);border-radius:15px;background:#faf7f1}.die{width:60px;height:60px;display:grid;place-items:center;background:#fff;border:1px solid #e8dfd1;border-radius:15px;box-shadow:0 4px 12px #3527190c;font-size:39px;color:#39352e}.turn-label{font-size:13px;font-weight:800}.turn-help{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4}.status{margin-top:11px;padding:11px 12px;border-radius:12px;background:#f5f1e9;color:#6e6557;font-size:11px;line-height:1.5;min-height:42px}.status strong{color:var(--ink)}.tiny{font-size:10px;color:#9b9387;line-height:1.55;margin:12px 0 0}.rule-list{display:grid;gap:9px;margin-top:13px}.rule{display:flex;gap:9px;align-items:flex-start;font-size:11px;color:#716a5e;line-height:1.45}.rule b{color:#b48a49;font-size:12px;min-width:15px}.hidden{display:none!important}.footer{display:flex;justify-content:space-between;gap:12px;margin-top:22px;color:#a39b8f;font-size:10px}.footer a{color:#9c7945;text-decoration:none}
+@media(max-width:900px){.main{grid-template-columns:minmax(0,1fr) 290px;gap:14px}.shell{padding:20px 16px 32px}.card{padding:16px}}
+@media(max-width:720px){.main{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr;align-items:start}.side .wide{grid-column:1/-1}.intro{align-items:flex-start}.live-pill{margin-top:9px}}
+@media(max-width:480px){.shell{padding:15px 10px 25px}.nav{margin-bottom:23px}.intro h1{font-size:36px}.intro p{font-size:12px}.nav-note{font-size:8px;letter-spacing:1.5px}.side{grid-template-columns:1fr}.side .wide{grid-column:auto}.board-frame{padding:4px}.board-card{padding:9px;border-radius:18px}.board-top{padding:2px 2px 9px}.board-caption{font-size:9px}.footer{font-size:9px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="nav"><div class="logo">JP <em>·</em> PLAYROOM</div><div class="nav-note">A little game for two &nbsp; ♥</div></header>
+<section class="intro"><div><div class="eyebrow">The classic, together</div><h1>Roll. Move. Repeat.</h1><p>A private Ludo room for you and your favourite person.</p></div><div class="live-pill"><span class="live-dot"></span> Live multiplayer</div></section>
+<main class="main">
+<section class="board-card">
+ <div class="board-top"><div class="board-caption"><strong>JP LUDO</strong> &nbsp; / &nbsp; TWO PLAYER EDITION</div><div class="board-caption">RED vs GREEN</div></div>
+ <div class="board-frame"><div class="board" id="board" aria-label="Ludo board"></div></div>
+</section>
+<aside class="side">
+<section class="card wide" id="lobby">
+ <h2>Start a game</h2><div class="muted">Create a room, then share the invite with your opponent. No account needed.</div>
+ <label class="field-label" for="name">YOUR NAME</label><input class="field" id="name" maxlength="24" placeholder="What should we call you?">
+ <div class="button-stack"><button class="btn btn-dark btn-full" id="create">Create private room <span aria-hidden="true">↗</span></button></div>
+ <div class="or">or join a room</div>
+ <label class="field-label" for="code" style="margin-top:0">ROOM CODE</label><input class="field" id="code" maxlength="6" placeholder="Enter 6-character code" style="text-transform:uppercase;letter-spacing:2px">
+ <div class="button-stack"><button class="btn btn-light btn-full" id="join">Join game</button></div>
+ <p class="tiny">Your game is private to the two room players. Share the room link only with the person you want to play with.</p>
+</section>
+<section class="card wide hidden" id="game">
+ <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div><h2 style="margin:0">Your room</h2><div class="muted">Send the invite and get playing.</div></div><button class="btn btn-light" id="copy" style="padding:9px 11px;font-size:11px">Copy invite</button></div>
+ <div class="room-code" id="roomcode">------</div><div class="copyline">ROOM CODE <button id="copycode">COPY</button></div>
+ <div class="players">
+  <div class="player" id="player0"><span class="player-dot red"></span><div><div class="player-name" id="p0">Red player</div><div class="player-meta">Red tokens</div></div><span class="turn-mark" id="turn0"></span></div>
+  <div class="player" id="player1"><span class="player-dot green"></span><div><div class="player-name" id="p1">Waiting for opponent…</div><div class="player-meta">Green tokens</div></div><span class="turn-mark" id="turn1"></span></div>
+ </div>
+ <div class="dice-area"><div class="die" id="die">⚄</div><div><div class="turn-label" id="turntitle">Waiting for opponent</div><div class="turn-help" id="turnhint">Share your room code to begin.</div></div></div>
+ <div class="button-stack"><button class="btn btn-gold btn-full" id="roll" disabled>Roll the dice</button></div>
+ <div class="status" id="status">Your game updates live on both devices.</div>
+ <button class="btn btn-light btn-full" id="leave" style="margin-top:10px">Leave room</button>
+</section>
+<section class="card"><h2>How to play</h2><div class="muted">Classic Ludo rules, with the dice rolled securely on the game server.</div>
+ <div class="rule-list"><div class="rule"><b>01</b><span>Roll a <strong>6</strong> to bring a token out of base.</span></div><div class="rule"><b>02</b><span>Tap a highlighted token to move it clockwise.</span></div><div class="rule"><b>03</b><span>Capture an opponent on an unprotected square to send it home.</span></div><div class="rule"><b>04</b><span>Six gives another roll. Three sixes in a row forfeit the turn.</span></div><div class="rule"><b>05</b><span>Reach the centre with an exact roll. First to bring all four tokens home wins.</span></div></div>
+ <p class="tiny">Star squares are safe. Both players must be online to take their turns.</p>
+</section>
+</aside>
+</main>
+<footer class="footer"><span>JP Ludo · Made for two</span><span>Designed by <a href="https://jp.sakkhi.co.in/" target="_blank" rel="noopener">Jashwanth JP</a></span></footer>
+</div>
+<script>
+const SUPABASE_URL='https://smyupcjfusgduaoxqfvu.supabase.co';
+const SUPABASE_KEY='sb_publishable_TKEOxVT1aP_mW78TdPE7KQ_zKkk8WoN';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+let room='',token='',player=-1,state=null,channel=null,legal=[];
+const track=[[6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],[0,7],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,9],[6,10],[6,11],[6,12],[6,13],[6,14],[7,14],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9],[9,8],[10,8],[11,8],[12,8],[13,8],[14,8],[14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0],[7,0],[6,0]];
+const safe=[0,8,13,21,26,34,39,47];
+const lanes=[[[7,1],[7,2],[7,3],[7,4],[7,5],[7,6]],[[7,13],[7,12],[7,11],[7,10],[7,9],[7,8]]];
+const bases=[[[2,2],[2,4],[4,2],[4,4]],[[2,10],[2,12],[4,10],[4,12]]];
+function id(r,c){return 'cell-'+r+'-'+c}
+function addZone(board,row,col,color){
+ const z=document.createElement('div');z.className='zone '+color;z.style.gridRow=(row+1)+'/span 6';z.style.gridColumn=(col+1)+'/span 6';board.appendChild(z);
+ const nest=document.createElement('div');nest.className='nest '+color;
+ for(let i=0;i<4;i++){const dot=document.createElement('i');dot.className='nest-dot';nest.appendChild(dot)}
+ z.appendChild(nest);
+}
+function buildBoard(){
+ const b=$('board');b.innerHTML='';
+ for(let r=0;r<15;r++)for(let c=0;c<15;c++){const d=document.createElement('div');d.className='cell';d.id=id(r,c);d.style.gridRow=r+1;d.style.gridColumn=c+1;b.appendChild(d)}
+ addZone(b,0,0,'red');addZone(b,0,9,'green');addZone(b,9,0,'inactive');addZone(b,9,9,'inactive');
+ track.forEach((p,i)=>{const d=$(id(p[0],p[1]));d.classList.add('track');if(safe.includes(i))d.classList.add('safe');if(i===0)d.classList.add('start-red');if(i===26)d.classList.add('start-green')});
+ lanes[0].forEach(p=>$(id(p[0],p[1])).classList.add('home-lane','red'));
+ lanes[1].forEach(p=>$(id(p[0],p[1])).classList.add('home-lane','green'));
+ const center=document.createElement('div');center.className='center';center.style.gridRow='7/10';center.style.gridColumn='7/10';center.textContent='JP';b.appendChild(center);
+}
+function positionFor(p,t,pos){
+ if(pos<0)return bases[p][t];
+ if(pos<52){const ix=(p===0?0:26)+pos;return track[ix%52]}
+ return lanes[p][Math.min(5,pos-52)];
+}
+function render(){
+ if(!state)return;
+ document.querySelectorAll('.token').forEach(n=>n.remove());
+ for(let p=0;p<2;p++)for(let t=0;t<4;t++){
+  const pos=Number(state.players[p].tokens[t]);const xy=positionFor(p,t,pos);const btn=document.createElement('button');
+  btn.className='token '+(p===0?'red':'green')+(p===player&&legal.includes(t)?' legal':'');btn.textContent=String(t+1);btn.title=(state.players[p].name||'Player')+' · token '+(t+1);
+  btn.disabled=!(p===player&&legal.includes(t));btn.setAttribute('aria-label','Move token '+(t+1));btn.addEventListener('click',()=>moveToken(t));
+  const cell=$(id(xy[0],xy[1]));if(cell)cell.appendChild(btn);
+ }
+ $('p0').textContent=state.players[0].name||'Red player';$('p1').textContent=state.players[1].name||'Waiting for opponent…';
+ $('player0').classList.toggle('active',state.turn===0&&state.phase!=='finished');$('player1').classList.toggle('active',state.turn===1&&state.phase!=='finished');
+ $('turn0').textContent=state.turn===0&&state.phase!=='finished'?'YOUR TURN':'';$('turn1').textContent=state.turn===1&&state.phase!=='finished'?'YOUR TURN':'';
+ const mine=state.turn===player;
+ $('turntitle').textContent=state.phase==='finished'?'Game complete':state.phase==='waiting'?'Waiting for opponent':mine?'Your turn':(state.players[state.turn].name||'Opponent')+' is playing';
+ $('turnhint').textContent=state.phase==='move'&&mine?'Choose one of the glowing tokens.':mine?'Roll to see what fate has in store.':'Their move will appear here automatically.';
+ const faces=['⚀','⚁','⚂','⚃','⚄','⚅'];$('die').textContent=state.die?faces[Number(state.die)-1]:'⚄';
+ $('roll').disabled=!(state.phase==='roll'&&mine);$('status').textContent=state.last_event||'The game is ready.';
+ if(state.phase==='waiting')$('status').textContent='Room created. Share the code above to invite your opponent.';
+ if(state.phase==='finished')$('status').textContent=state.last_event||'The game is complete.';
+}
+function showError(e){$('status').textContent=e&&e.message?e.message:String(e)}
+async function refresh(){
+ const {data,error}=await db.rpc('jp_ludo_get_room',{p_code:room,p_token:token});if(error)throw error;
+ state=data.state;player=Number(data.player_index);legal=(state.legal||[]).map(Number);render();
+}
+async function subscribeRoom(){
+ if(channel)await db.removeChannel(channel);
+ channel=db.channel('jp-ludo:'+room).on('broadcast',{event:'game_update'},()=>refresh().catch(showError)).subscribe();
+ await refresh();
+}
+async function enterRoom(kind){
+ const name=$('name').value.trim();if(!name){$('name').focus();showError(new Error('Add your name first.'));return}
+ try{
+  $('create').disabled=true;$('join').disabled=true;
+  const args=kind==='create'?{p_name:name}:{p_code:$('code').value.trim().toUpperCase(),p_name:name};
+  const {data,error}=await db.rpc(kind==='create'?'jp_ludo_create_room':'jp_ludo_join_room',args);if(error)throw error;
+  room=data.room_code;token=data.token;player=Number(data.player_index);state=data.state;legal=(state.legal||[]).map(Number);
+  localStorage.setItem('jp_ludo_'+room,token);
+  $('lobby').classList.add('hidden');$('game').classList.remove('hidden');$('roomcode').textContent=room;
+  const invite=location.origin+location.pathname+'?room='+room;history.replaceState({},'',invite);
+  await subscribeRoom();
+ }catch(e){showError(e)}finally{$('create').disabled=false;$('join').disabled=false}
+}
+async function rollDice(){
+ try{$('roll').disabled=true;const {error}=await db.rpc('jp_ludo_roll',{p_code:room,p_token:token});if(error)throw error;await refresh()}catch(e){showError(e)}
+}
+async function moveToken(index){
+ try{const {error}=await db.rpc('jp_ludo_move',{p_code:room,p_token:token,p_token_index:index});if(error)throw error;await refresh()}catch(e){showError(e)}
+}
+async function copyInvite(){
+ const url=location.origin+location.pathname+'?room='+room;
+ try{await navigator.clipboard.writeText('Join my JP Ludo game ❤️\n'+url+'\nRoom code: '+room);$('copy').textContent='Copied!';setTimeout(()=>$('copy').textContent='Copy invite',1600)}
+ catch(e){showError(new Error('Copy unavailable. Share this link: '+url))}
+}
+async function copyCode(){try{await navigator.clipboard.writeText(room);$('copycode').textContent='COPIED';setTimeout(()=>$('copycode').textContent='COPY',1400)}catch(e){showError(e)}}
+async function leaveRoom(){
+ if(channel)await db.removeChannel(channel);room='';token='';state=null;player=-1;legal=[];
+ history.replaceState({},'',location.pathname);$('game').classList.add('hidden');$('lobby').classList.remove('hidden');$('status').textContent='You left the room.';buildBoard();
+}
+$('create').addEventListener('click',()=>enterRoom('create'));$('join').addEventListener('click',()=>enterRoom('join'));$('roll').addEventListener('click',rollDice);$('copy').addEventListener('click',copyInvite);$('copycode').addEventListener('click',copyCode);$('leave').addEventListener('click',leaveRoom);
+$('code').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-F0-9]/g,'').slice(0,6)});
+buildBoard();
+const roomFromUrl=new URLSearchParams(location.search).get('room');
+if(roomFromUrl){$('code').value=roomFromUrl.toUpperCase();const saved=localStorage.getItem('jp_ludo_'+roomFromUrl.toUpperCase());if(saved){room=roomFromUrl.toUpperCase();token=saved;$('lobby').classList.add('hidden');$('game').classList.remove('hidden');$('roomcode').textContent=room;subscribeRoom().catch(e=>{showError(e);$('game').classList.add('hidden');$('lobby').classList.remove('hidden')})}}
+</script>
+</body>
+</html>
