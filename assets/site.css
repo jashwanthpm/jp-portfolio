@@ -172,7 +172,7 @@ footer.f-minimal{padding:34px 0}footer.f-minimal .fm{display:flex;justify-conten
 .stripl .film-track{display:flex;align-items:stretch;gap:var(--g,14px);width:max-content;will-change:transform;animation:galleryFilmMove var(--film-duration,36s) linear infinite}
 .stripl .t{flex:none;height:min(70vh,540px);width:auto;scroll-snap-align:none}.stripl .t img{width:auto;height:100%}
 .stripl:hover .film-track{animation-play-state:paused}
-@keyframes galleryFilmMove{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@keyframes galleryFilmMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.stripl .film-track{animation:none;transform:none}}
 #gallery-nav{display:flex;justify-content:space-between;align-items:stretch;gap:18px;width:100%;margin:clamp(42px,7vw,84px) 0 24px;padding-top:22px;border-top:1px solid var(--line);position:relative;z-index:2;clear:both}
 #gallery-nav[hidden]{display:none}
