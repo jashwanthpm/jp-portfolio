@@ -270,7 +270,7 @@ contact(){
 };
 const PV=new URLSearchParams(location.search).has('preview'),NOSITE=/^\/admin(\/|$)/.test(location.pathname);
 const obs=()=>{const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('on'),io.unobserve(e.target))),{threshold:.1});$$('.rv').forEach(x=>io.observe(x))};
-function theme(){const t=C.theme||{},s=document.documentElement.style,set=(k,v)=>v?s.setProperty(k,v):s.removeProperty(k);const ui=t.interface==='equipment'?'ui-equipment':'ui-original';document.body.classList.remove('ui-equipment','ui-original');document.body.classList.add(ui);
+function theme(){const t=C.theme||{},s=document.documentElement.style,set=(k,v)=>v?s.setProperty(k,v):s.removeProperty(k);const studio=t.interface==='studio'||t.interface==='equipment';document.body.classList.remove('ui-equipment','ui-studio','ui-original');document.body.classList.add(studio?'ui-studio':'ui-original');
  set('--acc',t.accent);set('--hs',t.heroScale&&t.heroScale/100);set('--ds',t.headScale&&t.headScale/100);set('--bs',t.bodyScale&&t.bodyScale/100);
  set('--d',t.headFont&&`'${t.headFont}',serif`);set('--bf',t.bodyFont&&`'${t.bodyFont}',sans-serif`);
  [t.headFont,t.bodyFont].filter(Boolean).forEach(n=>{const id='gf-'+n.replace(/\W/g,'');if(!document.getElementById(id)){const l=document.createElement('link');l.id=id;l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+n.replace(/ /g,'+')+':ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap';document.head.appendChild(l)}})}
