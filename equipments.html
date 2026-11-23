@@ -71,6 +71,23 @@ header{height:76px;display:flex;align-items:center;justify-content:space-between
 @media(max-width:800px){.wrap{width:calc(100% - 36px)}header{height:66px}.nav{gap:15px}.nav a{font-size:10px}.hero{grid-template-columns:1fr;gap:24px;padding:48px 0 45px;min-height:0}.hero-copy h1{font-size:clamp(50px,12vw,72px);max-width:500px}.hero-copy p{max-width:470px}.camera-stage{height:min(82vw,365px);min-height:270px}.quick-stats{margin:0 0 60px}.quick-stats div{padding:15px 12px}.quick-stats b{font-size:21px}.section-head{display:block}.section-head p{margin-top:10px}.shelf{padding-bottom:55px}.product-card{flex-basis: min(78vw,300px)}.section-band{margin:0 -18px;padding:48px 18px 55px}.footer{padding-top:52px}.footer-bottom{flex-direction:column;gap:8px;align-items:center}}
 @media(max-width:420px){.logo{font-size:18px}.nav{gap:11px}.nav a{font-size:9px}.camera-stage{height:285px}.product-card{flex-basis:82vw}.product-visual{height:215px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.product-card{transition:none}}
+
+/* Shared site interface switch: follows Studio > Style. */
+body.interface-original{--paper:#0d0c0b;--white:#161412;--ink:#efe9df;--muted:#9b9185;--line:#2a2623;--accent:#c9a46a;--green:#697b68;background:var(--paper);color:var(--ink)}
+body.interface-original .camera-stage{background:radial-gradient(ellipse at 50% 56%,#34312b 0%,#1b1916 58%,#0d0c0b 100%);border-color:#302b25}
+body.interface-original .camera-stage:after,body.interface-original .product-visual:after{background:#0008}
+body.interface-original .lens-option,body.interface-original .product-card{background:#161412;border-color:#302b25;color:#efe9df}
+body.interface-original .lens-option small,body.interface-original .product-type,body.interface-original .selection-note,body.interface-original .section-head p,body.interface-original .hero-copy p,body.interface-original .product-info p,body.interface-original .rail-hint{color:#aaa196}
+body.interface-original .lens-option:hover,body.interface-original .lens-option.active{border-color:#c9a46a}
+body.interface-original .spec-list span{background:#29251f;color:#d8cfc2}
+body.interface-original .quick-stats,body.interface-original .quick-stats div{border-color:#302b25}
+body.interface-original .section-band{background:#090807;color:#efe9df}
+body.interface-original .section-band .product-card{background:#171513;border-color:#302b25}
+body.interface-original .section-band .product-visual{background:radial-gradient(ellipse at 50% 52%,#34312b 0%,#171513 72%)}
+body.interface-original .section-band .spec-list span{background:#302b25;color:#d8cfc2}
+body.interface-original .footer-bottom{border-color:#302b25}
+body.interface-original .pill{border-color:#c9a46a;color:#c9a46a}
+body.interface-original .pill.dark{background:#c9a46a;color:#16110b}
 </style>
 </head>
 <body>
@@ -88,6 +105,7 @@ header{height:76px;display:flex;align-items:center;justify-content:space-between
 <script>
 const fallback={"eyebrow":"A closer look at my kit","title":"Good tools.\nBetter stories.","intro":"The cameras, lenses and lights I reach for when a moment matters. Pick a lens and see it on the camera.","note":"A personal kit, chosen for the stories I love to tell.","categories":[{"name":"Camera body","eyebrow":"The foundation","items":[{"name":"Sony α7 IV","tag":"Primary camera","description":"A full-frame hybrid camera at the heart of my wedding and portrait work.","specs":["Full-frame","33 MP","Interchangeable lens"],"kind":"camera"}]},{"name":"Lenses","eyebrow":"Glass","items":[{"name":"Sony FE 28–70mm F2 GM","tag":"Master lens","description":"My go-to standard zoom, with a constant F2 aperture for beautiful subject separation and low-light flexibility.","specs":["28–70mm","Constant F2","G Master"],"kind":"lens"},{"name":"Tamron 28–75mm F/2.8","tag":"Everyday versatility","description":"A versatile standard zoom for adapting quickly as moments unfold.","specs":["28–75mm","Constant F/2.8"],"kind":"lens"},{"name":"Sony FE 50mm F1.8","tag":"The natural perspective","description":"A compact prime for intimate frames and a natural field of view.","specs":["50mm","F1.8"],"kind":"lens"},{"name":"Sony FE 85mm F1.8","tag":"Portrait favourite","description":"A portrait focal length for expressive close-ups and beautifully separated subjects.","specs":["85mm","F1.8"],"kind":"lens"}]},{"name":"Lighting","eyebrow":"Light","items":[{"name":"Nanlite PavoTube II","tag":"Continuous light","description":"Tube lighting for adding atmosphere, colour and controlled accents to a scene.","specs":["LED tube light"],"kind":"light"},{"name":"Godox iT32","tag":"On-camera flash","description":"A compact flash option for situations where the available light needs a little support.","specs":["Flash"],"kind":"flash"}]},{"name":"Memory & essentials","eyebrow":"Essentials","items":[{"name":"Memory cards","tag":"Capture essentials","description":"Memory cards used to keep every part of the shoot moving.","specs":["Recording media"],"kind":"cards"}]}]};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function applyInterface(theme){const equipment=theme&&theme.interface==='equipment';document.body.classList.toggle('interface-equipment',equipment);document.body.classList.toggle('interface-original',!equipment)}
 let currentData=fallback;
 function allItems(d){return(d.categories||[]).flatMap(c=>(c.items||[]).map(x=>({...x,category:c.name})))}
 function render(d){
@@ -110,7 +128,8 @@ function productCard(x){return '<article class="product-card"><div class="produc
 function observeReveals(){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});document.querySelectorAll('.reveal').forEach(el=>io.observe(el))}
 function selectLens(index){const x=allItems(currentData).filter(x=>x.kind==='lens')[index];if(!x)return;document.querySelectorAll('.lens-option').forEach((b,i)=>b.classList.toggle('active',i===index));document.querySelector('#selectionNote').textContent='Mounted: '+x.name;window.dispatchEvent(new CustomEvent('equipment:lens',{detail:x}))}
 fetch('/equipments.json?v=3').then(r=>r.ok?r.json():Promise.reject()).then(d=>render(d)).catch(()=>render(fallback));
-addEventListener('message',e=>{if(e.origin!==location.origin||!e.data||e.data.type!=='content'||!e.data.data||!e.data.data.equipment)return;render(JSON.parse(JSON.stringify(e.data.data.equipment)))});
+fetch('/content.json?interface='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{}).then(c=>applyInterface(c.theme||{})).catch(()=>applyInterface({}));
+addEventListener('message',e=>{if(e.origin!==location.origin||!e.data||e.data.type!=='content'||!e.data.data)return;if(e.data.data.theme)applyInterface(e.data.data.theme);if(e.data.data.equipment)render(JSON.parse(JSON.stringify(e.data.data.equipment)))});
 </script>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
