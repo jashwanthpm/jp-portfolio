@@ -32,6 +32,8 @@ h1,h2,h3,p{margin-top:0}h1{font:400 clamp(64px,8vw,112px)/.91 var(--serif);lette
 .hero-art .halo{position:absolute;width:min(100%,440px);aspect-ratio:1;border:1px solid #c9a46a35;border-radius:50%;box-shadow:0 0 100px #c9a46a0a,inset 0 0 80px #c9a46a08}
 .hero-art .halo:before,.hero-art .halo:after{content:"";position:absolute;border:1px solid #c9a46a22;border-radius:50%;inset:28px}.hero-art .halo:after{inset:65px}
 .hero-camera{width:min(88%,440px);position:relative;filter:drop-shadow(0 35px 30px #000b)}
+.hero-3d{position:relative;width:min(100%,520px);height:440px;z-index:2;touch-action:pan-y;cursor:grab;outline:none}.hero-3d:active{cursor:grabbing}.hero-3d canvas{width:100%;height:100%;display:block}.drag-hint{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#9d9182;white-space:nowrap;pointer-events:none}
+.item{perspective:1000px}.item .visual{transform-style:preserve-3d}.item .visual svg,.item .visual img{transform:translateZ(24px);transition:transform .35s}.item:hover .visual svg,.item:hover .visual img{transform:translateZ(44px) rotateY(-5deg)}
 .hero-caption{position:absolute;bottom:4px;right:2%;font:italic 18px var(--serif);color:#9d9182}
 .rule{height:1px;background:var(--line)}
 .section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:36px}
@@ -65,7 +67,7 @@ h1,h2,h3,p{margin-top:0}h1{font:400 clamp(64px,8vw,112px)/.91 var(--serif);lette
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 22px;border:1px solid var(--gold);color:var(--gold);font-size:9px;letter-spacing:.2em;text-transform:uppercase;transition:.25s}.btn:hover{background:var(--gold);color:#17120c}
 .footer-bottom{display:flex;justify-content:space-between;gap:16px;margin-top:70px;padding-top:22px;border-top:1px solid var(--line);color:#82796e;font-size:10px;letter-spacing:.1em}
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s,transform .8s}.reveal.in{opacity:1;transform:none}
-@media(max-width:800px){.wrap{width:min(100% - 40px,620px)}.top{height:70px}.nav{gap:15px}.nav a{font-size:8px;letter-spacing:.12em}.hero{grid-template-columns:1fr;gap:20px;padding:75px 0 70px;min-height:0}.hero h1{font-size:clamp(64px,15vw,100px)}.hero-art{min-height:330px;grid-row:1}.hero-art .halo{width:min(82vw,350px)}.hero-copy{grid-row:2}.hero-caption{right:4%;bottom:-4px}.kit-strip{margin-bottom:65px}.kit-strip div{padding:18px 12px}.kit-strip b{font-size:25px}.kit-strip span{font-size:8px}.section-head{display:block}.section-head p{margin-top:14px}.collection{padding:20px 0 65px}.grid{grid-template-columns:1fr}.item,.item.featured{grid-column:auto;grid-template-columns:1fr;min-height:0}.visual{min-height:230px}.featured .visual{min-height:280px}.item-copy{padding:25px 24px 28px}.item h3{font-size:32px}.foot{padding-top:60px}.footer-bottom{flex-direction:column;align-items:center;text-align:center}}
+@media(max-width:800px){.wrap{width:min(100% - 40px,620px)}.hero-3d{height:min(86vw,370px);width:100%}.drag-hint{font-size:8px}.top{height:70px}.nav{gap:15px}.nav a{font-size:8px;letter-spacing:.12em}.hero{grid-template-columns:1fr;gap:20px;padding:75px 0 70px;min-height:0}.hero h1{font-size:clamp(64px,15vw,100px)}.hero-art{min-height:330px;grid-row:1}.hero-art .halo{width:min(82vw,350px)}.hero-copy{grid-row:2}.hero-caption{right:4%;bottom:-4px}.kit-strip{margin-bottom:65px}.kit-strip div{padding:18px 12px}.kit-strip b{font-size:25px}.kit-strip span{font-size:8px}.section-head{display:block}.section-head p{margin-top:14px}.collection{padding:20px 0 65px}.grid{grid-template-columns:1fr}.item,.item.featured{grid-column:auto;grid-template-columns:1fr;min-height:0}.visual{min-height:230px}.featured .visual{min-height:280px}.item-copy{padding:25px 24px 28px}.item h3{font-size:32px}.foot{padding-top:60px}.footer-bottom{flex-direction:column;align-items:center;text-align:center}}
 @media(max-width:420px){.nav{gap:10px}.nav a{font-size:7px}.brand{font-size:22px}.hero-art{min-height:280px}.visual{min-height:210px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.item{transition:none}}
 </style>
@@ -75,9 +77,7 @@ h1,h2,h3,p{margin-top:0}h1{font:400 clamp(64px,8vw,112px)/.91 var(--serif);lette
 <main class="wrap">
 <section class="hero">
  <div class="hero-copy"><div class="kicker" id="eyebrow">The tools behind the frames</div><h1 id="title">A kit built for<br><em>real moments.</em></h1><p class="intro" id="intro">A considered collection of cameras, lenses and lighting tools I rely on to document stories with care, wherever the day takes us.</p><div class="hero-meta">My working kit · Bengaluru, India</div></div>
- <div class="hero-art" aria-label="Illustration of a professional camera"><div class="halo"></div>
- <svg class="hero-camera" viewBox="0 0 520 360" role="img" aria-label="Camera illustration"><defs><linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#49433a"/><stop offset=".45" stop-color="#211f1b"/><stop offset="1" stop-color="#0a0908"/></linearGradient><linearGradient id="lens" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#77664c"/><stop offset=".4" stop-color="#24221e"/><stop offset="1" stop-color="#080808"/></linearGradient><radialGradient id="glass"><stop stop-color="#8d887a"/><stop offset=".24" stop-color="#34434a"/><stop offset=".55" stop-color="#111b20"/><stop offset=".8" stop-color="#090b0c"/><stop offset="1" stop-color="#6c604e"/></radialGradient></defs><ellipse cx="265" cy="308" rx="185" ry="20" fill="#000" opacity=".5"/><path d="M90 104h78l26-35h105l29 35h88q20 0 20 20v139q0 22-22 22H91q-20 0-20-22V125q0-21 19-21z" fill="url(#body)" stroke="#8c795c" stroke-width="2"/><path d="M90 104h78l26-35h105l29 35" fill="none" stroke="#a08c69" opacity=".55" stroke-width="3"/><rect x="107" y="123" width="48" height="32" rx="5" fill="#111" stroke="#5c5345"/><rect x="360" y="82" width="52" height="23" rx="4" fill="#25231f" stroke="#76664d"/><circle cx="260" cy="186" r="104" fill="#0a0908" stroke="#77664e" stroke-width="8"/><circle cx="260" cy="186" r="91" fill="url(#lens)" stroke="#29251f" stroke-width="5"/><circle cx="260" cy="186" r="72" fill="#111" stroke="#857454" stroke-width="3"/><circle cx="260" cy="186" r="61" fill="url(#glass)" stroke="#282a27" stroke-width="5"/><circle cx="260" cy="186" r="39" fill="#080d10" stroke="#77806f" stroke-width="2"/><path d="M238 154q30-18 48 9" fill="none" stroke="#c9a46a" stroke-width="4" opacity=".5"/><circle cx="145" cy="181" r="8" fill="#c9a46a"/><rect x="90" y="263" width="338" height="9" rx="4" fill="#c9a46a" opacity=".25"/></svg>
- <div class="hero-caption">Tools, chosen with intention.</div></div>
+ <div class="hero-art" aria-label="Interactive three-dimensional camera model"><div class="halo"></div><div class="hero-3d" id="hero3d" tabindex="0" aria-label="Drag to rotate the camera model"><div class="drag-hint">Drag to explore · Touch friendly</div></div><div class="hero-caption">Tools, chosen with intention.</div></div>
 </section>
 <div class="rule"></div>
 <div class="kit-strip reveal"><div><b id="count-items">07</b><span>Tools in the kit</span></div><div><b>01</b><span>Creative approach</span></div><div><b>∞</b><span>Stories to tell</span></div></div>
@@ -105,9 +105,49 @@ function render(d){
  document.querySelector('#count-items').textContent=String(items.length).padStart(2,'0');
  document.querySelector('#collections').innerHTML=cats.map((c,ci)=>`<section class="collection reveal"><div class="collection-top"><small>${esc(c.eyebrow||'Collection')}</small><h2>${esc(c.name)}</h2><span class="count">${String((c.items||[]).length).padStart(2,'0')} ITEMS</span></div><div class="grid">${(c.items||[]).map((it,i)=>{const kind=it.kind||'lens',visual=it.image?`<img src="${esc(it.image)}" alt="${esc(it.name)}" style="width:84%;height:220px;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 22px 18px #0009)">`:(drawings[kind]||drawings.lens);return `<article class="item ${it.featured?'featured':''}"><span class="index">${String(i+1).padStart(2,'0')}</span><div class="visual">${visual}</div><div class="item-copy"><div class="item-tag">${esc(it.tag||c.name)}</div><h3>${esc(it.name)}</h3><p>${esc(it.description||'')}</p><div class="specs">${(it.specs||[]).map(s=>`<span>${esc(s)}</span>`).join('')}</div></div></article>`}).join('')}</div></section>`).join('');
  document.querySelector('#year').textContent=new Date().getFullYear();
+ document.querySelectorAll('.item').forEach(el=>{el.addEventListener('pointermove',ev=>{if(ev.pointerType!=='mouse')return;const r=el.getBoundingClientRect(),x=(ev.clientX-r.left)/r.width-.5,y=(ev.clientY-r.top)/r.height-.5;el.style.transform='perspective(1100px) rotateY('+(-x*3)+'deg) rotateX('+(y*2.5)+'deg) translateY(-3px)'});el.addEventListener('pointerleave',()=>el.style.transform='')});
  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 }
-fetch('/equipments.json?v=1').then(r=>r.ok?r.json():Promise.reject()).then(render).catch(()=>render(fallback));
+function normalizeEquipment(d){(d.categories||[]).forEach(c=>(c.items||[]).forEach(it=>{if(!Array.isArray(it.specs))it.specs=String(it.specs||'').split(',').map(x=>x.trim()).filter(Boolean)}));return d}
+fetch('/equipments.json?v=2').then(r=>r.ok?r.json():Promise.reject()).then(d=>render(normalizeEquipment(d))).catch(()=>render(fallback));
+addEventListener('message',e=>{if(e.origin!==location.origin||!e.data||e.data.type!=='content'||!e.data.data||!e.data.data.equipment)return;render(normalizeEquipment(JSON.parse(JSON.stringify(e.data.data.equipment))))});
 </script>
-</body></html>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+const host=document.getElementById('hero3d');
+if(host){
+ const scene=new THREE.Scene();
+ const camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(4.2,2.3,6.8);
+ const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;host.appendChild(renderer.domElement);
+ scene.add(new THREE.HemisphereLight(0xe8dfce,0x17120d,2.0));
+ const key=new THREE.DirectionalLight(0xffe1ae,3.3);key.position.set(3,5,5);scene.add(key);
+ const rim=new THREE.PointLight(0xc99a57,26,12);rim.position.set(-4,1,2);scene.add(rim);
+ const cool=new THREE.PointLight(0x8da4b5,12,10);cool.position.set(1,2,-4);scene.add(cool);
+ const dark=new THREE.MeshStandardMaterial({color:0x24221e,metalness:.82,roughness:.28});
+ const edge=new THREE.MeshStandardMaterial({color:0x65563e,metalness:.9,roughness:.22});
+ const rubber=new THREE.MeshStandardMaterial({color:0x0d0e0e,metalness:.18,roughness:.8});
+ const glass=new THREE.MeshPhysicalMaterial({color:0x263c47,metalness:.55,roughness:.1,clearcoat:1,clearcoatRoughness:.05});
+ const gold=new THREE.MeshStandardMaterial({color:0xc9a46a,metalness:.82,roughness:.23});
+ const rig=new THREE.Group();scene.add(rig);
+ const mesh=(geo,mat,pos,rot)=>{const m=new THREE.Mesh(geo,mat);m.position.set(...pos);if(rot)m.rotation.set(...rot);rig.add(m);return m};
+ mesh(new THREE.BoxGeometry(3.15,1.85,.78),dark,[0,0,0]);
+ mesh(new THREE.BoxGeometry(3.2,.08,.8),edge,[0,-.91,0]);
+ mesh(new THREE.BoxGeometry(.82,.5,.72),rubber,[-.9,.98,-.02]);
+ mesh(new THREE.BoxGeometry(.56,.23,.48),edge,[.78,1.02,-.03]);
+ mesh(new THREE.BoxGeometry(.42,.24,.22),rubber,[.82,1.23,-.02]);
+ mesh(new THREE.BoxGeometry(.45,.48,.12),edge,[-1.15,.05,.43]);
+ const cyl=(r1,r2,len,mat,z)=>mesh(new THREE.CylinderGeometry(r1,r2,len,72),mat,[0,0,z],[Math.PI/2,0,0]);
+ cyl(.98,.98,.28,edge,.47);cyl(.91,.91,.22,rubber,.7);cyl(.84,.84,.18,edge,.87);cyl(.78,.78,.48,dark,1.18);cyl(.73,.73,.09,gold,1.45);cyl(.68,.68,.11,rubber,1.53);cyl(.62,.62,.08,edge,1.62);cyl(.56,.56,.07,glass,1.69);
+ mesh(new THREE.CircleGeometry(.38,64),new THREE.MeshPhysicalMaterial({color:0x101c24,metalness:.35,roughness:.07,clearcoat:1}),[0,0,1.731]);
+ const glint=mesh(new THREE.TorusGeometry(.29,.012,8,80),new THREE.MeshBasicMaterial({color:0x9eb7c2}),[0,0,1.744]);glint.rotation.z=.4;
+ for(let j=0;j<3;j++){const ring=mesh(new THREE.TorusGeometry(.79-j*.06,.012,8,96),gold,[0,0,1.28+j*.13]);}
+ for(let x of [-1.28,1.28]){mesh(new THREE.BoxGeometry(.08,.55,.08),edge,[x,-.05,.4]);}
+ const badge=mesh(new THREE.BoxGeometry(.65,.19,.025),edge,[-.78,.55,.405]);badge.rotation.z=-.03;
+ for(let x of [-.95,-.72,-.49])mesh(new THREE.CylinderGeometry(.055,.055,.05,24),gold,[x,-.63,.43],[Math.PI/2,0,0]);
+ const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.055;controls.enablePan=false;controls.enableZoom=false;controls.autoRotate=true;controls.autoRotateSpeed=.42;controls.minPolarAngle=.72;controls.maxPolarAngle=2.35;controls.rotateSpeed=.62;
+ const resize=()=>{const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};new ResizeObserver(resize).observe(host);resize();
+ const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();rig.position.y=Math.sin(t*.7)*.045;rig.rotation.z=Math.sin(t*.32)*.018;controls.update();renderer.render(scene,camera)}animate();
+}
+</script></body></html>
