@@ -9,7 +9,7 @@
 <link rel="canonical" href="https://jp.sakkhi.co.in/equipments">
 <link rel="icon" type="image/png" href="/images/favicon-1791284648615.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--paper:#f2f0eb;--white:#faf9f6;--ink:#191a18;--muted:#777871;--line:#dfddd6;--accent:#b28a54;--green:#697b68;--sans:'DM Sans',Arial,sans-serif;--display:Manrope,Arial,sans-serif}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:85px}body{margin:0;background:var(--paper);color:var(--ink);font:400 14px/1.55 var(--sans);overflow-x:hidden}a{color:inherit;text-decoration:none}button{font:inherit}
@@ -73,7 +73,7 @@ header{height:76px;display:flex;align-items:center;justify-content:space-between
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.product-card{transition:none}}
 
 /* Shared site interface switch: follows Studio > Style. */
-body.interface-original{--paper:#0d0c0b;--white:#161412;--ink:#efe9df;--muted:#9b9185;--line:#2a2623;--accent:#c9a46a;--green:#697b68;background:var(--paper);color:var(--ink)}
+body.interface-original{--paper:#0d0c0b;--white:#161412;--ink:#efe9df;--muted:#9b9185;--line:#2a2623;--green:#697b68;--sans:'Inter',Arial,sans-serif;--display:'Cormorant Garamond',Georgia,serif;background:var(--paper);color:var(--ink)}
 body.interface-original .camera-stage{background:radial-gradient(ellipse at 50% 56%,#34312b 0%,#1b1916 58%,#0d0c0b 100%);border-color:#302b25}
 body.interface-original .camera-stage:after,body.interface-original .product-visual:after{background:#0008}
 body.interface-original .lens-option,body.interface-original .product-card{background:#161412;border-color:#302b25;color:#efe9df}
@@ -105,7 +105,7 @@ body.interface-original .pill.dark{background:#c9a46a;color:#16110b}
 <script>
 const fallback={"eyebrow":"A closer look at my kit","title":"Good tools.\nBetter stories.","intro":"The cameras, lenses and lights I reach for when a moment matters. Pick a lens and see it on the camera.","note":"A personal kit, chosen for the stories I love to tell.","categories":[{"name":"Camera body","eyebrow":"The foundation","items":[{"name":"Sony α7 IV","tag":"Primary camera","description":"A full-frame hybrid camera at the heart of my wedding and portrait work.","specs":["Full-frame","33 MP","Interchangeable lens"],"kind":"camera"}]},{"name":"Lenses","eyebrow":"Glass","items":[{"name":"Sony FE 28–70mm F2 GM","tag":"Master lens","description":"My go-to standard zoom, with a constant F2 aperture for beautiful subject separation and low-light flexibility.","specs":["28–70mm","Constant F2","G Master"],"kind":"lens"},{"name":"Tamron 28–75mm F/2.8","tag":"Everyday versatility","description":"A versatile standard zoom for adapting quickly as moments unfold.","specs":["28–75mm","Constant F/2.8"],"kind":"lens"},{"name":"Sony FE 50mm F1.8","tag":"The natural perspective","description":"A compact prime for intimate frames and a natural field of view.","specs":["50mm","F1.8"],"kind":"lens"},{"name":"Sony FE 85mm F1.8","tag":"Portrait favourite","description":"A portrait focal length for expressive close-ups and beautifully separated subjects.","specs":["85mm","F1.8"],"kind":"lens"}]},{"name":"Lighting","eyebrow":"Light","items":[{"name":"Nanlite PavoTube II","tag":"Continuous light","description":"Tube lighting for adding atmosphere, colour and controlled accents to a scene.","specs":["LED tube light"],"kind":"light"},{"name":"Godox iT32","tag":"On-camera flash","description":"A compact flash option for situations where the available light needs a little support.","specs":["Flash"],"kind":"flash"}]},{"name":"Memory & essentials","eyebrow":"Essentials","items":[{"name":"Memory cards","tag":"Capture essentials","description":"Memory cards used to keep every part of the shoot moving.","specs":["Recording media"],"kind":"cards"}]}]};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function applyInterface(theme){const equipment=theme&&theme.interface==='equipment';document.body.classList.toggle('interface-equipment',equipment);document.body.classList.toggle('interface-original',!equipment)}
+function applyInterface(theme){const equipment=theme&&theme.interface==='equipment';document.body.classList.toggle('interface-equipment',equipment);document.body.classList.toggle('interface-original',!equipment);document.documentElement.style.setProperty('--accent',equipment?'#b28a54':((theme&&theme.accent)||'#c9a46a'))}
 let currentData=fallback;
 function allItems(d){return(d.categories||[]).flatMap(c=>(c.items||[]).map(x=>({...x,category:c.name})))}
 function render(d){
