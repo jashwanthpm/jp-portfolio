@@ -360,3 +360,37 @@ body.ui-studio #gate input{background:#faf9f6;color:#191a18;border-color:var(--l
  #gallery-nav .gallery-step small{font-size:.52rem;letter-spacing:.08em}
  #gallery-nav .gallery-step b{font-size:.78rem;line-height:1.3}
 }
+
+/* One typography rule for every gallery navigation link */
+#gallery-nav .gallery-step,
+#gallery-nav .gallery-step:link,
+#gallery-nav .gallery-step:visited,
+#gallery-nav .gallery-step:hover,
+#gallery-nav .gallery-step:active {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-style: normal !important;
+  text-decoration: none;
+}
+#gallery-nav .gallery-step small {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-size: .56rem !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  line-height: 1.3 !important;
+  letter-spacing: .1em !important;
+  text-transform: uppercase !important;
+}
+#gallery-nav .gallery-step b {
+  display: block;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-size: .86rem !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+@media (max-width: 600px) {
+  #gallery-nav .gallery-step b { font-size: .78rem !important; }
+  #gallery-nav .gallery-step small { font-size: .52rem !important; }
+}
