@@ -12,7 +12,11 @@
           "name": "Sony α7 IV",
           "tag": "Primary camera",
           "description": "A full-frame hybrid camera at the heart of my wedding and portrait work.",
-          "specs": ["Full-frame", "33 MP", "Interchangeable lens"],
+          "specs": [
+            "Full-frame",
+            "33 MP",
+            "Interchangeable lens"
+          ],
           "kind": "camera",
           "featured": true
         }
@@ -26,7 +30,11 @@
           "name": "Sony FE 28–70mm F2 GM",
           "tag": "Master lens",
           "description": "My go-to standard zoom, with a constant F2 aperture for beautiful subject separation and low-light flexibility.",
-          "specs": ["28–70mm", "Constant F2", "G Master"],
+          "specs": [
+            "28–70mm",
+            "Constant F2",
+            "G Master"
+          ],
           "kind": "lens",
           "featured": true
         },
@@ -34,21 +42,30 @@
           "name": "Tamron 28–75mm F/2.8",
           "tag": "Everyday versatility",
           "description": "A versatile standard zoom for adapting quickly as moments unfold.",
-          "specs": ["28–75mm", "Constant F/2.8"],
+          "specs": [
+            "28–75mm",
+            "Constant F/2.8"
+          ],
           "kind": "lens"
         },
         {
           "name": "Sony FE 50mm F1.8",
           "tag": "The natural perspective",
           "description": "A compact prime for intimate frames and a natural field of view.",
-          "specs": ["50mm", "F1.8"],
+          "specs": [
+            "50mm",
+            "F1.8"
+          ],
           "kind": "lens"
         },
         {
           "name": "Sony FE 85mm F1.8",
           "tag": "Portrait favourite",
           "description": "A portrait focal length for expressive close-ups and beautifully separated subjects.",
-          "specs": ["85mm", "F1.8"],
+          "specs": [
+            "85mm",
+            "F1.8"
+          ],
           "kind": "lens"
         }
       ]
@@ -61,14 +78,18 @@
           "name": "Nanlite PavoTube II",
           "tag": "Continuous light",
           "description": "Tube lighting for adding atmosphere, colour and controlled accents to a scene.",
-          "specs": ["LED tube light"],
+          "specs": [
+            "LED tube light"
+          ],
           "kind": "light"
         },
         {
           "name": "Godox iT32",
           "tag": "On-camera flash",
           "description": "A compact flash option for situations where the available light needs a little support.",
-          "specs": ["Flash"],
+          "specs": [
+            "Flash"
+          ],
           "kind": "flash"
         }
       ]
@@ -81,7 +102,9 @@
           "name": "Memory cards",
           "tag": "Capture essentials",
           "description": "Memory cards used to keep every part of the shoot moving.",
-          "specs": ["Recording media"],
+          "specs": [
+            "Recording media"
+          ],
           "kind": "cards"
         }
       ]
