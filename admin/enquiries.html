@@ -219,12 +219,12 @@ function drawer(r){const s=SM[r.status]||SM.new,p=phone(r.phone),first=(r.name||
  const quoteLine=r.quote_ref||r.quote_amount?'\n\n'+[r.quote_ref?'Quotation '+r.quote_ref:'',r.quote_amount?'Quoted amount '+inr(r.quote_amount):''].filter(Boolean).join(' · '):'';
  const messageForStatus=()=>{
   switch(r.status){
-   case 'contacted':return `Hi ${first}, just checking in after our conversation. Have you had a chance to discuss things and decide how you'd like to proceed? If you have any questions, I'm happy to help.${eventLine}\n\n— Jashwanth | Offbeat by JP`;
-   case 'quoted':return `Hi ${first}, hope you're doing well. I wanted to check whether you've had a chance to go through the quotation I shared. Let me know if you'd like to discuss anything or make any changes. Happy to help.${quoteLine}${eventLine}\n\n— Jashwanth | Offbeat by JP`;
-   case 'follow_up':return `Hi ${first}, just following up on your enquiry. Have you had a chance to decide? No rush at all — let me know if you'd like to go ahead or if there's anything you'd like me to clarify.${eventLine}\n\n— Jashwanth | Offbeat by JP`;
-   case 'booked':return `Hi ${first}, thank you for confirming with Offbeat by JP! I've marked your booking as confirmed. I'll coordinate with you on the remaining details and next steps as we get closer to the event.${eventLine}\n\nLooking forward to being part of it!\n\n— Jashwanth | Offbeat by JP`;
-   case 'lost':return `Hi ${first}, thank you for considering Offbeat by JP and taking the time to speak with me. I'll close this enquiry for now. If your plans change or you need photography in the future, you're always welcome to reach out. Wishing you all the best!${eventLine}\n\n— Jashwanth | Offbeat by JP`;
-   default:return `Hi ${first}, thank you for reaching out${shootType?' about your '+shootType:''}! I'm Jashwanth from Offbeat by JP. I'd love to know a little more about what you have in mind. Is now a good time to chat?${eventLine}`;
+   case 'contacted':return `Hi ${first}, just checking in after our conversation. Have you had a chance to discuss things and decide how you'd like to proceed? If you have any questions, I'm happy to help.\n\n— Jashwanth | Offbeat by JP`;
+   case 'quoted':return `Hi ${first}, hope you're doing well. I wanted to check whether you've had a chance to go through the quotation I shared. Let me know if you'd like to discuss anything or make any changes. Happy to help.${quoteLine}\n\n— Jashwanth | Offbeat by JP`;
+   case 'follow_up':return `Hi ${first}, just following up on your enquiry. Have you had a chance to decide? No rush at all — let me know if you'd like to go ahead or if there's anything you'd like me to clarify.\n\n— Jashwanth | Offbeat by JP`;
+   case 'booked':return `Hi ${first}, thank you for confirming with Offbeat by JP! I've marked your booking as confirmed. I'll coordinate with you on the remaining details and next steps as we get closer to the event.\n\nLooking forward to being part of it!\n\n— Jashwanth | Offbeat by JP`;
+   case 'lost':return `Hi ${first}, thank you for considering Offbeat by JP and taking the time to speak with me. I'll close this enquiry for now. If your plans change or you need photography in the future, you're always welcome to reach out. Wishing you all the best!\n\n— Jashwanth | Offbeat by JP`;
+   default:return `Hi ${first}, thank you for reaching out${shootType?' about your '+shootType:''}! I'm Jashwanth from Offbeat by JP. I'd love to know a little more about what you have in mind. Is now a good time to chat?`;
   }
  };
  const message=messageForStatus();
