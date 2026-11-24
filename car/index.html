@@ -1,69 +1,382 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<meta name="theme-color" content="#101820">
-<title>Tiago · Drive Monitor</title>
+<title>Tiago Drive Monitor</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1016;--panel:#121b25;--panel2:#172330;--line:#273543;--ink:#f3f6f8;--muted:#91a0ae;--gold:#e5ad62;--green:#75d6a0;--red:#ff827b}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#263b4b 0,transparent 40%),var(--bg);color:var(--ink);font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
-main{width:min(1180px,100%);margin:auto;padding:30px 22px 70px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:28px}.eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}h1{font-size:clamp(27px,5vw,42px);letter-spacing:-.045em;margin:5px 0 0}.sub{color:var(--muted);margin:5px 0}.pill{border:1px solid var(--line);border-radius:30px;padding:8px 12px;color:var(--muted);font-size:12px;white-space:nowrap}.pill:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#74808c;margin-right:8px}.pill.live:before{background:var(--green);box-shadow:0 0 10px var(--green)}
-.actions{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--ink);padding:11px 15px;border-radius:9px;font:inherit;cursor:pointer}.btn.primary{background:var(--gold);border-color:var(--gold);color:#17130e;font-weight:700}.btn:disabled{opacity:.4;cursor:not-allowed}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.card{background:linear-gradient(145deg,#172330,#111922);border:1px solid var(--line);border-radius:14px;padding:18px;min-width:0}.label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.value{font-size:clamp(28px,4vw,40px);font-weight:650;letter-spacing:-.05em;margin-top:10px;font-variant-numeric:tabular-nums}.unit{font-size:13px;color:var(--muted);font-weight:400;letter-spacing:0}.section{margin-top:18px}.section h2{font-size:15px;margin:0 0 12px}.wide{grid-column:span 3}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}.muted{color:var(--muted)}table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px 7px;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--muted);font-weight:500}td:last-child,th:last-child{text-align:right}.log{max-height:220px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:#0b1118;padding:12px;border-radius:9px;color:#a9bac8;font:11px/1.6 ui-monospace,monospace}.hint{font-size:12px;color:var(--muted);line-height:1.65}.danger{color:var(--red)}.good{color:var(--green)}.settings{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.settings label{font-size:11px;color:var(--muted);display:grid;gap:5px}.settings input{width:130px;padding:10px;background:#0b1118;border:1px solid var(--line);border-radius:8px;color:var(--ink);font:inherit}
-@media(max-width:700px){main{padding:22px 14px 50px}.top{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wide{grid-column:span 2}.split{grid-template-columns:1fr}.value{font-size:30px}.pill{white-space:normal}}
+:root{--navy:#10294a;--navy2:#1b3b66;--or:#f08a24;--bg:#f3f5f8;--card:#fff;--ink:#14202e;--mute:#6b7788;--line:#e3e8ee}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;min-height:100vh}
+aside{width:230px;background:var(--navy);color:#fff;padding:20px 12px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;flex-shrink:0}
+.brand{font-size:18px;font-weight:700;padding:0 10px 2px}.brand small{display:block;font-weight:400;font-size:12px;color:#9fb2cc}
+nav{margin:22px 0;flex:1}
+nav button{display:block;width:100%;text-align:left;background:none;border:0;color:#c4d2e6;padding:10px 12px;border-radius:8px;font:inherit;cursor:pointer;margin-bottom:2px}
+nav button:hover{background:var(--navy2)}nav button.on{background:var(--or);color:#fff;font-weight:600}
+.conn{border-top:1px solid var(--navy2);padding-top:14px}
+.conn button{width:100%;margin-bottom:8px;padding:9px;border-radius:8px;border:1px solid var(--or);background:var(--or);color:#fff;font:inherit;cursor:pointer}
+.conn button.o{background:none;color:#fff;border-color:#4a6286}.conn button:disabled{opacity:.4}
+#status{font-size:12px;color:#9fb2cc;display:block;margin-bottom:10px}
+main{flex:1;padding:24px;min-width:0;max-width:1100px}
+h1{font-size:22px;margin:0 0 16px}h3{font-size:14px;margin:0 0 10px}
+.page{display:none}.page.on{display:block}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.grid .card{margin:0}
+.k{color:var(--mute);font-size:12px}.big{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--navy)}
+.big small{font-size:13px;font-weight:400;color:var(--mute)}.hl{color:var(--or)}
+table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--mute);font-weight:500;font-size:12px}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line)}tr:last-child td{border:0}td.v{font-weight:600;color:var(--navy)}
+svg.ch{width:100%;height:170px;display:block}
+.lg{display:flex;gap:16px;font-size:12px;color:var(--mute);margin-top:6px}.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+label{display:block;font-size:12px;color:var(--mute);margin:10px 0 3px}
+input{width:100%;max-width:260px;padding:8px;border:1px solid var(--line);border-radius:8px;font:inherit}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid var(--navy);background:var(--navy);color:#fff;font:inherit;cursor:pointer;margin:0 6px 6px 0}
+.btn.o{background:#fff;color:var(--navy)}.btn.w{background:var(--or);border-color:var(--or)}.btn:disabled{opacity:.4}
+pre{background:var(--bg);border-radius:8px;padding:10px;max-height:400px;overflow:auto;font-size:12px;white-space:pre-wrap;margin:0}
+.note{color:var(--mute);font-size:12px}
+@media(max-width:760px){body{flex-direction:column}aside{width:100%;height:auto;position:static;padding:12px}nav{display:flex;overflow-x:auto;margin:10px 0;gap:4px}nav button{white-space:nowrap;width:auto}.conn{display:flex;flex-wrap:wrap;gap:6px}.conn button{width:auto;flex:1}main{padding:14px}}
 </style>
 </head>
-<body><main>
-<header class="top"><div><div class="eyebrow">JP · Personal vehicle system</div><h1>Tiago <span style="color:var(--gold)">/</span> Drive Monitor</h1><p class="sub">Tata Tiago · 2017 · OBD-II telemetry</p></div><div id="status" class="pill">Not connected</div></header>
-<div class="actions"><button class="btn primary" id="ble">Connect BLE adapter</button><button class="btn" id="serial">Connect Bluetooth Classic / USB</button><button class="btn" id="off" disabled>Disconnect</button></div>
-<p class="hint" id="connectHint">For a classic ELM327 Mini, pair it in macOS Bluetooth settings first (often PIN 1234), then choose <b>Connect Bluetooth Classic / USB</b> in Chrome. BLE adapters use the first button. The car ignition should be ON.</p>
-<section class="section"><div class="grid">
-<div class="card"><div class="label">Vehicle speed</div><div class="value" id="speed">— <span class="unit">km/h</span></div></div>
-<div class="card"><div class="label">Engine speed</div><div class="value" id="rpm">— <span class="unit">rpm</span></div></div>
-<div class="card"><div class="label">Coolant temperature</div><div class="value" id="coolant">— <span class="unit">°C</span></div></div>
-<div class="card"><div class="label">Engine load</div><div class="value" id="load">— <span class="unit">%</span></div></div>
-<div class="card"><div class="label">Fuel level</div><div class="value" id="fuel">— <span class="unit">%</span></div></div>
-<div class="card"><div class="label">Control module voltage</div><div class="value" id="voltage">— <span class="unit">V</span></div></div>
-</div></section>
-<section class="section split">
-<div class="card"><h2>Vehicle & adapter</h2><table id="vehicle"><tr><td class="muted">Connect to read ECU details</td></tr></table></div>
-<div class="card"><h2>Diagnostics</h2><div class="actions"><button class="btn" id="codes">Read fault codes</button><button class="btn" id="ready">Readiness tests</button><button class="btn" id="freeze">Freeze frame</button></div><div id="diagnostics" class="hint">Connect your scanner to begin.</div><button class="btn" id="clear" style="margin-top:12px">Clear engine codes</button></div>
+<body>
+<aside>
+  <div class="brand">Tiago Monitor<small>Tata Tiago · 2017</small></div>
+  <nav id="nav">
+    <button data-p="dash" class="on">Dashboard</button>
+    <button data-p="live">Live data</button>
+    <button data-p="trips">Trips &amp; cost</button>
+    <button data-p="diag">Diagnostics</button>
+    <button data-p="veh">Vehicle &amp; settings</button>
+    <button data-p="logp">Raw log</button>
+  </nav>
+  <div class="conn">
+    <span id="status">Not connected</span>
+    <button id="bBle">Connect Bluetooth</button>
+    <button id="bSer" class="o">Connect USB</button>
+    <button id="bOff" class="o" disabled>Disconnect</button>
+  </div>
+</aside>
+<main>
+
+<section class="page on" id="dash">
+  <h1>Dashboard</h1>
+  <div class="grid">
+    <div class="card"><div class="k">Speed</div><div class="big" id="d0D">–<small> km/h</small></div></div>
+    <div class="card"><div class="k">Engine speed</div><div class="big" id="d0C">–<small> rpm</small></div></div>
+    <div class="card"><div class="k">Coolant</div><div class="big" id="d05">–<small> °C</small></div></div>
+    <div class="card"><div class="k">Engine load</div><div class="big" id="d04">–<small> %</small></div></div>
+    <div class="card"><div class="k">Fuel level</div><div class="big" id="d2F">–<small> %</small></div></div>
+    <div class="card"><div class="k">Battery</div><div class="big" id="d42">–<small> V</small></div></div>
+  </div>
+  <div class="card"><h3>Last 2 minutes</h3><svg class="ch" id="chLive" viewBox="0 0 600 170" preserveAspectRatio="none"></svg>
+    <div class="lg"><span><i style="background:var(--navy)"></i>Speed</span><span><i style="background:var(--or)"></i>Engine speed</span></div></div>
+  <div class="grid">
+    <div class="card"><div class="k">Odometer</div><div class="big" id="odo">–</div><div class="note" id="odoNote"></div></div>
+    <div class="card"><div class="k">Current trip distance</div><div class="big" id="tDist">0.0<small> km</small></div></div>
+    <div class="card"><div class="k">Current trip fuel</div><div class="big" id="tFuel">0.00<small> L</small></div></div>
+    <div class="card"><div class="k">Current trip cost</div><div class="big hl" id="tCost">₹0</div></div>
+    <div class="card"><div class="k">Current mileage</div><div class="big" id="tKml">–<small> km/L</small></div></div>
+    <div class="card"><div class="k">Trip time</div><div class="big" id="tTime">0:00</div></div>
+  </div>
 </section>
-<section class="section card"><h2>Live sensor data</h2><table id="sensors"><tr><td class="muted">No live data yet</td></tr></table></section>
-<section class="section card"><h2>Trip & fuel settings</h2><div class="grid"><div><div class="label">Trip distance</div><div class="value" id="distance">0.0 <span class="unit">km</span></div></div><div><div class="label">Estimated fuel used</div><div class="value" id="used">0.00 <span class="unit">L</span></div></div><div><div class="label">Estimated trip cost</div><div class="value" id="cost">₹0</div></div></div><div class="settings" style="margin-top:18px"><label>Petrol ₹/L<input id="price" type="number" step=".01" value="105"></label><label>Engine size (L)<input id="disp" type="number" step=".001" value="1.199"></label><button class="btn" id="save">Save settings</button></div><p class="hint">Fuel use is an estimate derived from available ECU sensors; it is not a calibrated fuel-flow meter. Compare against actual refills before relying on mileage or cost figures.</p></section>
-<section class="section card"><h2>Connection log</h2><pre class="log" id="log">Ready. Connect an ELM327 adapter.</pre></section>
-<footer class="hint" style="margin-top:24px">Personal utility · Not part of the public photography navigation. OBD data availability varies by ECU and adapter firmware. Use only while parked; never operate the dashboard while driving.</footer>
+
+<section class="page" id="live">
+  <h1>Live data</h1>
+  <div class="card"><table id="liveT"><tr><td class="note">Connect your scanner to see every sensor your car supports.</td></tr></table></div>
+</section>
+
+<section class="page" id="trips">
+  <h1>Trips &amp; cost</h1>
+  <div class="grid" id="sum"></div>
+  <div class="card"><h3>Cost per trip (last 12)</h3><svg class="ch" id="chTrips" viewBox="0 0 600 170" preserveAspectRatio="none"></svg></div>
+  <div class="card"><h3>Trip history</h3><table id="tripT"></table>
+    <p class="note">Trips start automatically when the car moves and end after 3 minutes standing still, or on disconnect. Fuel is estimated from engine sensors, so calibrate it in Vehicle &amp; settings.</p>
+    <button class="btn o" id="bCsv">Download trips (CSV)</button><button class="btn o" id="bWipe">Delete all trips</button></div>
+</section>
+
+<section class="page" id="diag">
+  <h1>Diagnostics</h1>
+  <div class="card"><button class="btn" id="bRdy">Check engine light &amp; tests</button><button class="btn" id="bDtc">Read fault codes</button><button class="btn o" id="bFrz">Freeze frame</button><button class="btn w" id="bClr">Clear codes</button>
+    <div id="ready" class="note" style="margin-top:8px">Connect, then press a button.</div></div>
+  <div class="card"><h3>Fault codes</h3><div id="dtcs" class="note">Not read yet.</div></div>
+  <div class="card"><h3>Freeze frame</h3><table id="frz"><tr><td class="note">Not read yet.</td></tr></table></div>
+</section>
+
+<section class="page" id="veh">
+  <h1>Vehicle &amp; settings</h1>
+  <div class="card"><h3>Vehicle</h3><table id="info"><tr><td class="note">Connect to read VIN and ECU details.</td></tr></table></div>
+  <div class="card"><h3>Cost &amp; mileage settings</h3>
+    <label>Petrol price (₹ per litre)</label><input id="sPrice" type="number" step="0.01">
+    <label>Engine size (litres). Tiago 1.2 = 1.199</label><input id="sDisp" type="number" step="0.001">
+    <label>Fuel calibration (%). Raise if app shows less fuel than you filled</label><input id="sCal" type="number" step="1">
+    <label>Current odometer reading (km), from your dashboard</label><input id="sOdo" type="number" step="1">
+    <p><button class="btn w" id="bSave">Save settings</button></p>
+    <p class="note">Tip: fill the tank, reset, drive, refill. Compare litres filled with the app's total fuel and adjust the calibration %. Your estimated odometer = the reading you enter + distance the app tracks after that.</p></div>
+</section>
+
+<section class="page" id="logp"><h1>Raw log</h1><div class="card"><pre id="log"></pre></div></section>
 </main>
+
 <script>
-const $=id=>document.getElementById(id),log=t=>{$('log').textContent+= '\n'+t;$('log').scrollTop=1e9},status=t=>{$('status').textContent=t};
-let port=null,reader=null,writer=null,device=null,rx='',pending=null,alive=false,values={},timer=null,trip={km:0,litres:0},last=0;
-const settings=JSON.parse(localStorage.getItem('tiago_settings')||'{}');$('price').value=settings.price??105;$('disp').value=settings.disp??1.199;
-function feed(s){rx+=s;if(rx.includes('>')&&pending){const r=rx;rx='';const p=pending;pending=null;p(r)}}
-function send(cmd){return new Promise(async(resolve,reject)=>{rx='';pending=resolve;const t=setTimeout(()=>{if(pending){pending=null;reject(Error('Adapter timeout: '+cmd))}},5000);try{if(writer)await writer.write(new TextEncoder().encode(cmd+'\r'));else if(writeBle)await writeBle(cmd+'\r')}catch(e){clearTimeout(t);pending=null;reject(e)}})}
-let writeBle=null;
-async function connectBLE(){device=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[0xfff0,0xffe0,0x18f0,'e7810a71-73ae-499d-8c15-faa9aef0c3f2','0000ffe0-0000-1000-8000-00805f9b34fb']});const server=await device.gatt.connect();let w,n;for(const s of await server.getPrimaryServices())for(const c of await s.getCharacteristics()){if(!n&&(c.properties.notify||c.properties.indicate))n=c;if(!w&&(c.properties.write||c.properties.writeWithoutResponse))w=c}if(!w||!n)throw Error('BLE serial characteristics not found');await n.startNotifications();n.addEventListener('characteristicvaluechanged',e=>feed(new TextDecoder().decode(e.target.value)));writeBle=async str=>{const b=new TextEncoder().encode(str);for(let i=0;i<b.length;i+=20){const part=b.slice(i,i+20);w.properties.writeWithoutResponse?await w.writeValueWithoutResponse(part):await w.writeValue(part)}};device.addEventListener('gattserverdisconnected',disconnect)}
-async function connectSerial(){port=await navigator.serial.requestPort();await port.open({baudRate:38400});writer=port.writable.getWriter();reader=port.readable.getReader();(async()=>{try{while(true){const x=await reader.read();if(x.done)break;feed(new TextDecoder().decode(x.value))}}catch(e){log('Reader: '+e.message)}})()}
-const clean=s=>s.replace(/[\r\n>]+/g,' ').trim(),hex=s=>s.replace(/SEARCHING\.\.\./g,'').split(/[\r\n]+/).map(x=>x.replace(/>/g,'').trim()).filter(x=>/^[0-9a-f ]+$/i.test(x)).join('').replace(/\s/g,'').toUpperCase();
-async function cmd(s){const r=await send(s);log('> '+s+'  '+clean(r));return hex(r)}
-async function pid(p){const h=await cmd('01'+p),tag='41'+p,i=h.indexOf(tag);if(i<0)return null;return(h.slice(i+4).match(/.{2}/g)||[]).map(x=>parseInt(x,16))}
-const u16=b=>b[0]*256+b[1],fmt=(n,d=1)=>Number(n).toFixed(d);
-function show(id,v,unit=''){if(v!==null&&Number.isFinite(Number(v)))$(id).innerHTML=v+' <span class="unit">'+unit+'</span>'}
-async function initialise(){for(const c of ['ATZ','ATE0','ATL0','ATS0','ATH0','ATSP0'])try{await cmd(c)}catch(e){};try{const a=clean(await send('ATI'));log('Adapter: '+a);$('vehicle').innerHTML='<tr><td>Adapter</td><td>'+a+'</td></tr>'}catch(e){};try{const v=clean(await send('ATRV'));$('vehicle').innerHTML+='<tr><td>Adapter voltage</td><td>'+v+'</td></tr>'}catch(e){};try{const p=clean(await send('ATDP'));$('vehicle').innerHTML+='<tr><td>Protocol</td><td>'+p+'</td></tr>'}catch(e){};try{const h=await cmd('0902');const i=h.indexOf('4902');if(i>=0){const bytes=(h.slice(i+6).match(/.{2}/g)||[]).map(x=>parseInt(x,16));const vin=bytes.filter(x=>x>=32&&x<=126).map(x=>String.fromCharCode(x)).join('');if(vin.length>8)$('vehicle').innerHTML+='<tr><td>VIN</td><td>'+vin+'</td></tr>'}}catch(e){}}
-const sensorDefs={'04':['Engine load','%',b=>b[0]*100/255],'05':['Coolant temperature','°C',b=>b[0]-40],'0B':['Intake manifold pressure','kPa',b=>b[0]],'0C':['Engine speed','rpm',b=>Math.round(u16(b)/4)],'0D':['Vehicle speed','km/h',b=>b[0]],'0F':['Intake air temperature','°C',b=>b[0]-40],'10':['Air flow','g/s',b=>u16(b)/100],'11':['Throttle position','%',b=>b[0]*100/255],'2F':['Fuel level','%',b=>b[0]*100/255],'42':['Control module voltage','V',b=>u16(b)/1000],'5E':['Fuel rate','L/h',b=>u16(b)/20]};
-async function poll(){while(alive){for(const p of Object.keys(sensorDefs)){if(!alive)break;try{const b=await pid(p);if(!b||!b.length)continue;const d=sensorDefs[p],v=d[2](b);values[p]=v;const ids={'0D':'speed','0C':'rpm','05':'coolant','04':'load','2F':'fuel','42':'voltage'};if(ids[p])show(ids[p],fmt(v,p==='0C'?0:1),d[1]);}catch(e){log('PID '+p+': '+e.message)}}renderSensors();calcTrip();await new Promise(r=>setTimeout(r,700))}}
-function renderSensors(){$('sensors').innerHTML='<tr><th>Sensor</th><th>Value</th></tr>'+Object.entries(values).map(([p,v])=>'<tr><td>'+sensorDefs[p][0]+'</td><td>'+fmt(v,2)+' '+sensorDefs[p][1]+'</td></tr>').join('')}
-function calcTrip(){const now=Date.now(),speed=values['0D'];if(last&&speed>0){const dt=Math.min((now-last)/3600000,.02);trip.km+=speed*dt;let lph=values['5E'];if(!Number.isFinite(lph)&&Number.isFinite(values['10']))lph=values['10']/14.7/745*3600;if(Number.isFinite(lph))trip.litres+=lph*dt}last=now;$('distance').innerHTML=fmt(trip.km)+' <span class="unit">km</span>';$('used').innerHTML=fmt(trip.litres,3)+' <span class="unit">L</span>';$('cost').textContent='₹'+Math.round(trip.litres*Number($('price').value||105))}
-function connected(){alive=true;status('Connected · '+(device?.name||'OBD adapter'));$('status').classList.add('live');$('off').disabled=false;$('ble').disabled=$('serial').disabled=true;last=Date.now();poll()}
-async function start(fn){try{status('Connecting…');await fn();await initialise();connected()}catch(e){status('Connection failed');log('ERROR: '+e.message);try{await disconnect()}catch(x){}}}
-async function disconnect(){alive=false;clearInterval(timer);try{if(reader){await reader.cancel();reader.releaseLock()}}catch(e){}try{writer?.releaseLock()}catch(e){}try{await port?.close()}catch(e){}try{device?.gatt?.disconnect()}catch(e){}port=reader=writer=device=null;writeBle=null;$('off').disabled=true;$('ble').disabled=$('serial').disabled=false;$('status').classList.remove('live');status('Not connected')}
-$('ble').onclick=()=>navigator.bluetooth?start(connectBLE):alert('Use Chrome or Edge with Bluetooth support.');
-$('serial').onclick=()=>navigator.serial?start(connectSerial):alert('Use desktop Chrome or Edge. Pair a classic Bluetooth adapter in macOS settings first, then select it here.');
-$('off').onclick=disconnect;
-$('save').onclick=()=>{localStorage.setItem('tiago_settings',JSON.stringify({price:Number($('price').value),disp:Number($('disp').value)}));alert('Settings saved on this device.')};
-$('codes').onclick=async()=>{if(!alive)return alert('Connect the scanner first');try{const r=await cmd('03');$('diagnostics').textContent='Stored-code response: '+r+' (raw hex)'}catch(e){$('diagnostics').textContent=e.message}};
-$('ready').onclick=async()=>{if(!alive)return alert('Connect the scanner first');try{const r=await cmd('0101');$('diagnostics').textContent='Readiness response: '+r+' (raw hex)'}catch(e){$('diagnostics').textContent=e.message}};
-$('freeze').onclick=async()=>{if(!alive)return alert('Connect the scanner first');try{const r=await cmd('0200');$('diagnostics').textContent='Freeze-frame response: '+r+' (raw hex)'}catch(e){$('diagnostics').textContent=e.message}};
-$('clear').onclick=async()=>{if(!alive)return alert('Connect the scanner first');if(!confirm('Clear engine fault codes? This also resets emissions readiness monitors. Only do this after recording the codes and fixing the cause.'))return;try{const r=await cmd('04');$('diagnostics').textContent='Clear command response: '+r+'. Re-read codes to verify.'}catch(e){$('diagnostics').textContent=e.message}};
-window.addEventListener('pagehide',()=>{alive=false;try{device?.gatt?.disconnect()}catch(e){}});
-</script></body></html>
+const $=id=>document.getElementById(id);
+const logEl=$('log'),log=t=>{logEl.textContent+=t+'\n';logEl.scrollTop=1e9;if(logEl.textContent.length>60000)logEl.textContent=logEl.textContent.slice(-30000)};
+const setStatus=t=>$('status').textContent=t;
+let tx=null,busy=Promise.resolve(),alive=false,supported=[];
+const vals={},infoRows=[],hist={s:[],r:[]};
+
+/* storage (safe) */
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let S=Object.assign({price:105,disp:1.199,cal:100,odo:0,odoTracked:0},ld('obd_set',{}));
+let trips=ld('obd_trips',[]),tracked=ld('obd_tracked',0),cur=null;
+
+/* navigation */
+$('nav').onclick=e=>{const p=e.target.dataset.p;if(!p)return;
+  document.querySelectorAll('.page').forEach(x=>x.classList.toggle('on',x.id===p));
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===e.target));
+  if(p==='trips')renderTrips();};
+
+/* transports */
+function makeTx(name,write,close){
+  const dec=new TextDecoder();let buf='',waiter=null;
+  return{name,close,feed(d){buf+=dec.decode(d);if(buf.includes('>')&&waiter){const r=buf;buf='';const w=waiter;waiter=null;w(r)}},
+    send(cmd){buf='';return new Promise(async(res,rej)=>{waiter=res;setTimeout(()=>{if(waiter){waiter=null;rej(new Error('timeout'))}},7000);
+      try{await write(new TextEncoder().encode(cmd+'\r'))}catch(e){rej(e)}})}};
+}
+async function connectBle(){
+  const dev=await navigator.bluetooth.requestDevice({acceptAllDevices:true,
+    optionalServices:[0xfff0,0xffe0,0x18f0,'e7810a71-73ae-499d-8c15-faa9aef0c3f2','0000ffe0-0000-1000-8000-00805f9b34fb']});
+  setStatus('Connecting…');
+  const srv=await dev.gatt.connect();let wr=null,nt=null;
+  for(const s of await srv.getPrimaryServices()){
+    for(const c of await s.getCharacteristics()){const p=c.properties;
+      if(!nt&&(p.notify||p.indicate))nt=c;if(!wr&&(p.write||p.writeWithoutResponse))wr=c}
+    if(wr&&nt)break}
+  if(!wr||!nt)throw new Error('No serial characteristic found');
+  tx=makeTx(dev.name||'BLE adapter',async d=>{for(let i=0;i<d.length;i+=20){const c=d.slice(i,i+20);
+    wr.properties.writeWithoutResponse?await wr.writeValueWithoutResponse(c):await wr.writeValue(c)}},()=>{try{dev.gatt.disconnect()}catch(e){}});
+  await nt.startNotifications();
+  nt.addEventListener('characteristicvaluechanged',e=>tx.feed(e.target.value));
+  dev.addEventListener('gattserverdisconnected',disconnected);
+}
+async function connectSerial(){
+  const port=await navigator.serial.requestPort();await port.open({baudRate:38400});
+  const w=port.writable.getWriter(),r=port.readable.getReader();
+  tx=makeTx('USB adapter',d=>w.write(d),async()=>{try{r.cancel();w.releaseLock();await port.close()}catch(e){}});
+  (async()=>{try{for(;;){const{value,done}=await r.read();if(done)break;tx&&tx.feed(value)}}catch(e){}disconnected()})();
+}
+
+/* OBD helpers */
+const q=cmd=>{const p=busy.then(async()=>{const raw=await tx.send(cmd);log('> '+cmd+'  < '+raw.replace(/[\r\n>]+/g,' ').trim());return raw});busy=p.catch(()=>{});return p};
+const lines=raw=>raw.replace(/SEARCHING\.\.\./g,'').split(/[\r\n]+/).map(s=>s.replace(/>/g,'').trim()).filter(Boolean);
+const bad=raw=>/NO DATA|UNABLE|ERROR|\?|STOPPED/.test(raw);
+const hexOf=raw=>lines(raw).map(l=>l.replace(/^\d+:/,'')).filter(l=>/^[0-9A-F ]+$/i.test(l)).join('').replace(/\s/g,'').toUpperCase();
+const bytesOf=h=>(h.match(/.{2}/g)||[]).map(x=>parseInt(x,16));
+async function req(mode,pid,tagMode,suffix=''){
+  const raw=await q(mode+pid+suffix);if(bad(raw))return null;
+  const h=hexOf(raw),tag=tagMode+pid+suffix,i=h.indexOf(tag);
+  return i<0?null:bytesOf(h.slice(i+tag.length));
+}
+const asc=b=>b.filter(c=>c>=32&&c<127).map(c=>String.fromCharCode(c)).join('').trim();
+const U16=b=>b[0]*256+b[1],S16=b=>{const v=U16(b);return v>32767?v-65536:v};
+const pct=b=>b[0]*100/255,tmp=b=>b[0]-40,trim=b=>b[0]*100/128-100,lam=b=>U16(b)*2/65536;
+const f1=x=>x.toFixed(1);
+const FUEL={1:'Gasoline',2:'Methanol',3:'Ethanol',4:'Diesel',5:'LPG',6:'CNG',7:'Propane',8:'Electric',9:'Bifuel gasoline/CNG',10:'Bifuel gasoline/LPG'};
+const STD={1:'OBD-II (CARB)',2:'OBD (EPA)',3:'OBD + OBD-II',5:'OBD-II',6:'EOBD (Europe)',7:'EOBD + OBD-II',9:'EOBD + OBD',11:'JOBD',17:'EOBD, India (Bharat)',18:'OBD-II/EOBD',19:'OBD India'};
+const o2=n=>[n,'V',b=>(b[0]/200).toFixed(3)];
+const P={
+'04':['Engine load','%',b=>f1(pct(b))],'05':['Coolant temperature','°C',tmp],
+'06':['Short fuel trim B1','%',b=>f1(trim(b))],'07':['Long fuel trim B1','%',b=>f1(trim(b))],
+'08':['Short fuel trim B2','%',b=>f1(trim(b))],'09':['Long fuel trim B2','%',b=>f1(trim(b))],
+'0A':['Fuel pressure','kPa',b=>b[0]*3],'0B':['Intake manifold pressure','kPa',b=>b[0]],
+'0C':['Engine speed','rpm',b=>Math.round(U16(b)/4)],'0D':['Vehicle speed','km/h',b=>b[0]],
+'0E':['Timing advance','°',b=>b[0]/2-64],'0F':['Intake air temperature','°C',tmp],
+'10':['Air flow (MAF)','g/s',b=>(U16(b)/100).toFixed(2)],'11':['Throttle position','%',b=>f1(pct(b))],
+'13':['O2 sensors present','',b=>b[0].toString(2).padStart(8,'0')],
+'14':o2('O2 B1S1'),'15':o2('O2 B1S2'),'16':o2('O2 B1S3'),'17':o2('O2 B1S4'),'18':o2('O2 B2S1'),'19':o2('O2 B2S2'),'1A':o2('O2 B2S3'),'1B':o2('O2 B2S4'),
+'1C':['OBD standard','',b=>STD[b[0]]||('code '+b[0])],'1F':['Engine run time','min',b=>Math.floor(U16(b)/60)],
+'21':['Distance with warning light','km',U16],'22':['Fuel rail pressure (rel.)','kPa',b=>(U16(b)*0.079).toFixed(0)],'23':['Fuel rail pressure','kPa',b=>U16(b)*10],
+'2C':['Commanded EGR','%',b=>f1(pct(b))],'2D':['EGR error','%',b=>f1(trim(b))],'2E':['Evap purge','%',b=>f1(pct(b))],'2F':['Fuel level','%',b=>f1(pct(b))],
+'30':['Warm-ups since clear','',b=>b[0]],'31':['Distance since codes cleared','km',U16],'32':['Evap vapour pressure','Pa',b=>S16(b)/4],'33':['Barometric pressure','kPa',b=>b[0]],
+'3C':['Catalyst temp B1S1','°C',b=>f1(U16(b)/10-40)],'3D':['Catalyst temp B2S1','°C',b=>f1(U16(b)/10-40)],'3E':['Catalyst temp B1S2','°C',b=>f1(U16(b)/10-40)],'3F':['Catalyst temp B2S2','°C',b=>f1(U16(b)/10-40)],
+'42':['Control module voltage','V',b=>(U16(b)/1000).toFixed(2)],'43':['Absolute load','%',b=>f1(U16(b)*100/255)],'44':['Commanded lambda','',b=>lam(b).toFixed(3)],
+'45':['Relative throttle','%',b=>f1(pct(b))],'46':['Ambient temperature','°C',tmp],'47':['Throttle position B','%',b=>f1(pct(b))],
+'49':['Accelerator pedal D','%',b=>f1(pct(b))],'4A':['Accelerator pedal E','%',b=>f1(pct(b))],'4B':['Accelerator pedal F','%',b=>f1(pct(b))],'4C':['Commanded throttle','%',b=>f1(pct(b))],
+'4D':['Time with warning light','min',U16],'4E':['Time since codes cleared','min',U16],'51':['Fuel type','',b=>FUEL[b[0]]||('code '+b[0])],'52':['Ethanol fuel','%',b=>f1(pct(b))],
+'5A':['Relative pedal position','%',b=>f1(pct(b))],'5C':['Engine oil temperature','°C',tmp],'5D':['Injection timing','°',b=>(U16(b)/128-210).toFixed(2)],'5E':['Fuel rate','L/h',b=>(U16(b)/20).toFixed(2)],
+'A6':['Odometer','km',b=>((b[0]*16777216+b[1]*65536+b[2]*256+b[3])/10).toFixed(1)]
+};
+for(let i=0x24;i<=0x2B;i++)P[i.toString(16).toUpperCase()]=['Wideband O2 #'+(i-0x23),'λ',b=>lam(b).toFixed(3)];
+for(let i=0x34;i<=0x3B;i++)P[i.toString(16).toUpperCase()]=['Wideband O2 #'+(i-0x33)+' current','λ',b=>lam(b).toFixed(3)];
+
+/* discovery & polling */
+async function discover(){
+  supported=[];
+  for(let base=0;base<=0xC0;base+=0x20){
+    const code=base.toString(16).toUpperCase().padStart(2,'0');
+    const b=await req('01',code,'41');if(!b||b.length<4)break;
+    for(let i=0;i<32;i++)if(b[i>>3]&(0x80>>(i&7))){const p=base+i+1;if(p%32)supported.push(p.toString(16).toUpperCase().padStart(2,'0'))}
+    if(!(b[3]&1))break;
+  }
+  supported=supported.filter(p=>!['01','02','03'].includes(p));
+}
+function buildLive(){
+  $('liveT').innerHTML='<tr><th>PID</th><th>Sensor</th><th>Value</th><th>Unit</th></tr>'+supported.map(p=>{const d=P[p];
+    return`<tr><td class="note">${p}</td><td>${d?d[0]:'Unknown sensor'}</td><td class="v" id="v${p}">–</td><td class="note">${d?d[1]:''}</td></tr>`}).join('');
+}
+function setVal(p,txt){vals[p]=txt;const e=$('v'+p);if(e)e.textContent=txt;const d=$('d'+p);if(d&&d.firstChild)d.firstChild.textContent=txt}
+async function readPid(p){
+  const b=await req('01',p,'41');if(!b||!b.length)return;
+  const d=P[p];setVal(p,d?d[2](b)+'':b.map(x=>x.toString(16).padStart(2,'0')).join(' ').toUpperCase());
+}
+const FAST=['0D','0C','0B','0F','10','5E'];
+let slowIdx=0,lastT=0;
+async function poll(){
+  const fast=FAST.filter(p=>supported.includes(p));
+  const slow=supported.filter(p=>!FAST.includes(p));
+  lastT=Date.now();
+  while(alive){
+    try{
+      for(const p of fast){if(!alive)return;await readPid(p)}
+      for(let k=0;k<2&&slow.length;k++){if(!alive)return;await readPid(slow[slowIdx++%slow.length])}
+      tick();
+    }catch(e){log('poll error '+e.message)}
+  }
+}
+
+/* trip engine */
+const num=p=>parseFloat(vals[p]);
+function fuelLps(){
+  let lps=null;const cal=S.cal/100;
+  if(!isNaN(num('5E')))lps=num('5E')/3600;
+  else if(!isNaN(num('10')))lps=num('10')/14.7/745;
+  else if(!isNaN(num('0B'))&&!isNaN(num('0C'))){
+    const iat=isNaN(num('0F'))?30:num('0F');
+    const g=num('0B')*1000*(S.disp/1000)*(num('0C')/120)*0.8/(287*(iat+273.15))*1000;lps=g/14.7/745}
+  return lps==null?null:lps*cal;
+}
+let still=0;
+function tick(){
+  const now=Date.now(),dt=Math.min(5,(now-lastT)/1000);lastT=now;
+  const v=num('0D');
+  hist.s.push(isNaN(v)?0:v);hist.r.push(isNaN(num('0C'))?0:num('0C'));
+  if(hist.s.length>90){hist.s.shift();hist.r.shift()}
+  if(!isNaN(v)){
+    if(!cur&&v>2)cur={start:now,dist:0,fuel:0,secs:0,maxV:0};
+    if(cur){const l=fuelLps();cur.dist+=v*dt/3600;if(l)cur.fuel+=l*dt;cur.secs+=dt;cur.maxV=Math.max(cur.maxV,v);
+      tracked+=v*dt/3600;still=v<1?still+dt:0;if(still>180)endTrip()}
+    else tracked+=v*dt/3600;
+  }
+  sv('obd_tracked',tracked);
+  render();
+}
+function endTrip(){
+  if(cur&&cur.dist>=0.2){trips.push({...cur,end:Date.now(),price:S.price});sv('obd_trips',trips)}
+  cur=null;still=0;renderTrips();render();
+}
+const fmtT=s=>Math.floor(s/3600)+':'+String(Math.floor(s%3600/60)).padStart(2,'0')+(s>=3600?'':':'+String(Math.floor(s%60)).padStart(2,'0'));
+function render(){
+  const t=cur||{dist:0,fuel:0,secs:0};
+  $('tDist').firstChild.textContent=f1(t.dist);$('tFuel').firstChild.textContent=t.fuel.toFixed(2);
+  $('tCost').textContent='₹'+Math.round(t.fuel*S.price);$('tTime').textContent=fmtT(t.secs);
+  $('tKml').firstChild.textContent=t.fuel>0.01?f1(t.dist/t.fuel):'–';
+  if(!isNaN(num('A6'))){$('odo').innerHTML=Math.round(num('A6')).toLocaleString('en-IN')+'<small> km</small>';$('odoNote').textContent='Read from car'}
+  else if(S.odo>0){$('odo').innerHTML=Math.round(S.odo+tracked-S.odoTracked).toLocaleString('en-IN')+'<small> km</small>';$('odoNote').textContent='Estimated: your entered reading + distance tracked'}
+  else{$('odo').textContent='–';$('odoNote').textContent='Enter your odometer in Vehicle & settings'}
+  chart('chLive',[{d:hist.s,c:'#10294a'},{d:hist.r,c:'#f08a24'}]);
+}
+function chart(id,series){
+  let g='';for(let i=1;i<4;i++)g+=`<line x1="0" x2="600" y1="${i*42.5}" y2="${i*42.5}" stroke="#e3e8ee"/>`;
+  series.forEach(s=>{if(s.d.length<2)return;const mx=Math.max(...s.d,s.min||1);
+    g+=`<polyline fill="none" stroke="${s.c}" stroke-width="2" vector-effect="non-scaling-stroke" points="${s.d.map((v,i)=>(i/(s.d.length-1)*600).toFixed(1)+','+(165-v/mx*155).toFixed(1)).join(' ')}"/>`});
+  $(id).innerHTML=g;
+}
+function renderTrips(){
+  const T=trips,km=T.reduce((a,t)=>a+t.dist,0),L=T.reduce((a,t)=>a+t.fuel,0),cost=T.reduce((a,t)=>a+t.fuel*t.price,0);
+  const c=(k,v)=>`<div class="card"><div class="k">${k}</div><div class="big">${v}</div></div>`;
+  $('sum').innerHTML=c('Trips',T.length)+c('Total distance',f1(km)+'<small> km</small>')+c('Total fuel',L.toFixed(1)+'<small> L</small>')+
+    c('Total cost','<span class="hl">₹'+Math.round(cost).toLocaleString('en-IN')+'</span>')+c('Average mileage',L>0.05?f1(km/L)+'<small> km/L</small>':'–')+c('Cost per km',km>0?'₹'+(cost/km).toFixed(2):'–');
+  const last=T.slice(-12);
+  const bars=last.map((t,i)=>{const mx=Math.max(...last.map(x=>x.fuel*x.price),1),h=t.fuel*t.price/mx*140,w=600/12;
+    return`<rect x="${i*w+8}" y="${165-h}" width="${w-16}" height="${h}" rx="3" fill="#f08a24"/><text x="${i*w+w/2}" y="${160-h}" font-size="11" text-anchor="middle" fill="#10294a">₹${Math.round(t.fuel*t.price)}</text>`}).join('');
+  $('chTrips').innerHTML=bars||'<text x="300" y="90" text-anchor="middle" fill="#6b7788" font-size="13">No trips yet</text>';
+  $('tripT').innerHTML='<tr><th>Date</th><th>Time</th><th>Distance</th><th>Avg / max</th><th>Fuel</th><th>km/L</th><th>Cost</th></tr>'+
+    T.slice().reverse().map(t=>{const d=new Date(t.start);return`<tr><td>${d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})} ${d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</td><td>${fmtT(t.secs)}</td><td class="v">${f1(t.dist)} km</td><td>${Math.round(t.dist/(t.secs/3600)||0)} / ${Math.round(t.maxV)} km/h</td><td>${t.fuel.toFixed(2)} L</td><td>${t.fuel>0.01?f1(t.dist/t.fuel):'–'}</td><td class="v">₹${Math.round(t.fuel*t.price)}</td></tr>`}).join('')||'<tr><td class="note">No trips recorded yet. Drive with the scanner connected.</td></tr>';
+}
+
+/* vehicle info & diagnostics */
+const setInfo=(k,v)=>{const i=infoRows.findIndex(r=>r[0]===k);i<0?infoRows.push([k,v]):infoRows[i]=[k,v];
+  $('info').innerHTML=infoRows.map(r=>`<tr><td class="note">${r[0]}</td><td class="v" style="word-break:break-all">${r[1]}</td></tr>`).join('')};
+async function mode09(pid,label,hex){
+  try{const raw=await q('09'+pid);if(bad(raw))return setInfo(label,'Not reported');
+    const h=hexOf(raw),i=h.indexOf('49'+pid);if(i<0)return setInfo(label,'Not reported');
+    const b=bytesOf(h.slice(i+6));setInfo(label,hex?b.map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase():(asc(b)||'Not reported'))}catch(e){setInfo(label,'Not reported')}
+}
+async function readiness(){
+  const b=await req('01','01','41');if(!b){$('ready').textContent='Not available on this car.';return}
+  const mil=b[0]&0x80,n=b[0]&0x7f,t=[];
+  const st=(nm,s,inc)=>s&&t.push(`<tr><td>${nm}</td><td class="v">${inc?'Not ready':'Ready'}</td></tr>`);
+  st('Misfire',b[1]&1,b[1]&0x10);st('Fuel system',b[1]&2,b[1]&0x20);st('Components',b[1]&4,b[1]&0x40);
+  [['Catalyst',0],['Heated catalyst',1],['Evaporative system',2],['Secondary air',3],['A/C refrigerant',4],['Oxygen sensor',5],['O2 sensor heater',6],['EGR',7]].forEach(([nm,k])=>st(nm,b[2]&(1<<k),b[3]&(1<<k)));
+  $('ready').innerHTML=`<p style="font-size:15px;color:var(--ink)"><b>Check-engine light: <span class="${mil?'hl':''}">${mil?'ON':'OFF'}</span></b> · ${n} stored code${n==1?'':'s'}</p><table>${t.join('')}</table>`;
+}
+function decodeDtc(h){const o=[];for(let i=0;i+4<=h.length;i+=4){const w=parseInt(h.slice(i,i+4),16);if(!w)continue;o.push('PCBU'[w>>14]+((w>>12)&3)+(w&0xfff).toString(16).toUpperCase().padStart(3,'0'))}return o}
+async function readDtc(){
+  let out='';
+  for(const[m,l]of[['03','Stored'],['07','Pending'],['0A','Permanent']]){
+    const raw=await q(m);let list=[];
+    if(!bad(raw)){const h=hexOf(raw),tag=(parseInt(m,16)+0x40).toString(16).toUpperCase().padStart(2,'0'),i=h.indexOf(tag);
+      if(i>=0){let p=h.slice(i+2);if(p.length%4===2)p=p.slice(2);list=decodeDtc(p)}}
+    out+=`<p style="color:var(--ink)"><b>${l}:</b> ${list.length?list.join(', '):'none'}</p>`;
+  }
+  $('dtcs').innerHTML=out+'<p class="note">Search each code with "Tata Tiago" to find its meaning.</p>';
+}
+async function freeze(){
+  const t=[];
+  for(const p of supported){if(!P[p]||p==='A6')continue;
+    try{const b=await req('02',p,'42','00');if(b)t.push(`<tr><td>${P[p][0]}</td><td class="v">${P[p][2](b)} ${P[p][1]}</td></tr>`)}catch(e){}}
+  $('frz').innerHTML=t.join('')||'<tr><td class="note">No freeze frame saved.</td></tr>';
+}
+async function clearDtc(){
+  if(!confirm('Clear fault codes and reset readiness tests? Faults may return if not fixed.'))return;
+  await q('04');$('dtcs').textContent='Clear command sent. Read fault codes again to confirm.';
+}
+
+/* settings */
+function loadSettings(){$('sPrice').value=S.price;$('sDisp').value=S.disp;$('sCal').value=S.cal;$('sOdo').value=S.odo||''}
+$('bSave').onclick=()=>{
+  const odoNew=parseFloat($('sOdo').value)||0;
+  if(odoNew!==S.odo)S.odoTracked=tracked;
+  S.price=parseFloat($('sPrice').value)||S.price;S.disp=parseFloat($('sDisp').value)||S.disp;S.cal=parseFloat($('sCal').value)||100;S.odo=odoNew;
+  sv('obd_set',S);render();alert('Saved');
+};
+$('bCsv').onclick=()=>{
+  const r=['Start,Minutes,Distance km,Fuel L,km/L,Cost INR'].concat(trips.map(t=>[new Date(t.start).toISOString(),(t.secs/60).toFixed(1),t.dist.toFixed(2),t.fuel.toFixed(3),(t.dist/t.fuel).toFixed(1),(t.fuel*t.price).toFixed(1)].join(',')));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([r.join('\n')],{type:'text/csv'}));a.download='trips.csv';a.click();
+};
+$('bWipe').onclick=()=>{if(confirm('Delete all trips?')){trips=[];sv('obd_trips',trips);renderTrips()}};
+
+/* connection flow */
+async function init(){
+  for(const c of['ATZ','ATE0','ATL0','ATS0','ATH0','ATSP0'])await q(c);
+  await q('0100');
+  const cl=s=>s.replace(/[\r\n>]+/g,' ').trim();
+  setInfo('Adapter',cl(await q('ATI')));setInfo('Battery voltage (adapter)',cl((await q('ATRV')).replace('ATRV','')));setInfo('Protocol',cl((await q('ATDP')).replace('ATDP','')));
+  await mode09('02','VIN');await mode09('04','Calibration ID');await mode09('06','Calibration verification (CVN)',true);await mode09('0A','ECU name');
+  setStatus('Scanning sensors…');await discover();
+  setInfo('Supported sensors',supported.length+' ('+supported.join(' ')+')');
+  buildLive();await readiness();setStatus('Connected: '+tx.name);poll();
+}
+function connected(){alive=true;setStatus('Connected: '+tx.name);$('bOff').disabled=false;$('bBle').disabled=$('bSer').disabled=true}
+function disconnected(){if(!tx)return;alive=false;tx=null;endTrip();setStatus('Disconnected');$('bOff').disabled=true;$('bBle').disabled=$('bSer').disabled=false}
+async function go(fn){try{await fn();connected();await init()}catch(e){setStatus('Failed: '+e.message);log('ERR '+e.message);if(tx){try{await tx.close()}catch(x){}tx=null;alive=false;$('bBle').disabled=$('bSer').disabled=false}}}
+const run=f=>()=>tx?f().catch(e=>log('ERR '+e.message)):alert('Connect your scanner first');
+$('bBle').onclick=()=>navigator.bluetooth?go(connectBle):setStatus('Use Chrome or Edge (Bluetooth)');
+$('bSer').onclick=()=>navigator.serial?go(connectSerial):setStatus('Use Chrome or Edge on desktop (USB)');
+$('bOff').onclick=async()=>{alive=false;if(tx)await tx.close();disconnected()};
+$('bRdy').onclick=run(readiness);$('bDtc').onclick=run(readDtc);$('bFrz').onclick=run(freeze);$('bClr').onclick=run(clearDtc);
+loadSettings();render();renderTrips();
+</script>
+</body>
+</html>
