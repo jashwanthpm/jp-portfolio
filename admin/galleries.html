@@ -372,7 +372,7 @@ function panelHTML(c){
   c.lay=c.lay||{};const L=c.lay,url=location.origin+'/g/'+c.slug+'/';
   return SEC('cover','Cover preview','Desktop and mobile cover banner',coverBody(c))
   +SEC('details','Details','Name, date and story',F('Gallery name','name',c.name||'')+F('Date','date',c.date||'')+F('Short story','story',c.story||'',true)
-    +`<div class="field"><label>Gallery link</label><div class="row"><input readonly value="${esc(url)}"><button data-act="copylink">Copy</button></div><small>The link name is managed from the main Studio, since changing it breaks links already sent.</small></div>`)
+    +`<div class="field"><label>Gallery URL</label><div class="row"><span class="muted" style="white-space:nowrap">/g/</span><input data-f="slug" value="${esc(c.slug)}" aria-label="Gallery URL slug" spellcheck="false"><button data-act="copylink">Copy</button></div><small>Use the client name for a clean link. Example: /g/priya-and-arjun/. Publish to make the new URL live. Old links will no longer work automatically.</small><p class="muted" id="slugpreview" style="overflow-wrap:anywhere;margin:6px 0 0">${esc(url)}</p></div>`)
   +SEC('access','Access and sharing','Hidden, PIN and link previews',CK('Hide from the public galleries page','private',c.private,'The direct link keeps working.')+CK('Show on the home page','onHome',c.onHome)+CK('Use the cover for link previews','ogOn',c.ogOn!==false)
     +`<div class="field"><label>${c.pinHash?'PIN protection is on. Set a new PIN':'PIN protection'}</label><div class="row"><input id="pin" type="password" inputmode="numeric" placeholder="4–10 characters"><button class="primary" data-act="setpin">${c.pinHash?'Change':'Set'} PIN</button></div></div>`
     +(c.pinHash?'<button class="ghost danger" data-act="rmpin">Remove PIN protection</button>':''))
@@ -498,6 +498,16 @@ V.addEventListener('input',e=>{
   if(t.id==='nameIn'){c.name=t.value;mark();const d=$('[data-f="name"]');if(d)d.value=t.value;return}
   if(t.id==='dateIn'){c.date=t.value;mark();const d=$('[data-f="date"]');if(d)d.value=t.value;return}
   if(!f)return;
+  if(f==='slug'){
+    const slug=t.value.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    if(t.value!==slug){const p=t.selectionStart;t.value=slug;try{t.setSelectionRange(Math.min(slug.length,p),Math.min(slug.length,p))}catch{}}
+    c.slug=slug;mark();
+    const full=location.origin+'/g/'+slug+'/';const pv=$('#slugpreview');if(pv)pv.textContent=full;
+    const duplicate=D.clients.some((x,i)=>i!==cur&&x.slug===slug);
+    t.setCustomValidity(duplicate?'This URL is already used by another gallery.':'');
+    if(duplicate)toast('That gallery URL is already in use.');
+    return;
+  }
   let v=t.value;if(f.startsWith('lay.')&&f!=='lay.style')v=+v;setf(c,f,v);
   if(f==='lay.gap')$('#gapval').textContent=v;
   if(f==='name'){const i=$('#nameIn');if(i)i.value=v}
@@ -761,6 +771,9 @@ async function load(){
 }
 async function publish(){
   if(!dirty)return;
+  const slugs=D.clients.map(c=>String(c.slug||'').trim());
+  if(slugs.some(x=>!x)){toast('Every gallery needs a URL slug.');return}
+  if(new Set(slugs).size!==slugs.length){toast('Two galleries have the same URL. Please make each one unique.');return}
   $('#save').disabled=true;$('#status').textContent='Publishing…';
   try{
     // Fetch the current file version immediately before publishing. Studio or
@@ -787,6 +800,7 @@ async function publish(){
     }
     const saved=await r.json();
     sha=saved.content.sha;D=latest;dirty=false;
+    if(view==='client'&&cur>=0)history.replaceState(null,'',location.pathname+location.search+'#client/'+encodeURIComponent(D.clients[cur].slug));
     $('#dot').classList.remove('dirty');$('#status').textContent='Published. The site may take a minute to update.';
     toast('Published');render();
   }catch(e){
