@@ -107,9 +107,14 @@ hr{border:0;border-top:1px solid var(--line2);margin:16px 0}
 .focusdot{position:absolute;width:18px;height:18px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 2px #0008;transform:translate(-50%,-50%);pointer-events:none}
 .pvrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;align-items:end}
 .pvrow figure{margin:0}
+.laytiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}
+.laytile{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;padding:9px;border:1px solid var(--line);border-radius:9px;background:var(--p2);min-width:0}
+.laytile.on{border-color:var(--gold);background:#2a241b;box-shadow:inset 0 0 0 1px #c9a46a44}
+.laytile svg{width:42px;height:29px;color:var(--gold);fill:currentColor}
+.laytile b{font-size:12px;font-weight:600}.laytile small{font-size:10px;line-height:1.35;color:var(--muted)}
 .pv{border-radius:7px;overflow:hidden;background:var(--p2)}
 .pv img{width:100%;height:100%;object-fit:cover;display:block}
-.pv43{aspect-ratio:4/3}.pv169{aspect-ratio:16/9}
+.pv43{aspect-ratio:4/3}.pv169{aspect-ratio:16/9}.pv916{aspect-ratio:9/16;max-width:118px;margin:0 auto}
 .pvrow figcaption{color:var(--muted);font-size:11px;margin-top:4px}
 
 /* thumbnails */
@@ -358,9 +363,9 @@ function coverBody(c){
   if(!cv)return '<small style="margin-top:12px">Upload photos first, then choose which one is the cover.</small>';
   const xy=focusOf(cv).split(' ').map(x=>parseFloat(x)||50),pos=xy[0]+'% '+xy[1]+'%',u=esc(imgUrl(cv));
   return `<div class="fbox" id="fbox"><img src="${u}" alt="Cover photo"><i class="focusdot" id="fdot" style="left:${xy[0]}%;top:${xy[1]}%"></i></div>
-  <small>Drag the dot to choose what stays in view when the photo is cropped.</small>
-  <div class="pvrow"><figure><div class="pv pv43"><img src="${u}" style="object-position:${pos}" alt=""></div><figcaption>Gallery thumbnail</figcaption></figure>
-  <figure><div class="pv pv169"><img src="${u}" style="object-position:${pos}" alt=""></div><figcaption>Cover banner</figcaption></figure></div>
+  <small>Drag the dot to choose the crop. The same cover image is used for the gallery banner and its mobile crop.</small>
+  <div class="pvrow"><figure><div class="pv pv169"><img src="${u}" style="object-position:${pos}" alt=""></div><figcaption>Desktop cover banner</figcaption></figure>
+  <figure><div class="pv pv916"><img src="${u}" style="object-position:${pos}" alt=""></div><figcaption>Mobile cover banner</figcaption></figure></div>
   <div class="actions"><button class="primary" data-act="pickcover">Change cover</button></div>`;
 }
 function panelHTML(c){
@@ -371,9 +376,18 @@ function panelHTML(c){
   +SEC('access','Access and sharing','Hidden, PIN and link previews',CK('Hide from the public galleries page','private',c.private,'The direct link keeps working.')+CK('Show on the home page','onHome',c.onHome)+CK('Use the cover for link previews','ogOn',c.ogOn!==false)
     +`<div class="field"><label>${c.pinHash?'PIN protection is on. Set a new PIN':'PIN protection'}</label><div class="row"><input id="pin" type="password" inputmode="numeric" placeholder="4–10 characters"><button class="primary" data-act="setpin">${c.pinHash?'Change':'Set'} PIN</button></div></div>`
     +(c.pinHash?'<button class="ghost danger" data-act="rmpin">Remove PIN protection</button>':''))
-  +SEC('layout','Look and layout','Arrangement, spacing and downloads',CK('Show large cover at top','showCover',c.showCover!==false)
+  +SEC('layout','Look and layout','Same gallery styling controls as Studio Site Editor',CK('Show large cover at top','showCover',c.showCover!==false)
     +SEL('Cover height','coverSize',c.coverSize||'full',[['full','Full screen'],['tall','Tall'],['half','Half']])
-    +SEL('Photo arrangement','lay.style',L.style||'masonry',[['masonry','Masonry'],['rows','Even rows'],['grid','Square grid'],['pair','Side by side'],['story','Left and right'],['portrait','Portrait'],['stack','One by one'],['strip','Film strip']])
+    +`<p class="hint">Choose a layout. These settings are shared with the main Studio editor.</p><div class="laytiles">`+[
+      ['masonry','Columns','Keeps each photo’s shape'],
+      ['rows','Rows','Even horizontal rows'],
+      ['grid','Square grid','Square cropped tiles'],
+      ['pair','Side by side','Two images, left and right'],
+      ['story','Left & right','Alternating image sides'],
+      ['portrait','Portrait only','Upright photos only'],
+      ['stack','One by one','Single-column viewing'],
+      ['strip','Film strip','Horizontal scrolling']
+    ].map(([k,t,d])=>`<button type="button" class="laytile ${(L.style||'masonry')===k?'on':''}" data-act="laystyle" data-v="${k}"><svg viewBox="0 0 60 40" aria-hidden="true">${({masonry:'<rect x="2" y="2" width="17" height="22" rx="2"/><rect x="2" y="26" width="17" height="12" rx="2"/><rect x="21" y="2" width="17" height="12" rx="2"/><rect x="21" y="16" width="17" height="22" rx="2"/><rect x="40" y="2" width="18" height="18" rx="2"/><rect x="40" y="22" width="18" height="16" rx="2"/>',rows:'<rect x="2" y="2" width="24" height="16" rx="2"/><rect x="28" y="2" width="30" height="16" rx="2"/><rect x="2" y="20" width="14" height="18" rx="2"/><rect x="18" y="20" width="20" height="18" rx="2"/><rect x="40" y="20" width="18" height="18" rx="2"/>',grid:'<rect x="2" y="2" width="17" height="17" rx="2"/><rect x="21" y="2" width="17" height="17" rx="2"/><rect x="40" y="2" width="18" height="17" rx="2"/><rect x="2" y="21" width="17" height="17" rx="2"/><rect x="21" y="21" width="17" height="17" rx="2"/><rect x="40" y="21" width="18" height="17" rx="2"/>',pair:'<rect x="2" y="2" width="27" height="36" rx="2"/><rect x="31" y="2" width="27" height="36" rx="2"/>',story:'<rect x="2" y="2" width="30" height="16" rx="2"/><rect x="28" y="22" width="30" height="16" rx="2"/>',portrait:'<rect x="3" y="3" width="16" height="34" rx="2"/><rect x="22" y="3" width="16" height="34" rx="2"/><rect x="41" y="3" width="16" height="34" rx="2"/>',stack:'<rect x="14" y="2" width="32" height="10" rx="2"/><rect x="14" y="15" width="32" height="10" rx="2"/><rect x="14" y="28" width="32" height="10" rx="2"/>',strip:'<rect x="0" y="8" width="18" height="24" rx="2"/><rect x="21" y="8" width="18" height="24" rx="2"/><rect x="42" y="8" width="18" height="24" rx="2/>'})[k]}</svg><b>${t}</b><small>${d}</small></button>`).join('')+`</div>`
     +SEL('Desktop columns','lay.cols',L.cols??3,[[2,'2'],[3,'3'],[4,'4'],[5,'5']])
     +SEL('Phone columns','lay.mcols',L.mcols??2,[[1,'1 (large)'],[2,'2']])
     +SEL('Photo corners','lay.round',L.round??0,[[0,'Square'],[8,'Soft'],[18,'Round']])
@@ -447,6 +461,7 @@ async function act(a,el){
   else if(a==='drive')driveDialog();
   else if(a==='newclient')newClient();
   else if(a==='pickcover')pickCover();
+  else if(a==='laystyle'){c.lay=c.lay||{};c.lay.style=el.dataset.v;mark();render()}
   else if(a==='copylink')navigator.clipboard.writeText(location.origin+'/g/'+c.slug+'/').then(()=>toast('Gallery link copied'));
   else if(a==='filter'){filter=el.dataset.v;render()}
   else if(a==='fit'){fit=el.dataset.v;localStorage.setItem('gm_fit',fit);render()}
