@@ -393,3 +393,31 @@ body.ui-studio #gate input{background:#faf9f6;color:#191a18;border-color:var(--l
   #gallery-nav .gallery-step b { font-size: .78rem !important; }
   #gallery-nav .gallery-step small { font-size: .52rem !important; }
 }
+
+/* Gallery navigation: keep previous/next cards aligned on every screen */
+#gallery-nav{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  align-items:stretch;
+  gap:14px;
+}
+#gallery-nav .gallery-step{
+  float:none;
+  position:relative;
+  top:auto;
+  align-self:stretch;
+  width:100%;
+  max-width:none;
+  min-width:0;
+  margin:0;
+  box-sizing:border-box;
+}
+#gallery-nav .gallery-step.prev{grid-column:1;grid-row:1;justify-self:stretch}
+#gallery-nav .gallery-step.next{grid-column:2;grid-row:1;justify-self:stretch;margin:0;text-align:right;align-items:flex-end}
+#gallery-nav .gallery-step b{overflow-wrap:anywhere}
+@media(max-width:600px){
+  #gallery-nav{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch;gap:10px}
+  #gallery-nav .gallery-step{max-width:none;min-height:76px;padding:12px 10px;margin:0}
+  #gallery-nav .gallery-step.prev,#gallery-nav .gallery-step.next{grid-row:1}
+  #gallery-nav .gallery-step.next{margin:0}
+}
