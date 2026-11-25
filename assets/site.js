@@ -40,6 +40,15 @@ async function mason(el,all,lay){const gen=el._g=(el._g||0)+1;el._items=all;el._
 const DLI='<svg class="dlsv" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>';
 const LOCK='<svg class="lk" viewBox="0 0 24 24" role="img" aria-label="PIN protected"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 const dlSrc=p=>(C.hi||{})[p]||p;
+const SBURL='https://kcihpkcpmklzytbsekhy.supabase.co',SBKEY='sb_publishable_nM8A5AzPXGZn_7phEIEy5Q_WommbEkU';
+const gid=u=>(String(u).match(/[?&]id=([\w-]+)/)||String(u).match(/\/d\/([\w-]+)/)||[])[1];
+const dlFetch=u=>/drive\.google\.com\/uc/.test(u)&&(C.cloudSettings||{}).driveKey?`https://www.googleapis.com/drive/v3/files/${gid(u)}?alt=media&key=${C.cloudSettings.driveKey}`:u;
+function needEmail(){const c=window.__dlc||{};if(!c.emailGate)return Promise.resolve(true);try{if(localStorage.getItem('em_'+c.slug))return Promise.resolve(true)}catch{}
+ return new Promise(ok=>{document.body.insertAdjacentHTML('beforeend',`<div id="emg" style="position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#0e0d0ccc"><form style="width:min(380px,90vw);background:#171513;border:1px solid #302a25;border-radius:16px;padding:26px;text-align:center;color:#efe9df;font:14px system-ui"><h3 style="font:400 30px Georgia,serif;margin:0 0 6px">Download your photos</h3><p style="color:#9d9387;margin:0 0 14px">Enter your email to start the download.</p><input type="email" required placeholder="you@example.com" aria-label="Email" style="width:100%;padding:12px 16px;border-radius:30px;border:1px solid #302a25;background:#100e0d;color:inherit;text-align:center;margin-bottom:12px"><button class="btn f" style="width:100%">Download</button><button type="button" id="emx" style="background:none;border:0;color:#9d9387;margin-top:10px;cursor:pointer">Cancel</button></form></div>`);
+  const g=document.getElementById('emg'),f=g.querySelector('form'),i=f.querySelector('input');i.focus();
+  document.getElementById('emx').onclick=()=>{g.remove();ok(false)};
+  f.onsubmit=e=>{e.preventDefault();const v=i.value.trim();try{localStorage.setItem('em_'+c.slug,v)}catch{}
+   fetch(SBURL+'/rest/v1/gallery_emails',{method:'POST',headers:{apikey:SBKEY,Authorization:'Bearer '+SBKEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({gallery_slug:c.slug,gallery_name:c.name,email:v})}).catch(()=>{});g.remove();ok(true)}})}
 const dlName=p=>{const c=window.__dlc||{},i=(c.photos||[]).indexOf(p),q=dlSrc(p),ext=(q.match(/\.(\w+)$/)||[0,'jpg'])[1];return `${c.slug||'photo'}-${String(i+1).padStart(3,'0')}.${ext}`};
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 function gate(c,ok){document.body.insertAdjacentHTML('beforeend',`<div id="gate"><i class="gbg"></i><form><span class="eb">Private gallery</span><h2>${c.name}</h2><p>Enter the PIN you were given to open this gallery.</p><input type="password" id="pin" autocomplete="off" placeholder="PIN" aria-label="PIN"><button class="btn f">Open gallery</button><small id="pe"></small></form></div>`);
@@ -48,17 +57,17 @@ function gate(c,ok){document.body.insertAdjacentHTML('beforeend',`<div id="gate"
  f.onsubmit=async e=>{e.preventDefault();const v=$('#pin').value.trim(),h=await sha((c.pinSalt||'')+v);
   if(h==c.pinHash){try{sessionStorage.setItem('pin_'+c.slug,c.pinHash)}catch{}$('#gate').remove();ok()}
   else{$('#pe').textContent='That PIN is not correct.';f.classList.add('shake');setTimeout(()=>f.classList.remove('shake'),500);$('#pin').value=''}}}
-async function dlBlob(a){a.classList.add('busy');try{const r=await fetch(a.href);if(!r.ok)throw 0;const b=await r.blob(),u=URL.createObjectURL(b),t=document.createElement('a');t.href=u;t.download=a.getAttribute('download')||'photo.jpg';document.body.appendChild(t);t.click();t.remove();setTimeout(()=>URL.revokeObjectURL(u),30000)}catch{window.open(a.href,'_blank')}a.classList.remove('busy')}
-document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a.dl,a.dli');if(a&&a.href&&!PV){e.preventDefault();e.stopPropagation();dlBlob(a)}},true);
+async function dlBlob(a){a.classList.add('busy');try{const r=await fetch(dlFetch(a.href));if(!r.ok)throw 0;const b=await r.blob(),u=URL.createObjectURL(b),t=document.createElement('a');t.href=u;t.download=a.getAttribute('download')||'photo.jpg';document.body.appendChild(t);t.click();t.remove();setTimeout(()=>URL.revokeObjectURL(u),30000)}catch{window.open(a.href,'_blank')}a.classList.remove('busy')}
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a.dl,a.dli');if(a&&a.href&&!PV){e.preventDefault();e.stopPropagation();needEmail().then(k=>k&&dlBlob(a))}},true);
 async function gcover(c){const old=$('#gcov');if(old)old.remove();const pg=$('.pg');if(pg)pg.classList.remove('has-cover');
  const im=c.cover||(c.photos||[])[0];if(!im||c.showCover===false||!pg)return;pg.classList.add('has-cover');
  pg.insertAdjacentHTML('beforebegin',`<section id="gcov" class="gc-${c.coverSize||'full'}"><i class="gcb"></i><div class="gct">${c.date?`<span class="eb">${c.date}</span>`:''}<h1>${c.name}</h1><button class="gdn" aria-label="View pictures"><span></span></button></div></section>`);
  const b=$('#gcov .gcb'),t=new Image();t.onload=()=>b.classList.add('on');t.src=im;b.style.backgroundImage=`url('${im}')`;b.style.backgroundPosition=pos(im);
  $('#gcov .gdn').onclick=()=>pg.scrollIntoView({behavior:'smooth'})}
-async function zipAll(c,btn){const sp=$('#dlp')||{};btn.disabled=true;
+async function zipAll(c,btn,list,zn){if(!(await needEmail()))return;const sp=$('#dlp')||{};btn.disabled=true;
  try{if(!window.JSZip)await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
-  const z=new JSZip(),ps=c.photos;let n=0;for(const p of ps){const r=await fetch(dlSrc(p));if(!r.ok)throw 0;z.file(dlName(p),await r.blob());n++;sp.textContent=`Preparing ${n} / ${ps.length}…`}
-  const blob=await z.generateAsync({type:'blob',compression:'STORE'},m=>sp.textContent=`Zipping ${Math.round(m.percent)}%`),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=c.slug+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
+  const z=new JSZip(),ps=list||c.photos;let n=0;for(const p of ps){const r=await fetch(dlFetch(dlSrc(p)));if(!r.ok)throw 0;z.file(dlName(p),await r.blob());n++;sp.textContent=`Preparing ${n} / ${ps.length}…`}
+  const blob=await z.generateAsync({type:'blob',compression:'STORE'},m=>sp.textContent=`Zipping ${Math.round(m.percent)}%`),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(zn||c.slug)+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
  catch{await jpDialogReady;if(window.JPDialog)await JPDialog.alert('The download could not be prepared. Please try downloading the pictures one by one instead.');else console.error('Could not prepare the download. Please download the pictures one by one instead.')}sp.textContent='';btn.disabled=false}
 const at=(l,i,x)=>PV?` data-item="${l}:${i}"${x.hide?' data-hid="1"':''}`:'';
 const shown=a=>(a||[]).map((x,i)=>[x,i]).filter(([x])=>PV||!x.hide);
@@ -161,7 +170,12 @@ gallery(){
  const run=()=>{document.title=c.name+' — '+C.name;$('#gt').textContent=c.name;txt('gd',c.date);txt('gs',c.story);
   window.__dlc=c;window.__dlon=!!c.download&&c.download!='off';
   if((c.private||c.pinHash)&&!document.querySelector('meta[name=robots]'))document.head.insertAdjacentHTML('beforeend','<meta name="robots" content="noindex,nofollow">');
-  const ps=(c.photos||[]).length?c.photos.map(src=>({src,client:c.name})):demo(9);mason($('#grid'),ps,c.lay);
+  const sets=(c.sets||[]).filter(x=>x.photos&&x.photos.length);let si=0;
+  const draw=()=>{const l=sets.length?sets[si].photos:(c.photos||[]);mason($('#grid'),l.length?l.map(src=>({src,client:c.name})):demo(9),c.lay)};draw();
+  const oldg=$('#gsets');if(oldg)oldg.remove();
+  if(sets.length>1){$('#grid').insertAdjacentHTML('beforebegin','<div id="gsets" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 18px"></div>');
+   const paint=()=>{$('#gsets').innerHTML=sets.map((x,i)=>`<button data-i="${i}" class="btn ${i===si?'f':''}" style="padding:7px 16px">${x.name}</button>`).join('')+(window.__dlon?'<button id="dlset" class="btn" style="margin-left:auto;padding:7px 16px">Download folder</button>':'')};paint();
+   $('#gsets').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='dlset'){zipAll(c,b,sets[si].photos,c.slug+'-'+sets[si].name.toLowerCase().replace(/[^a-z0-9]+/g,'-'));return}si=+b.dataset.i;paint();draw()}}
   const publicGalleries=(C.clients||[]).filter(x=>!x.private&&x.slug),currentIndex=publicGalleries.findIndex(x=>x.slug===s||x.slug===c.slug),prevGallery=currentIndex>0?publicGalleries[currentIndex-1]:null,nextGallery=currentIndex>=0?publicGalleries[currentIndex+1]:null;
   const gnav=$('#gallery-nav');
   if(gnav){
