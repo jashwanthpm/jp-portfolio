@@ -83,7 +83,7 @@ input[type=text],textarea,#side select{width:100%;background:#100e0d;border:1px 
 .pi{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;cursor:grab;background:#100e0d;outline:2px solid transparent;outline-offset:-2px;transition:.12s}.pi:hover{outline-color:#ffffff40}.pi img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .pi .no{position:absolute;left:8px;bottom:8px;background:#000b;border-radius:6px;padding:1px 8px;font-size:12px}.pi .ck{position:absolute;right:8px;top:8px;width:26px;height:26px;border-radius:50%;border:2px solid #fff9;display:grid;place-items:center;color:transparent;background:#0005}.pi .ck svg{width:14px;height:14px}
 .pi.sel{outline:3px solid var(--a)}.pi.sel .ck{background:var(--a);color:#16110b;border-color:var(--a)}.pi .cvb{position:absolute;left:8px;top:8px;background:var(--a);color:#16110b;border-radius:6px;padding:1px 9px;font-size:11.5px;font-weight:600}
-.pi.ov{box-shadow:-8px 0 0 0 var(--a)}.pi.end{border:1px dashed var(--l);display:grid;place-items:center;color:var(--m);font-size:12.5px;text-align:center;padding:10px;cursor:default;background:none}.pmg .big{grid-column:1/-1;aspect-ratio:auto;padding:60px 20px;text-align:center;color:var(--m);font-size:15px;border:1px dashed var(--l);border-radius:14px}
+.pi.ov{box-shadow:-8px 0 0 0 var(--a)}.pi.pm-placeholder{border:2px dashed var(--a);background:#c9a46a12;outline:0;cursor:default}.pi.pm-floating{z-index:80;cursor:grabbing;opacity:.94;outline-color:var(--a);box-shadow:0 18px 50px #0009;transition:none;pointer-events:none}.pi.end{border:1px dashed var(--l);display:grid;place-items:center;color:var(--m);font-size:12.5px;text-align:center;padding:10px;cursor:default;background:none}.pmg .big{grid-column:1/-1;aspect-ratio:auto;padding:60px 20px;text-align:center;color:var(--m);font-size:15px;border:1px dashed var(--l);border-radius:14px}
 .pmb{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;background:#201d1af2;border:1px solid var(--a);border-radius:14px;padding:10px 12px;box-shadow:0 10px 40px #000a;max-width:96vw;backdrop-filter:blur(8px)}.pmb[hidden]{display:none}.pmb span{padding:0 6px;color:var(--a);font-weight:600}
 #login{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;z-index:100}#login div{width:min(420px,90vw)}#login h1{font:400 34px Georgia,serif;margin-bottom:8px}#login p{color:var(--m);margin-bottom:16px}
 .lp{display:flex;flex-direction:column;border:1px solid var(--l);border-radius:12px;overflow:hidden;background:#100e0d;margin:12px 0}.lpi{aspect-ratio:1200/630;background:#1a1714;display:grid;place-items:center;color:var(--m);font-size:13px}.lpi img{width:100%;height:100%;object-fit:cover;display:block}.lpt{padding:10px 14px}.lpt small{display:block;color:var(--m);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em}.lpt b{display:block;font-weight:600;margin:2px 0}.lpt span{display:block;color:#cfc6ba;font-size:13px}
@@ -153,7 +153,7 @@ body{overflow:hidden}
 <div id="mbar"><button class="on" data-m="edit" type="button">Edit</button><button data-m="pv" type="button">Preview</button></div>
 <div id="pm" hidden>
  <div class="pmt"><button class="ghost" data-pm="done">← Back</button><div class="pmti"><b id="pmt"></b><small id="pmn"></small></div><div class="sp"></div><div class="seg" id="pms"><button data-pz="120">S</button><button data-pz="170" class="on">M</button><button data-pz="250">L</button></div><button class="ghost" data-pm="all">Select all</button><button data-pm="add">Add pictures</button><button class="pri" data-pm="done">Done</button></div>
- <div class="pmh">Drag a picture to move it. Click pictures to select them (hold Shift to select a range), then use the bar at the bottom.</div>
+ <div class="pmh">Drag a picture and drop it between pictures to reorder. Click to select; hold Shift to select a range. Use the bottom bar for precise moves, cover, or delete.</div>
  <div class="pmg" id="pmg"></div>
  <div class="pmb" id="pmb" hidden><span id="pmc"></span><button data-pm="first">To start</button><button data-pm="earlier">Earlier</button><button data-pm="later">Later</button><button data-pm="last">To end</button><button data-pm="cover">Set as cover</button><button class="dng" data-pm="del">Delete</button><button class="ghost" data-pm="clear">Clear</button></div>
 </div>
@@ -467,6 +467,42 @@ async function pmAct(x){const a=arr(PM.g,PM.i),S=[...PM.sel].sort((p,q)=>p-q);le
 $('#pm').addEventListener('click',e=>{const b=e.target.closest('[data-pm]');if(b)return pmAct(b.dataset.pm);
  const z=e.target.closest('[data-pz]');if(z){PZ=+z.dataset.pz;document.querySelectorAll('#pms button').forEach(x=>x.classList.toggle('on',x===z));pmDraw();return}
  const it=e.target.closest('.pi:not(.end)');if(it){const k=+it.dataset.k;if(e.shiftKey&&PM.last!=null){const [lo,hi]=[PM.last,k].sort((p,q)=>p-q);for(let j=lo;j<=hi;j++)PM.sel.add(j)}else PM.sel.has(k)?PM.sel.delete(k):PM.sel.add(k);PM.last=k;pmDraw()}});
+/* Pointer-based single-photo sorting: works with mouse and touch, with a clear drop slot. Native drag remains for multi-select and file drops. */
+let PMPD=null;
+$('#pmg').addEventListener('pointerdown',e=>{
+ const it=e.target.closest('.pi:not(.end)');if(!it||!PM||e.button!==0&&e.pointerType==='mouse')return;
+ const k=+it.dataset.k;if(PM.sel.has(k)&&PM.sel.size>1)return;
+ PMPD={id:e.pointerId,k,it,x:e.clientX,y:e.clientY,ox:e.clientX-it.getBoundingClientRect().left,oy:e.clientY-it.getBoundingClientRect().top,active:false,ph:null};
+ it.draggable=false;
+});
+addEventListener('pointermove',e=>{
+ if(!PMPD||e.pointerId!==PMPD.id)return;
+ const d=PMPD;if(!d.active&&Math.hypot(e.clientX-d.x,e.clientY-d.y)<6)return;
+ e.preventDefault();const grid=$('#pmg');
+ if(!d.active){
+  d.active=true;d.ph=document.createElement('div');d.ph.className='pi pm-placeholder';d.ph.setAttribute('aria-label','Drop position');
+  d.it.before(d.ph);d.it.classList.add('pm-floating');d.it.style.position='fixed';d.it.style.width=d.ph.getBoundingClientRect().width+'px';d.it.style.height=d.ph.getBoundingClientRect().height+'px';d.it.style.margin='0';d.it.style.left=(e.clientX-d.ox)+'px';d.it.style.top=(e.clientY-d.oy)+'px';
+  if(!PM.sel.has(d.k)||PM.sel.size!==1)PM.sel=new Set([d.k]);
+ }
+ d.it.style.left=(e.clientX-d.ox)+'px';d.it.style.top=(e.clientY-d.oy)+'px';
+ const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('#pmg .pi');
+ if(!target||target===d.it||target===d.ph)return;
+ if(target.classList.contains('end')){grid.insertBefore(d.ph,target);return}
+ const r=target.getBoundingClientRect(),after=e.clientY>r.top+r.height/2||(Math.abs(e.clientY-(r.top+r.height/2))<r.height*.22&&e.clientX>r.left+r.width/2);
+ grid.insertBefore(d.ph,after?target.nextSibling:target);
+});
+function pmPointerFinish(e){
+ if(!PMPD||e.pointerId!==PMPD.id)return;const d=PMPD;PMPD=null;d.it.draggable=true;
+ if(d.active){
+  const grid=$('#pmg'),a=arr(PM.g,PM.i);let dest=0;
+  for(const el of grid.children){if(el===d.ph)break;if(el.classList.contains('pi')&&!el.classList.contains('end')&&el!==d.it)dest++}
+  d.ph.remove();d.it.classList.remove('pm-floating');d.it.style.position='';d.it.style.width='';d.it.style.height='';d.it.style.margin='';d.it.style.left='';d.it.style.top='';
+  const t=dest+(d.k<dest?1:0);
+  if(t!==d.k){pmMove([d.k],t);touch();push()}else PM.sel=new Set([d.k]);
+  pmDraw();
+ }
+}
+addEventListener('pointerup',pmPointerFinish);addEventListener('pointercancel',pmPointerFinish);
 $('#pm').addEventListener('dragstart',e=>{const it=e.target.closest('.pi:not(.end)');if(it){PM.drag=+it.dataset.k;e.dataTransfer.effectAllowed='move'}});
 $('#pm').addEventListener('dragover',e=>{const it=e.target.closest('.pi');if(!it)return;e.preventDefault();document.querySelectorAll('#pmg .ov').forEach(x=>x.classList.remove('ov'));it.classList.add('ov')});
 $('#pm').addEventListener('dragend',()=>document.querySelectorAll('#pmg .ov').forEach(x=>x.classList.remove('ov')));
