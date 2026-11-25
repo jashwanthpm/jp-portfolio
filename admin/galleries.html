@@ -769,6 +769,32 @@ async function load(){
     route();
   }catch(e){$('#login').hidden=false;$('#err').textContent=e.message}
 }
+async function syncPublicGalleryPages(data){
+  const apiPath=p=>API+'/contents/'+p.split('/').map(encodeURIComponent).join('/')+'?ref='+BR+'&t='+Date.now();
+  const get=async p=>{const r=await fetch(apiPath(p),{headers:hdr(),cache:'no-store'});if(r.status===404)return null;if(!r.ok)throw Error('Could not read '+p+' ('+r.status+')');return r.json()};
+  const put=async(p,content,sha0)=>{const body={message:'Publish client gallery page: '+p,content:btoa(unescape(encodeURIComponent(content))),branch:BR};if(sha0)body.sha=sha0;const r=await fetch(API+'/contents/'+p.split('/').map(encodeURIComponent).join('/'),{method:'PUT',headers:hdr(),body:JSON.stringify(body)});if(!r.ok){let m='';try{m=(await r.json()).message||''}catch{}throw Error('Could not publish '+p+' ('+r.status+')'+(m?': '+m:''))}};
+  const del=async(p,sha0)=>{const r=await fetch(API+'/contents/'+p.split('/').map(encodeURIComponent).join('/'),{method:'DELETE',headers:hdr(),body:JSON.stringify({message:'Remove old client gallery URL: '+p,sha:sha0,branch:BR})});if(!r.ok&&r.status!==404)throw Error('Could not remove old gallery page '+p+' ('+r.status+')')};
+  const templateRes=await get('gallery.html');if(!templateRes)throw Error('Could not read gallery.html template');
+  const template=decodeURIComponent(escape(atob((templateRes.content||'').replace(/\\n/g,''))));
+  if(!template.includes('<!--og-->'))throw Error('Gallery page template is missing its SEO markers');
+  const dir=await get('g');const existing=Array.isArray(dir)?dir:[],keep=new Set(data.clients.map(c=>String(c.slug||'').trim()));
+  for(const item of existing){
+    if(item.type!=='dir'||keep.has(item.name))continue;
+    const children=await get('g/'+item.name);if(!Array.isArray(children))continue;
+    const page=children.find(x=>x.type==='file'&&x.name==='index.html');if(page)await del('g/'+item.name+'/index.html',page.sha);
+  }
+  const name=data.name||'Jashwanth JP',share=data.share||{};
+  for(const c of data.clients){
+    const slug=String(c.slug||'').trim();if(!slug)continue;
+    const locked=!!(c.private||c.pinHash),title=(c.name||'Gallery')+' — '+name;
+    const desc=(!locked&&c.story)?c.story.replace(/\\s+/g,' ').trim().slice(0,160):'View the pictures from this session.';
+    const image=(c.ogImg&&c.ogOn!==false)?location.origin+c.ogImg+'?v='+(c.ogv||1):(share.image?location.origin+share.image+'?v='+(share.v||1):'');
+    const canonical=location.origin+'/g/'+slug+'/';
+    const block=['<!--og-->',`<title>${esc(title)}</title>`, `<meta name="description" content="${esc(desc)}">`,locked?'<meta name="robots" content="noindex,nofollow">':'','<meta property="og:type" content="website">',`<meta property="og:site_name" content="${esc(name)}">`,`<meta property="og:title" content="${esc(title)}">`,`<meta property="og:description" content="${esc(desc)}">`,`<meta property="og:url" content="${canonical}">`,image?`<meta property="og:image" content="${image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${esc(c.name)}">`:'',`<meta name="twitter:card" content="${image?'summary_large_image':'summary'}">`,'<!--/og-->'].filter(Boolean).join('\\n');
+    const html=template.replace(/<!--og-->[\\s\\S]*?<!--\\/og-->/,()=>block).replace(/(href|src)="assets\\//g,'$1="/assets/').replace(/<script\\s+src="\\/assets\\/site\\.js(?:\\?[^"]*)?"><\\/script>/,m=>`<script>window.GSLUG=${JSON.stringify(slug)}<\\/script>`+m);
+    const path='g/'+slug+'/index.html',old=await get(path);await put(path,html,old?.sha);
+  }
+}
 async function publish(){
   if(!dirty)return;
   const slugs=D.clients.map(c=>String(c.slug||'').trim());
@@ -791,6 +817,10 @@ async function publish(){
     for(const field of ['dims','focus','hi']){
       latest[field]=Object.assign({},latest[field]||{},D[field]||{});
     }
+
+    // Generate each public /g/<slug>/ page from the shared gallery template,
+    // and remove old generated pages when a client URL slug has changed.
+    await syncPublicGalleryPages(latest);
 
     const body={message:'Update galleries and portfolio',content:btoa(unescape(encodeURIComponent(JSON.stringify(latest,null,2)))),sha:latestJson.sha,branch:BR};
     const r=await fetch(API+'/contents/content.json',{method:'PUT',headers:hdr(),body:JSON.stringify(body)});
