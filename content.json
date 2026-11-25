@@ -115,43 +115,6 @@
   ],
   "clients": [
     {
-      "name": "Meher & Deekshith",
-      "slug": "demo",
-      "date": "",
-      "story": "",
-      "cover": "https://lh3.googleusercontent.com/d/1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo=w2000",
-      "photos": [
-        "https://lh3.googleusercontent.com/d/1h1xWrkdnKqSfMXRBgQNKKqC-l2doUz-3=w2000",
-        "https://lh3.googleusercontent.com/d/1WZ17kVQTmH7OULiQIBs7lZLZc-y75rcj=w2000",
-        "https://lh3.googleusercontent.com/d/1P4gmLeN6VU9gPw8DO0Chj2E4fJjMUkeW=w2000",
-        "https://lh3.googleusercontent.com/d/1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo=w2000",
-        "https://lh3.googleusercontent.com/d/1zfNodFiib9uLszy23uHMcsUd-XdZXCBC=w2000",
-        "https://lh3.googleusercontent.com/d/1DYAcgSrVoJvAhTshaxS1zFkJRAHZdngN=w2000",
-        "https://lh3.googleusercontent.com/d/1S9_nGmu62zph2WEbgIrLdxELRuXC5_tk=w2000",
-        "https://lh3.googleusercontent.com/d/1EstmWSxa77ToqhYWV31Y6cUbbYW4dZjj=w2000",
-        "https://lh3.googleusercontent.com/d/1RhYqnxC056P8AQCr9hi_YZdnz_QaFfkk=w2000",
-        "https://lh3.googleusercontent.com/d/1DJ1evlWfFKe3byJKk1VFt_yvBD3QCSqP=w2000",
-        "https://lh3.googleusercontent.com/d/14PPTH4cEIpuiamiIhpGrRG62AGmn9blI=w2000",
-        "https://lh3.googleusercontent.com/d/1Wt26F-uIUEtny8vsh3en5V7-0csbh5O-=w2000",
-        "https://lh3.googleusercontent.com/d/1DNBv0fmeFtb4U9E3L84uHaE3G3dOWRyx=w2000",
-        "https://lh3.googleusercontent.com/d/1qbaCOesglYv4t1yY-bF5zePcJ3oga8f5=w2000"
-      ],
-      "private": false,
-      "onHome": false,
-      "ogOn": true,
-      "showCover": true,
-      "coverSize": "full",
-      "download": "off",
-      "lay": {
-        "style": "masonry",
-        "gap": 14,
-        "cols": 3,
-        "mcols": 2,
-        "round": 0
-      },
-      "ogs": ""
-    },
-    {
       "name": "Abhay & Sanjivani",
       "slug": "abhay-sanjivani",
       "date": "2026",
@@ -320,6 +283,44 @@
       "ogv": 1792835843498,
       "ogs": "/images/1791288495765-23w9.jpg|32% 17%",
       "stubSig": "[\"Happy 40♡\",\"\",false,false,true,\"/images/1791288495765-23w9.jpg\",\"32% 17%\",\"/share.jpg\",1792136406810,\"Jashwanth JP\"]"
+    },
+    {
+      "name": "Meher & Deekshith",
+      "slug": "demo",
+      "date": "",
+      "story": "",
+      "cover": "https://lh3.googleusercontent.com/d/1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo=w2000",
+      "photos": [
+        "https://lh3.googleusercontent.com/d/1h1xWrkdnKqSfMXRBgQNKKqC-l2doUz-3=w2000",
+        "https://lh3.googleusercontent.com/d/1WZ17kVQTmH7OULiQIBs7lZLZc-y75rcj=w2000",
+        "https://lh3.googleusercontent.com/d/1P4gmLeN6VU9gPw8DO0Chj2E4fJjMUkeW=w2000",
+        "https://lh3.googleusercontent.com/d/1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo=w2000",
+        "https://lh3.googleusercontent.com/d/1zfNodFiib9uLszy23uHMcsUd-XdZXCBC=w2000",
+        "https://lh3.googleusercontent.com/d/1DYAcgSrVoJvAhTshaxS1zFkJRAHZdngN=w2000",
+        "https://lh3.googleusercontent.com/d/1S9_nGmu62zph2WEbgIrLdxELRuXC5_tk=w2000",
+        "https://lh3.googleusercontent.com/d/1EstmWSxa77ToqhYWV31Y6cUbbYW4dZjj=w2000",
+        "https://lh3.googleusercontent.com/d/1RhYqnxC056P8AQCr9hi_YZdnz_QaFfkk=w2000",
+        "https://lh3.googleusercontent.com/d/1DJ1evlWfFKe3byJKk1VFt_yvBD3QCSqP=w2000",
+        "https://lh3.googleusercontent.com/d/14PPTH4cEIpuiamiIhpGrRG62AGmn9blI=w2000",
+        "https://lh3.googleusercontent.com/d/1Wt26F-uIUEtny8vsh3en5V7-0csbh5O-=w2000",
+        "https://lh3.googleusercontent.com/d/1DNBv0fmeFtb4U9E3L84uHaE3G3dOWRyx=w2000",
+        "https://lh3.googleusercontent.com/d/1qbaCOesglYv4t1yY-bF5zePcJ3oga8f5=w2000"
+      ],
+      "private": false,
+      "onHome": false,
+      "ogOn": true,
+      "showCover": true,
+      "coverSize": "full",
+      "download": "off",
+      "lay": {
+        "style": "masonry",
+        "gap": 14,
+        "cols": 3,
+        "mcols": 2,
+        "round": 0
+      },
+      "ogs": "",
+      "stubSig": "[\"Meher & Deekshith\",\"\",false,false,true,\"https://lh3.googleusercontent.com/d/1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo=w2000\",\"54% 33%\",\"/share.jpg\",1792136406810,\"Jashwanth JP\"]"
     },
     {
       "name": "Pranav & Nishitha",
