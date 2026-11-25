@@ -765,7 +765,7 @@ async function load(){
     if(!r.ok)throw Error('Could not read content.json ('+r.status+'). Check token permissions.');
     const j=await r.json();sha=j.sha;
     D=JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))));
-    D.clients=D.clients||[];D.clients.forEach(c=>{c.photos=c.photos||[];c.lay=c.lay||{}});
+    D.clients=D.clients||[];D.clients.forEach(c=>{c.photos=c.photos||[];c.lay=c.lay||{}});deployExpectedClients=JSON.stringify(D.clients);
     $('#login').hidden=true;$('#status').textContent='All changes saved';
     fetch(API,{headers:hdr()}).then(r=>r.ok?r.json():null).then(j=>{if(j){repoKB=j.size;repoText()}}).catch(()=>{});
     route();
@@ -866,12 +866,16 @@ addEventListener('keydown',e=>{
 $('#connect').onclick=()=>{token=$('#token').value.trim();localStorage.setItem('jp_tok',token);load()};
 
 /* ---------- live deployment status ---------- */
-let deployTimer=null,deployBusy=false,deployShown=false;
+let deployTimer=null,deployBusy=false,deployShown=false,deployExpectedClients=null;
 const deploySet=(title,desc,rows='')=>{$('#deploytitle').textContent=title;$('#deploydesc').textContent=desc;$('#deploylist').innerHTML=rows};
 async function checkLiveGalleryPages(){
   if(deployBusy||!D)return;deployBusy=true;$('#deploybtn').textContent='Checking…';
+  if(dirty){deploySet('Changes not published','Publish your edits first. After publishing, this panel will track the live deployment.');deployBusy=false;$('#deploybtn').textContent='Deployment status';return}
   const clients=(D.clients||[]).filter(c=>c.slug),rows=[];
   try{
+    let contentReady=false;
+    try{const cr=await fetch(location.origin+'/content.json?deploycheck='+Date.now(),{cache:'no-store'});if(cr.ok){const live=await cr.json();contentReady=JSON.stringify(live.clients||[])===deployExpectedClients}}catch{}
+    if(!contentReady)rows.push('<div>… Gallery data — waiting for the latest content.json</div>');
     for(const c of clients){
       const slug=String(c.slug),url=location.origin+'/g/'+slug+'/?deploycheck='+Date.now();
       try{
@@ -881,7 +885,7 @@ async function checkLiveGalleryPages(){
         rows.push('<div>'+(ok?'✓ ':'… ')+esc(c.name||slug)+' — '+(ok?'live':'waiting for Pages')+'</div>');
       }catch{rows.push('<div>… '+esc(c.name||slug)+' — checking again</div>')}
     }
-    const done=rows.length===clients.length&&rows.every(x=>x.startsWith('<div>✓'));
+    const done=contentReady&&rows.length===clients.length&&rows.every(x=>x.startsWith('<div>✓'));
     deploySet(done?'Fully deployed':'Deployment in progress',done?'All client gallery URLs are responding with the published page.':'Published to GitHub. GitHub Pages is still updating; this check will continue in the background.',rows.join(''));
     if(done){if(deployTimer){clearInterval(deployTimer);deployTimer=null}$('#deploybtn').textContent='Live ✓';$('#status').textContent='All gallery pages live'}
     else $('#deploybtn').textContent='Deployment status';
