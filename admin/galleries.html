@@ -1,36 +1,617 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Studio — Gallery Manager</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Studio — Galleries</title>
 <link rel="icon" href="../images/favicon-1791284648615.png">
 <style>
-:root{--bg:#0e0d0c;--p:#171513;--p2:#1f1c19;--p3:#27231f;--line:#302a25;--fg:#efe9df;--muted:#9d9387;--gold:#c9a46a;--red:#ff8f80}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 -apple-system,Inter,system-ui,sans-serif;height:100dvh;overflow:hidden}button,input,textarea,select{font:inherit}button,select{background:var(--p3);color:var(--fg);border:1px solid var(--line);border-radius:9px;padding:9px 13px;cursor:pointer}button:hover{border-color:var(--gold)}button:disabled{opacity:.4;cursor:default}.primary{background:var(--gold);color:#17120b;border-color:var(--gold);font-weight:600}.ghost{background:none}.danger{color:var(--red)}input,textarea{background:#100e0d;border:1px solid var(--line);border-radius:9px;color:var(--fg);padding:10px 12px;width:100%;min-width:0}input:focus,textarea:focus,select:focus{outline:0;border-color:var(--gold)}textarea{resize:vertical}.top{height:62px;display:flex;align-items:center;gap:14px;padding:0 20px;background:var(--p);border-bottom:1px solid var(--line)}.brand{font:24px Georgia,serif}.sub{color:var(--muted);font-size:12px}.spacer{flex:1}.status{color:var(--muted);font-size:12px}.layout{height:calc(100dvh - 62px);display:grid;grid-template-columns:280px minmax(0,1fr) 320px}.left{background:var(--p);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}.lefthead{padding:16px;border-bottom:1px solid var(--line)}.lefthead h2{font:22px Georgia,serif;margin:0 0 12px}.lefthead input{margin-bottom:10px}.filters{display:flex;gap:6px;flex-wrap:wrap}.filters button{padding:5px 9px;font-size:12px;color:var(--muted)}.filters button.active{color:var(--gold);border-color:var(--gold)}.clients{overflow:auto;padding:8px}.client{display:flex;align-items:center;gap:10px;padding:9px;border:1px solid transparent;border-radius:10px;cursor:pointer;margin-bottom:4px}.client:hover{background:var(--p2)}.client.active{background:var(--p2);border-color:var(--gold)}.cthumb{width:50px;height:50px;border-radius:7px;overflow:hidden;background:#100e0d;flex:none}.cthumb img{width:100%;height:100%;object-fit:cover}.cinfo{min-width:0;flex:1}.cinfo b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:550}.cinfo small{color:var(--muted);font-size:11.5px}.tag{font-size:10px;border:1px solid var(--line);border-radius:20px;padding:2px 6px;color:var(--muted);white-space:nowrap}.center{min-width:0;display:flex;flex-direction:column}.worktop{padding:16px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);flex-wrap:wrap}.worktitle{min-width:0}.worktitle h1{font:26px Georgia,serif;margin:0}.worktitle p{color:var(--muted);margin:3px 0 0;font-size:12px}.photos{flex:1;min-height:0;overflow:auto;padding:18px 20px 100px}.welcome{flex:1;display:grid;place-items:center;padding:30px;text-align:center;color:var(--muted)}.welcome h2{font:30px Georgia,serif;color:var(--fg);margin:0 0 8px}.welcome p{max-width:360px}.photos[hidden],.welcome[hidden]{display:none!important}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;align-content:start}.photo{position:relative;min-height:260px;max-height:58vh;background:#100e0d;border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:grab;user-select:none;touch-action:pan-y;display:flex;align-items:center;justify-content:center;padding:8px}.photo img{max-width:100%;max-height:calc(58vh - 16px);width:auto;height:auto;object-fit:contain;display:block;pointer-events:none}.photo.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}.photo.dragging{opacity:.28}.photo.dropbefore{box-shadow:-4px 0 0 var(--gold)}.photo.dropafter{box-shadow:4px 0 0 var(--gold)}.num{position:absolute;bottom:7px;left:7px;background:#000b;border-radius:6px;padding:2px 7px;font-size:11px}.coverflag{position:absolute;top:7px;left:7px;background:var(--gold);color:#17120b;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:600}.photo button{display:none}.focusbox{position:relative;width:100%;aspect-ratio:1200/630;max-height:260px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#100e0d;cursor:crosshair}.focusbox img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}.focusdot{position:absolute;width:18px;height:18px;border:2px solid white;border-radius:50%;box-shadow:0 0 0 2px #0008;transform:translate(-50%,-50%);pointer-events:none}.focusdot:after{content:'';position:absolute;left:50%;top:50%;width:4px;height:4px;background:white;border-radius:50%;transform:translate(-50%,-50%)}.coverpreview{width:100%;aspect-ratio:1200/630;max-height:240px;object-fit:cover;border-radius:10px;background:#100e0d}.photo-tools{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.photo-tools button{padding:7px 10px;font-size:12px}.empty{padding:60px 20px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}.right{background:var(--p);border-left:1px solid var(--line);overflow:auto;padding:18px 16px 100px}.right h2{font:22px Georgia,serif;margin:0 0 15px}.tabs{display:flex;gap:4px;margin-bottom:16px;background:#100e0d;border:1px solid var(--line);border-radius:10px;padding:4px}.tabs button{flex:1;padding:7px 5px;border:0;background:none;color:var(--muted);font-size:12px}.tabs button.active{background:var(--p3);color:var(--gold)}.field{margin:13px 0}.field label{display:block;color:#d2c8bc;font-size:12px;margin-bottom:6px}.field small{display:block;color:var(--muted);font-size:11.5px;margin-top:5px}.check{display:flex;gap:9px;align-items:flex-start;margin:12px 0;color:#d7cec2;font-size:13px}.check input{width:auto;margin-top:3px;accent-color:var(--gold)}.rule{border:0;border-top:1px solid var(--line);margin:18px 0}.row{display:flex;gap:7px}.row button{flex:none}.shareurl{font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.note{color:var(--muted);font-size:12px;line-height:1.5}.footer{position:fixed;bottom:0;left:280px;right:320px;padding:10px 18px;background:#171513f2;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;backdrop-filter:blur(8px)}.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:var(--p3);border:1px solid var(--gold);border-radius:10px;padding:10px 16px;display:none;z-index:10}.login{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;z-index:20}.login[hidden]{display:none}.loginbox{width:min(420px,92vw);background:var(--p);border:1px solid var(--line);border-radius:15px;padding:24px}.loginbox h1{font:28px Georgia,serif}.loginbox p{color:var(--muted);font-size:13px}.loginbox input{margin:10px 0}.newgallery{margin:10px 8px 8px;width:calc(100% - 16px);border-style:dashed;color:var(--gold)}@media(max-width:1050px){.layout{grid-template-columns:235px minmax(0,1fr)}.right{position:fixed;right:0;top:62px;bottom:0;width:300px;transform:translateX(100%);transition:transform .2s;z-index:5;box-shadow:-10px 0 30px #0006}.right.open{transform:translateX(0)}.footer{right:0}.inspectorbtn{display:inline-flex!important}}@media(max-width:700px){.top{padding:0 12px;height:56px}.layout{height:calc(100dvh - 56px);grid-template-columns:110px minmax(0,1fr)}.lefthead{padding:8px}.lefthead h2{font-size:15px}.lefthead input{font-size:12px;padding:7px}.filters{gap:3px}.filters button{font-size:10px;padding:4px 5px}.client{padding:6px;flex-direction:column;gap:4px;text-align:center}.cthumb{width:62px;height:48px}.cinfo b{font-size:11px;white-space:normal;line-height:1.2}.cinfo small{font-size:10px}.tag{display:none}.worktop{padding:10px 12px}.worktitle h1{font-size:20px}.worktitle p{font-size:11px}.worktop button{padding:7px 9px;font-size:12px}.photos{padding:10px 8px 95px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.photo{border-radius:7px}.footer{left:110px;padding:8px}.footer .status{display:none}.right{top:56px}.sub{display:none}} 
-</style></head><body>
-<header class="top"><div><div class="brand">Studio</div><div class="sub">All client galleries</div></div><span class="status" id="status">Connect to your Studio</span><div class="spacer"></div><a href="index.html" style="color:var(--muted);text-decoration:none;font-size:13px">← Studio</a><button id="save" class="primary" disabled>Publish</button></header>
-<div class="layout"><aside class="left"><div class="lefthead"><h2>Client galleries</h2><input id="search" placeholder="Search clients…"><div class="filters"><button class="active" data-filter="all">All</button><button data-filter="public">Public</button><button data-filter="hidden">Hidden</button><button data-filter="pin">PIN</button></div></div><div class="clients" id="clients"></div><button class="newgallery" id="new">＋ New gallery</button></aside>
-<main class="center"><div class="worktop"><div class="worktitle"><h1 id="title">Choose a gallery</h1><p id="meta">Select a client on the left to view their photographs.</p></div><div class="spacer"></div><button id="open" disabled>View ↗</button><button id="addphotos">Add photos ↗</button><button id="inspector" class="inspectorbtn" style="display:none">Settings</button></div><div class="welcome" id="welcome"><div><h2>Your galleries, together.</h2><p>Choose a client on the left to open their collection, view every photo, set the cover and adjust the gallery preview.</p></div></div><section class="photos" id="photoarea" hidden><div class="grid" id="grid"></div></section></main>
-<aside class="right" id="right"><h2 id="righttitle">Gallery settings</h2><div class="tabs"><button class="active" data-tab="details">Details</button><button data-tab="share">Share</button><button data-tab="design">Design</button></div><div id="settings"></div></aside></div>
-<div class="footer"><span id="count" class="status">0 photos</span><span class="spacer"></span><span class="status">Drag thumbnails to arrange · Set cover from any photo</span></div><div class="toast" id="toast"></div>
-<div class="login" id="login"><div class="loginbox"><h1>Gallery Manager</h1><p>Use the same GitHub token as Studio. It stays in this browser, in the same storage key as the Studio editor.</p><input id="token" type="password" placeholder="GitHub token"><button class="primary" id="connect" style="width:100%">Connect</button><p id="err" style="color:var(--red)"></p></div></div>
-<input type="file" id="files" accept="image/*" multiple hidden>
-<script>
-const REPO='jashwanthpm/jp-portfolio',BR='main',API='https://api.github.com/repos/'+REPO+'/contents/content.json';
-let token=localStorage.getItem('jp_tok')||'',D=null,sha='',dirty=false,selected=-1,activePhoto=-1,filter='all',tab='details',dragFrom=-1;
-const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),headers=()=>({Authorization:'Bearer '+token,Accept:'application/vnd.github+json','Content-Type':'application/json'});
-const img=p=>p?((/^https?:\/\//.test(p))?p:p.startsWith('/')?p:'/'+p):'';
-const toast=s=>{const t=$('#toast');t.textContent=s;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',2400)};
-const client=()=>D?.clients?.[selected];
-function mark(){dirty=true;$('#save').disabled=false;$('#status').textContent='Changes not published';}
-function renderList(){const q=$('#search').value.toLowerCase();$('#clients').innerHTML=(D.clients||[]).map((c,i)=>({c,i})).filter(({c})=>(c.name||'').toLowerCase().includes(q)||(c.slug||'').includes(q)).filter(({c})=>filter==='all'?true:filter==='public'?!c.private:filter==='hidden'?!!c.private:!!c.pinHash).map(({c,i})=>{const p=c.cover||c.photos?.[0],fp=((D.focus||{})[p]||'50% 50%');return '<div class="client '+(i===selected?'active':'')+'" data-i="'+i+'"><div class="cthumb">'+(p?'<img loading="lazy" src="'+esc(img(p))+'" style="object-position:'+fp+'">':'')+'</div><div class="cinfo"><b>'+esc(c.name||'Untitled gallery')+'</b><small>'+((c.photos||[]).length)+' photos · '+esc(c.date||'')+'</small></div>'+(c.pinHash?'<span class="tag">PIN</span>':'')+(c.private?'<span class="tag">Hidden</span>':'')+'</div>'}).join('')||'<div class="note" style="padding:14px">No galleries match.</div>';$('#clients').querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>{selected=+el.dataset.i;activePhoto=-1;tab='details';$('#right').classList.remove('open');render()});}
-function renderPhotos(){const c=client();const area=$('#photoarea'),welcome=$('#welcome'),right=$('#right');if(!c){area.hidden=true;welcome.hidden=false;$('#title').textContent='Choose a client';$('#meta').textContent='Your galleries will open here.';$('#count').textContent=(D.clients||[]).length+' client galleries';$('#open').disabled=true;$('#addphotos').disabled=true;$('#inspector').disabled=true;right.classList.remove('open');$('#settings').innerHTML='';$('#righttitle').textContent='Gallery settings';return}area.hidden=false;welcome.hidden=true;$('#addphotos').disabled=false;$('#inspector').disabled=false;const photos=c.photos||[];if(activePhoto>=photos.length)activePhoto=photos.length-1;$('#title').textContent=c.name||'Untitled gallery';$('#meta').textContent=photos.length+' photos · '+(c.private?'Hidden from public listing':'Public')+(c.pinHash?' · PIN protected':'')+' · /g/'+c.slug+'/';$('#count').textContent=photos.length+' photos';$('#open').disabled=!c.slug;$('#grid').innerHTML=photos.length?photos.map((p,k)=>'<div class="photo '+(k===activePhoto?'selected':'')+'" draggable="true" data-k="'+k+'"><img loading="lazy" src="'+esc(img(p))+'" draggable="false" alt="Photo '+(k+1)+'"><span class="num">'+(k+1)+'</span>'+(c.cover===p?'<span class="coverflag">Gallery cover</span>':'')+'</div>').join(''):'<div class="empty">This gallery has no photos yet.<br><br>Use Add photos to open Studio’s original picture manager.</div>';const grid=$('#grid');grid.querySelectorAll('.photo').forEach(el=>{el.onclick=()=>{activePhoto=+el.dataset.k;tab='photo';render()};el.addEventListener('dragstart',e=>{dragFrom=+el.dataset.k;el.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',String(dragFrom))});el.addEventListener('dragend',()=>{dragFrom=-1;grid.querySelectorAll('.photo').forEach(x=>x.classList.remove('dragging','dropbefore','dropafter'))});el.addEventListener('dragover',e=>{if(dragFrom<0)return;e.preventDefault();grid.querySelectorAll('.photo').forEach(x=>x.classList.remove('dropbefore','dropafter'));const r=el.getBoundingClientRect();el.classList.add(e.clientX<r.left+r.width/2?'dropbefore':'dropafter')});el.addEventListener('drop',e=>{e.preventDefault();if(dragFrom<0)return;const to=+el.dataset.k,r=el.getBoundingClientRect(),after=e.clientX>r.left+r.width/2;let dest=to+(after?1:0);const [item]=c.photos.splice(dragFrom,1);if(dragFrom<dest)dest--;c.photos.splice(Math.max(0,Math.min(c.photos.length,dest)),0,item);activePhoto=dest;dragFrom=-1;mark();render()})});}
-function field(label,key,type='text',hint=''){const c=client(),v=key.split('.').reduce((o,k)=>o?.[k],c)??'';return '<div class="field"><label>'+label+'</label>'+(type==='textarea'?'<textarea data-field="'+key+'" rows="4">'+esc(v)+'</textarea>':'<input data-field="'+key+'" type="text" value="'+esc(v)+'">')+(hint?'<small>'+hint+'</small>':'')+'</div>'}
-function checkbox(label,key,hint=''){return '<label class="check"><input type="checkbox" data-check="'+key+'" '+(((client()[key]===undefined&&(key==='ogOn'||key==='showCover'))||client()[key])?'checked':'')+'><span>'+label+(hint?'<small class="note" style="display:block">'+hint+'</small>':'')+'</span></label>'}
-function select(label,key,opts){const v=key.split('.').reduce((o,k)=>o?.[k],client())??opts[0][0];return '<div class="field"><label>'+label+'</label><select data-field="'+key+'">'+opts.map(([x,t])=>'<option value="'+x+'" '+(v==x?'selected':'')+'>'+t+'</option>').join('')+'</select></div>'}
-function renderSettings(){const c=client();if(!c)return;let html='';if(tab==='photo'){const photos=c.photos||[],k=activePhoto,p=photos[k];if(!p){tab='details';return renderSettings()}const foc=(D.focus||{})[p]||'50% 50%',xy=foc.split(' ').map(x=>parseFloat(x)||50);$('#righttitle').textContent='Photo '+(k+1)+' of '+photos.length;document.querySelector('.tabs').style.display='none';const cov=c.cover===p;html='<div class="field"><label>Selected photograph</label><img class="coverpreview" src="'+esc(img(p))+'" style="object-fit:contain;aspect-ratio:auto;max-height:210px"></div><div class="actions"><button id="setcover" class="primary">'+(cov?'Current cover':'Set as gallery cover')+'</button><button id="prevphoto" '+(k===0?'disabled':'')+'>← Previous</button><button id="nextphoto" '+(k===photos.length-1?'disabled':'')+'>Next →</button></div><hr class="rule"><div class="field"><label>Cover & share-thumbnail crop</label><small>Click or drag the point on the preview to choose what stays centred in the cover and link thumbnail.</small><div class="focusbox" id="focusbox"><img src="'+esc(img(p))+'" style="object-position:'+xy[0]+'% '+xy[1]+'%"><i class="focusdot" id="focusdot" style="left:'+xy[0]+'%;top:'+xy[1]+'%"></i></div><small id="focusread">Focus '+Math.round(xy[0])+'% · '+Math.round(xy[1])+'%</small></div><div class="field"><label>Gallery list thumbnail</label><img class="coverpreview" src="'+esc(img(c.cover||photos[0]||p))+'" style="object-position:'+(((D.focus||{})[c.cover||photos[0]||p]||'50% 50%').replace(' ',' '))+';aspect-ratio:1;max-height:180px"></div><div class="photo-tools"><button id="backsettings">Gallery settings</button><button id="moveleft" '+(k===0?'disabled':'')+'>Move earlier</button><button id="moveright" '+(k===photos.length-1?'disabled':'')+'>Move later</button><button id="removephoto" class="danger">Remove from gallery</button></div><p class="note">The photo is shown fully in the collection. Cover focus controls the cropped cover/link preview, while the collection thumbnail keeps the entire photo visible.</p>';}else{document.querySelector('.tabs').style.display='';$('#righttitle').textContent='Gallery settings';if(tab==='details'){html=field('Gallery / client name','name')+field('Date','date')+field('Short story / description','story','textarea')+'<div class="field"><label>Gallery URL</label><input readonly value="'+esc(location.origin+'/g/'+c.slug+'/')+'"><small>Changing the slug can break links already sent, so it is managed from the main Studio.</small></div>'}else if(tab==='share'){html='<div class="field"><label>Shareable gallery link</label><div class="row"><input class="shareurl" readonly value="'+esc(location.origin+'/g/'+c.slug+'/')+'"><button id="copy">Copy</button></div></div>'+checkbox('Hide from the public galleries page','private','The direct link continues to work.')+checkbox('Show on the home page','onHome')+checkbox('Use this gallery cover for link previews','ogOn')+'<hr class="rule"><div class="field"><label>PIN protection</label><div class="note">'+(c.pinHash?'PIN protection is enabled. The old PIN cannot be viewed.':'No PIN is set; anyone with the link can open it.')+'</div></div><div class="field"><label>'+(c.pinHash?'Set a new PIN':'Choose a PIN')+'</label><div class="row"><input id="pin" type="password" inputmode="numeric" placeholder="4–10 characters"><button id="setpin" class="primary">'+(c.pinHash?'Change':'Set')+' PIN</button></div></div>'+(c.pinHash?'<button id="removepin" class="ghost danger">Remove PIN protection</button>':'')+'<p class="note" style="margin-top:12px">PINs are stored as a salted SHA-256 hash. Publish after changing access settings. Link preview images are refreshed by publishing from the main Studio.</p>'}else{c.lay=c.lay||{};html=checkbox('Show large cover at top','showCover')+select('Cover height','coverSize',[['full','Full screen'],['tall','Tall'],['half','Half']])+select('Gallery arrangement','lay.style',[['masonry','Masonry · natural shapes'],['rows','Even rows'],['grid','Square grid'],['pair','Side by side'],['story','Left & right'],['portrait','Portrait'],['stack','One by one'],['strip','Film strip']])+select('Desktop columns','lay.cols',[['2','2'],['3','3'],['4','4'],['5','5']])+select('Phone columns','lay.mcols',[['1','1 · large'],['2','2']])+select('Photo corners','lay.round',[['0','Square'],['8','Soft'],['18','Round']])+ '<div class="field"><label>Space between photos · <span id="gapval">'+(c.lay.gap??14)+'</span> px</label><input type="range" min="0" max="48" data-field="lay.gap" value="'+(c.lay.gap??14)+'" style="accent-color:var(--gold)"></div>'+select('Visitor downloads','download',[['off','Off'],['std','Standard size'],['high','High resolution'],['orig','Original files']])+'<p class="note">Gallery design settings are stored per client and apply when the gallery is published.</p>'}
+:root{--bg:#0e0d0c;--p:#171513;--p2:#1f1c19;--p3:#27231f;--line:#302a25;--fg:#efe9df;--muted:#9d9387;--gold:#c9a46a;--red:#ff8f80;--serif:Georgia,'Times New Roman',serif}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,Inter,system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+button,input,textarea,select{font:inherit;color:inherit}
+button,select{background:var(--p3);border:1px solid var(--line);border-radius:9px;padding:9px 14px;cursor:pointer;transition:border-color .15s,background .15s}
+button:hover,select:hover{border-color:var(--gold)}
+button:disabled{opacity:.4;cursor:default}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.primary{background:var(--gold);color:#17120b;border-color:var(--gold);font-weight:600}
+.primary:hover{background:#d6b57d;border-color:#d6b57d}
+.ghost{background:none}.danger{color:var(--red)}
+input,textarea{background:#100e0d;border:1px solid var(--line);border-radius:9px;padding:10px 12px;width:100%;min-width:0}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:0}
+textarea{resize:vertical}
+.muted{color:var(--muted)}.sp{flex:1}
+
+/* top bar */
+.top{height:60px;flex:none;display:flex;align-items:center;gap:18px;padding:0 24px;background:var(--p);border-bottom:1px solid var(--line)}
+.brand{font:24px var(--serif)}
+.nav{display:flex;gap:4px}
+.navb{background:none;border:0;border-radius:8px;color:var(--muted);padding:8px 14px}
+.navb:hover{color:var(--fg)}
+.navb.on{color:var(--gold);background:var(--p3)}
+.chip{display:flex;align-items:center;gap:9px;background:none;padding:6px 12px;font-size:12px;color:var(--muted)}
+.chip i{display:block;width:70px;height:5px;border-radius:5px;background:var(--line);overflow:hidden}
+.chip i b{display:block;height:100%;background:var(--gold)}
+.status{color:var(--muted);font-size:12px}
+.toplink{color:var(--muted);text-decoration:none;font-size:13px}
+
+#view{flex:1;min-height:0;overflow:auto}
+.page{max-width:1480px;margin:0 auto;padding:34px 28px 130px}
+.pagehead{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+h1.big{font:400 42px/1.1 var(--serif);margin:0 0 6px}
+.pagehead p{margin:0}
+.search{width:240px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{border:0;border-radius:0;background:none;color:var(--muted);padding:8px 13px}
+.seg button.on{background:var(--p3);color:var(--gold)}
+
+/* client cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:30px 26px;align-items:start}
+.card{position:relative;display:block;color:inherit;text-decoration:none;border-radius:14px}
+.cardimg{aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--p2);border:1px solid var(--line);transition:border-color .2s}
+.cardimg img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.card:hover .cardimg{border-color:var(--gold)}
+.card:hover .cardimg img{transform:scale(1.03)}
+.noimg{width:100%;height:100%;display:grid;place-items:center;color:var(--muted);font-size:13px}
+.cardinfo{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 4px 0}
+.cardinfo h3{font:400 22px/1.2 var(--serif);margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cardinfo span{color:var(--muted);font-size:13px;white-space:nowrap}
+.tags{position:absolute;top:12px;left:12px;display:flex;gap:6px}
+.tag{background:#000a;backdrop-filter:blur(6px);border-radius:20px;padding:2px 10px;font-size:11.5px}
+.newcard{aspect-ratio:4/3;width:100%;border:1px dashed #4a3f33;border-radius:14px;background:none;color:var(--gold);font-size:16px}
+.newcard:hover{background:var(--p)}
+
+/* client hero */
+.hero{position:relative;height:46vh;min-height:330px;max-height:540px;background:var(--p2);overflow:hidden}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.herofade{position:absolute;inset:0;background:linear-gradient(to top,#0e0d0cf2 0%,#0e0d0c66 48%,#0e0d0c80 100%)}
+.herotop{position:absolute;top:18px;left:28px;right:28px;display:flex;gap:8px}
+.glass{background:#0e0d0c99;backdrop-filter:blur(8px);border-color:#ffffff24}
+.herobody{position:absolute;left:28px;right:28px;bottom:26px;display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.herotitle{flex:1;min-width:260px}
+.titlein{font:400 clamp(30px,5vw,56px)/1.1 var(--serif);background:none;border:0;border-bottom:1px dashed transparent;border-radius:0;padding:0 0 4px}
+.titlein:hover{border-color:#ffffff40}.titlein:focus{border-color:var(--gold)}
+.herometa{display:flex;gap:16px;align-items:center;color:var(--muted)}
+.datein{background:none;border:0;border-bottom:1px dashed transparent;border-radius:0;padding:2px 0;width:200px}
+.datein:hover{border-color:#ffffff40}.datein:focus{border-color:var(--gold)}
+.herohint{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
+.wrap{max-width:1480px;margin:0 auto;padding:24px 28px 130px}
+.bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.opt{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;cursor:pointer}
+.opt input{width:auto;accent-color:var(--gold)}
+
+/* thumbnails */
+.grid.square{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.grid.square .th{aspect-ratio:1}
+.grid.square .th img{width:100%;height:100%;object-fit:cover}
+.grid.natural{columns:210px;column-gap:10px}
+.grid.natural .th{break-inside:avoid;margin-bottom:10px}
+.grid.natural .th img{width:100%;height:auto}
+.th{position:relative;border-radius:8px;overflow:hidden;background:var(--p2);cursor:pointer;user-select:none;border:2px solid transparent}
+.th img{display:block;pointer-events:none}
+.th.sel{border-color:var(--gold)}
+.th.dragging{opacity:.3}
+.th.before{box-shadow:-5px 0 0 var(--gold)}.th.after{box-shadow:5px 0 0 var(--gold)}
+.chk{position:absolute;top:8px;left:8px;width:26px;height:26px;border-radius:50%;padding:0;background:#0009;border:2px solid #fff;opacity:0;display:grid;place-items:center}
+.th:hover .chk,.th.sel .chk{opacity:1}
+.th.sel .chk{background:var(--gold);border-color:var(--gold)}
+.th.sel .chk::after{content:'✓';color:#17120b;font-weight:700;font-size:14px;line-height:1}
+@media(hover:none){.chk{opacity:1}}
+.badge{position:absolute;top:8px;right:8px;background:var(--gold);color:#17120b;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600}
+.n{position:absolute;bottom:8px;left:8px;background:#000b;border-radius:6px;padding:1px 7px;font-size:11px}
+.empty{padding:70px 20px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
+.empty h2{font:400 26px var(--serif);color:var(--fg);margin:0 0 8px}
+
+/* selection bar, toast, progress */
+.selbar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--p3);border:1px solid var(--gold);border-radius:14px;padding:10px 12px 10px 18px;display:none;align-items:center;gap:10px;z-index:8;box-shadow:0 12px 40px #000a}
+.selbar.on{display:flex}
+.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--p3);border:1px solid var(--gold);border-radius:10px;padding:10px 16px;display:none;z-index:40;max-width:90vw}
+.dropov{position:fixed;inset:0;background:#0e0d0ce8;display:none;place-items:center;z-index:30;font:30px var(--serif);border:3px dashed var(--gold);margin:14px;border-radius:20px;inset:0;pointer-events:none}
+.dropov.on{display:grid}
+.prog{position:fixed;inset:0;background:#0e0d0ccc;display:none;place-items:center;z-index:35}
+.prog.on{display:grid}
+.progbox{width:min(420px,90vw);background:var(--p);border:1px solid var(--line);border-radius:14px;padding:22px}
+.progbox h2{font:400 22px var(--serif);margin:0 0 14px}
+.pbar{height:6px;border-radius:6px;background:var(--line);overflow:hidden}
+.pbar b{display:block;height:100%;width:0;background:var(--gold);transition:width .2s}
+
+/* photo viewer */
+.modal{position:fixed;inset:0;background:#0b0a09;display:none;z-index:20;grid-template-columns:minmax(0,1fr) 340px}
+.modal.on{display:grid}
+.mstage{position:relative;display:grid;place-items:center;padding:30px;min-height:0}
+.mstage img{max-width:100%;max-height:calc(100dvh - 60px);object-fit:contain}
+.mnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;padding:0;font-size:22px;background:#0009}
+.mnav.l{left:16px}.mnav.r{right:16px}
+.mside{background:var(--p);border-left:1px solid var(--line);overflow:auto;padding:20px}
+.dh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.dh h2{font:400 22px var(--serif);margin:0}
+.x{padding:6px 11px}
+.focusbox{position:relative;width:100%;aspect-ratio:4/3;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#100e0d;cursor:crosshair;touch-action:none}
+.focusbox img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.focusdot{position:absolute;width:20px;height:20px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 2px #0008;transform:translate(-50%,-50%);pointer-events:none}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.field{margin:14px 0}
+.field label{display:block;color:#d2c8bc;font-size:12.5px;margin-bottom:6px}
+small{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.45}
+.check{display:flex;gap:10px;align-items:flex-start;margin:13px 0;color:#d7cec2;cursor:pointer}
+.check input{width:auto;margin-top:3px;accent-color:var(--gold)}
+.row{display:flex;gap:7px}.row button{flex:none}
+hr{border:0;border-top:1px solid var(--line);margin:20px 0}
+
+/* settings drawer + dialog */
+.drawer{position:fixed;top:0;right:0;bottom:0;width:380px;max-width:100vw;background:var(--p);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .22s;z-index:15;overflow:auto;padding:22px;box-shadow:-14px 0 40px #0008}
+.drawer.on{transform:none}
+.drawer h3{font:400 18px var(--serif);margin:26px 0 4px;color:var(--gold)}
+.dlg{position:fixed;inset:0;background:#0e0d0ccc;display:none;place-items:center;z-index:25}
+.dlg.on{display:grid}
+.dbox{width:min(440px,92vw);background:var(--p);border:1px solid var(--line);border-radius:15px;padding:24px}
+.dbox h2{font:400 26px var(--serif);margin:0 0 6px}
+.dbox .actions{justify-content:flex-end;margin-bottom:0}
+
+/* storage */
+.meter{display:flex;height:16px;border-radius:10px;overflow:hidden;background:var(--p2);border:1px solid var(--line);margin:16px 0 14px}
+.meter b{display:block;height:100%}
+.legend{display:flex;gap:20px;flex-wrap:wrap}
+.legend div{display:flex;align-items:center;gap:8px;color:#d7cec2}
+.legend i{width:11px;height:11px;border-radius:3px;display:block}
+.legend span{color:var(--muted)}
+.big2{font:400 34px var(--serif)}
+.panel{background:var(--p);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:22px}
+.srow{display:grid;grid-template-columns:56px minmax(0,1fr) 120px 90px;gap:14px;align-items:center;padding:10px 0;border-top:1px solid var(--line);color:inherit;text-decoration:none}
+.srow:first-of-type{border-top:0}
+.srow:hover .sname{color:var(--gold)}
+.sth{width:56px;height:42px;border-radius:6px;overflow:hidden;background:var(--p2)}
+.sth img{width:100%;height:100%;object-fit:cover;display:block}
+.sname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar{height:5px;border-radius:5px;background:var(--line);overflow:hidden}
+.sbar b{display:block;height:100%;background:var(--gold)}
+.sz{text-align:right;color:var(--muted)}
+
+.login{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;z-index:50}
+.login[hidden]{display:none}
+.loginbox{width:min(420px,92vw);background:var(--p);border:1px solid var(--line);border-radius:15px;padding:26px}
+.loginbox h1{font:400 30px var(--serif);margin:0 0 6px}
+.loginbox p{color:var(--muted);font-size:13px}
+.loginbox input{margin:10px 0}
+
+@media(max-width:900px){
+  .modal{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
+  .mside{border-left:0;border-top:1px solid var(--line);max-height:46dvh}
+  .chip i{display:none}
 }
-$('#settings').innerHTML=html;if(tab==='photo'){const back=$('#backsettings');if(back)back.onclick=()=>{tab='details';render()};const set=$('#setcover');if(set)set.onclick=()=>{c.cover=c.photos[activePhoto];c.ogs='';mark();render()};const prev=$('#prevphoto');if(prev)prev.onclick=()=>{activePhoto--;render()};const next=$('#nextphoto');if(next)next.onclick=()=>{activePhoto++;render()};const left=$('#moveleft');if(left)left.onclick=()=>{if(activePhoto>0){const x=c.photos.splice(activePhoto,1)[0];activePhoto--;c.photos.splice(activePhoto,0,x);mark();render()}};const right=$('#moveright');if(right)right.onclick=()=>{if(activePhoto<c.photos.length-1){const x=c.photos.splice(activePhoto,1)[0];activePhoto++;c.photos.splice(activePhoto,0,x);mark();render()}};const rem=$('#removephoto');if(rem)rem.onclick=()=>{if(confirm('Remove this photo from this gallery? The image file itself will not be deleted.')){const gone=c.photos.splice(activePhoto,1)[0];if(c.cover===gone)c.cover=c.photos[0]||'';activePhoto=Math.min(activePhoto,c.photos.length-1);mark();render()}};const box=$('#focusbox');if(box){let moving=false;const setpos=e=>{const r=box.getBoundingClientRect(),x=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100)),y=Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100)),val=Math.round(x)+'% '+Math.round(y)+'%';D.focus=D.focus||{};D.focus[p]=val;c.ogs='';box.querySelector('img').style.objectPosition=val;const dot=$('#focusdot');dot.style.left=x+'%';dot.style.top=y+'%';$('#focusread').textContent='Focus '+Math.round(x)+'% · '+Math.round(y)+'%';mark()};box.onpointerdown=e=>{moving=true;box.setPointerCapture(e.pointerId);setpos(e)};box.onpointermove=e=>{if(moving)setpos(e)};box.onpointerup=()=>moving=false;box.onpointercancel=()=>moving=false;}}$('#settings').querySelectorAll('[data-field]').forEach(el=>el.addEventListener('input',()=>{const key=el.dataset.field,val=el.type==='range'||key.startsWith('lay.')?+el.value:el.value;if(key.startsWith('lay.')){c.lay=c.lay||{};c.lay[key.slice(4)]=val}else c[key]=val;if(key==='lay.gap')$('#gapval').textContent=val;mark();if(key==='name'){$('#title').textContent=val;renderList()}}));$('#settings').querySelectorAll('[data-check]').forEach(el=>el.onchange=()=>{c[el.dataset.check]=el.checked;mark();renderList();renderPhotos()});const copy=$('#copy');if(copy)copy.onclick=()=>navigator.clipboard.writeText(location.origin+'/g/'+c.slug+'/').then(()=>toast('Gallery link copied'));const setpin=$('#setpin');if(setpin)setpin.onclick=async()=>{const v=$('#pin').value.trim();if(v.length<4||v.length>10){toast('PIN must be 4–10 characters');return}const salt=Array.from(crypto.getRandomValues(new Uint8Array(8))).map(x=>x.toString(16).padStart(2,'0')).join('');const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(salt+v));c.pinSalt=salt;c.pinHash=Array.from(new Uint8Array(digest)).map(x=>x.toString(16).padStart(2,'0')).join('');mark();toast('PIN set. Publish to apply.');renderSettings()};const rm=$('#removepin');if(rm)rm.onclick=()=>{if(confirm('Remove PIN protection from this gallery?')){delete c.pinHash;delete c.pinSalt;mark();renderSettings();renderList()}}}
-function render(){if(!D)return;renderList();renderPhotos();renderSettings();$('#clients').querySelector('.client.active')?.scrollIntoView({block:'nearest'});document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));}
-async function load(){try{const r=await fetch(API+'?ref='+BR+'&t='+Date.now(),{headers:headers()});if(!r.ok)throw Error('Could not read content.json ('+r.status+'). Check token permissions.');const j=await r.json();sha=j.sha;D=JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))));D.clients=D.clients||[];D.clients.forEach(c=>{c.photos=c.photos||[];c.lay=c.lay||{}});selected=-1;activePhoto=-1;$('#login').hidden=true;$('#status').textContent='Connected · '+D.clients.length+' galleries';render();}catch(e){$('#login').hidden=false;$('#err').textContent=e.message}}
-async function publish(){if(!dirty)return;$('#save').disabled=true;$('#status').textContent='Publishing…';try{const body={message:'Update client gallery settings and photo order',content:btoa(unescape(encodeURIComponent(JSON.stringify(D,null,2)))),sha,branch:BR};const r=await fetch(API,{method:'PUT',headers:headers(),body:JSON.stringify(body)});if(!r.ok)throw Error('GitHub publish failed ('+r.status+').');const j=await r.json();sha=j.content.sha;dirty=false;$('#status').textContent='Published · site build may take a minute';$('#save').disabled=true;toast('Gallery changes published');}catch(e){$('#status').textContent='Publish failed';$('#save').disabled=false;toast(e.message)}}
-$('#connect').onclick=()=>{token=$('#token').value.trim();localStorage.setItem('jp_tok',token);load()};$('#token').value=token;$('#save').onclick=publish;$('#search').oninput=renderList;document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderList()});document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;renderSettings();document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b))});$('#open').onclick=()=>{const c=client();if(c?.slug)window.open('../g/'+c.slug+'/','_blank')};$('#addphotos').onclick=()=>window.open('index.html','_blank');$('#inspector').onclick=()=>$('#right').classList.toggle('open');$('#new').onclick=()=>{const name=prompt('Client / gallery name');if(!name)return;const slug=name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');if(D.clients.some(c=>c.slug===slug)){toast('A gallery with this link name already exists');return}D.clients.unshift({name,slug,date:'',story:'',cover:'',photos:[],private:false,onHome:false,ogOn:true,showCover:true,coverSize:'full',download:'off',lay:{style:'masonry',gap:14,cols:3,mcols:2,round:0}});selected=0;activePhoto=-1;mark();render();};
+@media(max-width:700px){
+  .top{padding:0 12px;gap:8px}.brand{font-size:20px}.status,.toplink{display:none}
+  .page{padding:22px 14px 130px}.wrap{padding:18px 14px 130px}
+  h1.big{font-size:32px}
+  .cards{grid-template-columns:1fr;gap:24px}
+  .herotop,.herobody{left:14px;right:14px}
+  .grid.square{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .grid.natural{columns:2}
+  .search{width:100%}
+  .srow{grid-template-columns:48px minmax(0,1fr) 70px}.srow .sbar{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+
+<header class="top">
+  <div class="brand">Studio</div>
+  <nav class="nav">
+    <button class="navb" data-go="clients">Clients</button>
+    <button class="navb" data-go="portfolio">Portfolio</button>
+    <button class="navb" data-go="storage">Storage</button>
+  </nav>
+  <button class="chip" id="chip" data-go="storage" hidden></button>
+  <div class="sp"></div>
+  <span class="status" id="status">Connect to your Studio</span>
+  <a class="toplink" href="index.html">Back to Studio</a>
+  <button id="save" class="primary" disabled>Publish</button>
+</header>
+
+<div id="view"></div>
+
+<div class="selbar" id="selbar"></div>
+<aside class="drawer" id="drawer" aria-label="Gallery settings"></aside>
+<div class="modal" id="modal"></div>
+<div class="dlg" id="dlg"></div>
+<div class="prog" id="prog"><div class="progbox"><h2 id="progtitle">Uploading…</h2><div class="pbar"><b id="progbar"></b></div><small id="progsub"></small></div></div>
+<div class="dropov" id="dropov">Drop photos to upload</div>
+<div class="toast" id="toast" role="status"></div>
+
+<div class="login" id="login"><div class="loginbox"><h1>Studio galleries</h1><p>Use the same GitHub token as Studio. It stays in this browser, under the same key as the Studio editor.</p><input id="token" type="password" placeholder="GitHub token" autocomplete="off"><button class="primary" id="connect" style="width:100%">Connect</button><p id="err" style="color:var(--red)"></p></div></div>
+<input type="file" id="files" accept="image/*" multiple hidden>
+
+<script>
+const REPO='jashwanthpm/jp-portfolio',BR='main',API='https://api.github.com/repos/'+REPO,LIMIT=1024**3;
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hdr=()=>({Authorization:'Bearer '+token,Accept:'application/vnd.github+json','Content-Type':'application/json'});
+const imgUrl=p=>p?(/^https?:\/\//.test(p)?p:p.startsWith('/')?p:'/'+p):'';
+const norm=p=>{p=String(p||'').replace(/^\/+/,'');try{return decodeURIComponent(p)}catch(e){return p}};
+const fmt=b=>b>=1024**3?(b/1024**3).toFixed(2)+' GB':b>=1024**2?(b/1024**2).toFixed(1)+' MB':Math.round(b/1024)+' KB';
+const gv=(o,k)=>k.split('.').reduce((a,b)=>a?.[b],o);
+function setf(o,k,v){const ks=k.split('.');const last=ks.pop();ks.forEach(x=>o=o[x]=o[x]||{});o[last]=v}
+
+let token=localStorage.getItem('jp_tok')||'',D=null,sha='',dirty=false;
+let view='clients',cur=-1,q='',filter='all',fit=localStorage.getItem('gm_fit')||'square';
+let picked=new Set(),photoIdx=-1,drawerOpen=false,dragFrom=-1,uploadKind='client';
+let tree=null,sizeMap={},repoKB=null,storLoading=false,storErr='';
+
+const toast=s=>{const t=$('#toast');t.textContent=s;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3200)};
+function mark(){dirty=true;$('#save').disabled=false;$('#status').textContent='Changes not published'}
+const focusOf=p=>(D.focus||{})[p]||'50% 50%';
+const optim=()=>localStorage.getItem('gm_opt')!=='0';
+
+/* ---------- portfolio data (auto-detected list of pictures in content.json) ---------- */
+const CAND=['portfolio','works','work','gallery','photos','images','slides'];
+const IMGRE=/\.(jpe?g|png|webp|gif|avif)/i;
+const KEYS=['src','image','img','url','photo','path'];
+const srcOf=it=>typeof it==='string'?it:(it&&KEYS.map(k=>it[k]).find(Boolean))||'';
+const arrays=()=>Object.keys(D).filter(k=>k!=='clients'&&Array.isArray(D[k])&&D[k].some(x=>IMGRE.test(srcOf(x))));
+function pKey(){const k=localStorage.getItem('gm_pkey'),a=arrays();if(k&&Array.isArray(D[k]))return k;return a.find(x=>CAND.includes(x))||a[0]||'portfolio'}
+function pArr(){const k=pKey();if(!Array.isArray(D[k]))D[k]=[];return D[k]}
+function ctx(){
+  if(view==='client'){const c=D.clients[cur];return{kind:'client',c,arr:c.photos,list:c.photos}}
+  const arr=pArr();return{kind:'portfolio',arr,list:arr.map(srcOf)}
+}
+
+/* ---------- routing ---------- */
+function route(){
+  const h=location.hash.slice(1)||'clients';
+  if(h.startsWith('client/')){const slug=decodeURIComponent(h.slice(7));cur=D.clients.findIndex(c=>c.slug===slug);view=cur<0?'clients':'client'}
+  else view=['clients','portfolio','storage'].includes(h)?h:'clients';
+  picked.clear();photoIdx=-1;closeDrawer();renderModal();render();$('#view').scrollTop=0;
+}
+const go=h=>{if(location.hash==='#'+h)route();else location.hash=h};
+addEventListener('hashchange',()=>D&&route());
+
+/* ---------- views ---------- */
+function render(){
+  if(!D)return;
+  const v=$('#view'),st=v.scrollTop;
+  $$('.navb').forEach(b=>b.classList.toggle('on',b.dataset.go===(view==='client'?'clients':view)));
+  v.innerHTML=view==='client'?viewClient():view==='portfolio'?viewPortfolio():view==='storage'?viewStorage():viewClients();
+  v.scrollTop=st;selbar();chip();
+}
+
+function cardsHTML(){
+  const ql=q.toLowerCase();
+  const items=D.clients.map((c,i)=>({c,i})).filter(({c})=>((c.name||'')+' '+(c.slug||'')).toLowerCase().includes(ql))
+    .filter(({c})=>filter==='all'||(filter==='public'&&!c.private)||(filter==='hidden'&&c.private)||(filter==='pin'&&c.pinHash));
+  return '<button class="newcard" data-act="newclient">＋ New client gallery</button>'+items.map(({c})=>{
+    const cv=c.cover||c.photos[0];
+    return `<a class="card" href="#client/${encodeURIComponent(c.slug)}">
+      <div class="cardimg">${cv?`<img loading="lazy" src="${esc(imgUrl(cv))}" style="object-position:${focusOf(cv)}" alt="">`:'<div class="noimg">No photos yet</div>'}</div>
+      <div class="tags">${c.private?'<span class="tag">Hidden</span>':''}${c.pinHash?'<span class="tag">PIN</span>':''}</div>
+      <div class="cardinfo"><h3>${esc(c.name||'Untitled gallery')}</h3><span>${c.photos.length} photos</span></div>
+      ${c.date?`<div class="cardinfo" style="padding-top:0"><span>${esc(c.date)}</span></div>`:''}
+    </a>`}).join('');
+}
+function viewClients(){
+  const f=[['all','All'],['public','Public'],['hidden','Hidden'],['pin','PIN']];
+  return `<div class="page"><div class="pagehead"><div><h1 class="big">Clients</h1><p class="muted">${D.clients.length} galleries. Open one to arrange photos and choose its cover.</p></div><div class="sp"></div>
+    <input class="search" id="q" placeholder="Search clients…" value="${esc(q)}" aria-label="Search clients">
+    <div class="seg">${f.map(([k,t])=>`<button data-act="filter" data-v="${k}" class="${filter===k?'on':''}">${t}</button>`).join('')}</div></div>
+    <div class="cards" id="cards">${cardsHTML()}</div></div>`;
+}
+
+const barHTML=hint=>`<div class="bar"><span class="muted">${hint}</span><div class="sp"></div>
+  <label class="opt"><input type="checkbox" id="optim" ${optim()?'checked':''}> Resize big photos on upload</label>
+  <div class="seg"><button data-act="fit" data-v="square" class="${fit==='square'?'on':''}">Square</button><button data-act="fit" data-v="natural" class="${fit==='natural'?'on':''}">Full photo</button></div></div>`;
+
+function gridHTML(cx){
+  if(!cx.list.length)return `<div class="empty"><h2>No photos yet</h2><p>Drag photos anywhere on this page, or use the upload button.</p><button class="primary" data-act="upload">Upload photos</button></div>`;
+  return `<div class="grid ${fit}">`+cx.list.map((p,k)=>`<div class="th ${picked.has(k)?'sel':''}" draggable="true" data-k="${k}">
+    <img loading="lazy" src="${esc(imgUrl(p))}" ${cx.kind==='client'?`style="object-position:${focusOf(p)}"`:''} draggable="false" alt="Photo ${k+1}">
+    <button class="chk" data-act="pick" data-k="${k}" aria-label="Select photo ${k+1}"></button>
+    ${cx.kind==='client'&&p===cx.c.cover?'<span class="badge">Cover</span>':''}<span class="n">${k+1}</span></div>`).join('')+'</div>';
+}
+
+function viewClient(){
+  const cx=ctx(),c=cx.c,cv=c.cover||c.photos[0];
+  return `<section class="hero">
+    ${cv?`<img src="${esc(imgUrl(cv))}" style="object-position:${focusOf(cv)}" alt="">`:'<div class="herohint">Upload photos, then pick a cover</div>'}
+    <div class="herofade"></div>
+    <div class="herotop"><button class="glass" data-act="back">← All clients</button><div class="sp"></div>${c.slug?'<button class="glass" data-act="viewlive">View live ↗</button>':''}<button class="glass" data-act="settings">Settings</button></div>
+    <div class="herobody"><div class="herotitle"><input id="nameIn" class="titlein" value="${esc(c.name)}" placeholder="Gallery name" aria-label="Gallery name">
+      <div class="herometa"><input id="dateIn" class="datein" value="${esc(c.date||'')}" placeholder="Add a date" aria-label="Date"><span>${c.photos.length} photos</span></div></div>
+      <button class="primary" data-act="upload">Upload photos</button></div>
+  </section>
+  <div class="wrap">${barHTML('Drag to reorder. Click a photo to open it, set the cover and choose the crop.')}${gridHTML(cx)}</div>`;
+}
+
+function viewPortfolio(){
+  const cx=ctx(),k=pKey(),opts=arrays();if(!opts.includes(k))opts.push(k);
+  const src=opts.length>1?`<label class="muted">Reading from <select id="pkey">${opts.map(o=>`<option ${o===k?'selected':''}>${esc(o)}</option>`).join('')}</select></label>`:`content.json › ${esc(k)}`;
+  return `<div class="page"><div class="pagehead"><div><h1 class="big">Portfolio</h1><p class="muted">${cx.list.length} pictures on your public site. Source: ${src}</p></div><div class="sp"></div><button class="primary" data-act="upload">Upload pictures</button></div>
+    ${barHTML('Drag to reorder. Click a picture to open it or remove it.')}${gridHTML(cx)}</div>`;
+}
+
+/* ---------- storage ---------- */
+async function loadStorage(){
+  if(storLoading)return;storLoading=true;storErr='';
+  try{
+    const [a,b]=await Promise.all([fetch(API,{headers:hdr()}),fetch(API+'/git/trees/'+BR+'?recursive=1',{headers:hdr()})]);
+    if(a.ok)repoKB=(await a.json()).size;
+    if(!b.ok)throw Error('Could not read file sizes ('+b.status+')');
+    tree=(await b.json()).tree.filter(t=>t.type==='blob');sizeMap={};tree.forEach(t=>sizeMap[t.path]=t.size||0);
+  }catch(e){storErr=e.message;tree=[]}
+  storLoading=false;if(view==='storage')render();chip();
+}
+function viewStorage(){
+  if(!tree){loadStorage();return '<div class="page"><h1 class="big">Storage</h1><p class="muted">Measuring your files…</p></div>'}
+  const total=tree.reduce((a,t)=>a+(t.size||0),0),used=repoKB?repoKB*1024:total,seen=new Set();
+  let port=0;pArr().map(srcOf).map(norm).filter(Boolean).forEach(p=>{if(!seen.has(p)){seen.add(p);port+=sizeMap[p]||0}});
+  let cl=0;D.clients.forEach(c=>[...c.photos,c.cover].filter(Boolean).map(norm).forEach(p=>{if(!seen.has(p)){seen.add(p);cl+=sizeMap[p]||0}}));
+  let oi=0;tree.forEach(t=>{if(/\.(jpe?g|png|webp|gif|avif|heic|svg)$/i.test(t.path)&&!seen.has(t.path))oi+=t.size||0});
+  const other=Math.max(0,total-cl-port-oi),hist=Math.max(0,used-total);
+  const segs=[['Client galleries',cl,'#c9a46a'],['Portfolio',port,'#e6d3ab'],['Other site images',oi,'#8a7a66'],['Code and other files',other,'#5b5148'],['Git history',hist,'#3a332d']];
+  const pct=Math.min(100,used/LIMIT*100);
+  const rows=D.clients.map(c=>{let s=0;new Set([...c.photos,c.cover].filter(Boolean).map(norm)).forEach(p=>s+=sizeMap[p]||0);return{c,s}}).sort((a,b)=>b.s-a.s),mx=Math.max(1,rows[0]?.s||1);
+  return `<div class="page"><div class="pagehead"><div><h1 class="big">Storage</h1><p class="muted">Your photos live in your GitHub repository. GitHub recommends keeping a repository under about 1 GB.</p></div></div>
+    ${storErr?`<p style="color:var(--red)">${esc(storErr)}</p>`:''}
+    <div class="panel"><div class="big2">${fmt(used)} <span class="muted" style="font-size:18px">of 1 GB · ${pct.toFixed(1)}% used</span></div>
+      <div class="meter" role="img" aria-label="${pct.toFixed(0)} percent of storage used">${segs.map(([n,v,col])=>`<b style="width:${v/LIMIT*100}%;background:${col}" title="${n}"></b>`).join('')}</div>
+      <div class="legend">${segs.map(([n,v,col])=>`<div><i style="background:${col}"></i>${n} <span>${fmt(v)}</span></div>`).join('')}</div></div>
+    <div class="panel"><h2 style="font:400 22px var(--serif);margin:0 0 8px">By client</h2>
+      ${rows.map(({c,s})=>{const cv=c.cover||c.photos[0];return `<a class="srow" href="#client/${encodeURIComponent(c.slug)}"><div class="sth">${cv?`<img loading="lazy" src="${esc(imgUrl(cv))}" alt="">`:''}</div><div><div class="sname">${esc(c.name||'Untitled gallery')}</div><small style="margin:0">${c.photos.length} photos</small></div><div class="sbar"><b style="width:${s/mx*100}%"></b></div><div class="sz">${fmt(s)}</div></a>`}).join('')||'<p class="muted">No client galleries yet.</p>'}</div>
+    <p class="muted" style="font-size:12px">Removing a photo from a gallery does not delete its file, so it still counts here. File sizes come from the main branch; the total also includes Git history.</p></div>`;
+}
+function chip(){
+  const c=$('#chip');if(!D||(!repoKB&&!tree)){c.hidden=true;return}
+  const used=repoKB?repoKB*1024:Object.values(sizeMap).reduce((a,b)=>a+b,0);
+  c.hidden=false;c.innerHTML=`Storage <i><b style="width:${Math.min(100,used/LIMIT*100)}%"></b></i> ${fmt(used)}`;
+}
+
+/* ---------- selection bar ---------- */
+function selbar(){
+  const s=$('#selbar'),n=picked.size;if(!n||!['client','portfolio'].includes(view)){s.classList.remove('on');return}
+  s.classList.add('on');
+  s.innerHTML=`<b>${n} selected</b>${view==='client'&&n===1?'<button data-act="bulkcover">Set as cover</button>':''}<button data-act="selectall">Select all</button><button class="danger" data-act="bulkremove">Remove</button><button class="ghost" data-act="clearpick">Clear</button>`;
+}
+function togglePick(k){picked.has(k)?picked.delete(k):picked.add(k);render()}
+
+/* ---------- actions ---------- */
+function act(a,el){
+  const cx=['client','portfolio'].includes(view)?ctx():null;
+  if(a==='back')go('clients');
+  else if(a==='settings')openDrawer();
+  else if(a==='viewlive'){const c=D.clients[cur];window.open('../g/'+c.slug+'/','_blank')}
+  else if(a==='upload'){uploadKind=view==='portfolio'?'portfolio':'client';$('#files').click()}
+  else if(a==='newclient')newClient();
+  else if(a==='filter'){filter=el.dataset.v;render()}
+  else if(a==='fit'){fit=el.dataset.v;localStorage.setItem('gm_fit',fit);render()}
+  else if(a==='pick')togglePick(+el.dataset.k);
+  else if(a==='clearpick'){picked.clear();render()}
+  else if(a==='selectall'){cx.list.forEach((_,i)=>picked.add(i));render()}
+  else if(a==='bulkcover'){const p=cx.list[[...picked][0]];cx.c.cover=p;cx.c.ogs='';picked.clear();mark();render();toast('Cover updated. Publish to apply.')}
+  else if(a==='bulkremove'){
+    if(!confirm('Remove '+picked.size+' photo(s) from '+(cx.kind==='client'?'this gallery':'your portfolio')+'? The files stay in your repository storage.'))return;
+    [...picked].sort((x,y)=>y-x).forEach(i=>cx.arr.splice(i,1));
+    if(cx.kind==='client'&&!cx.c.photos.includes(cx.c.cover))cx.c.cover=cx.c.photos[0]||'';
+    picked.clear();mark();tree=null;render();
+  }
+}
+$('#view').addEventListener('click',e=>{
+  const a=e.target.closest('[data-act]');if(a){e.preventDefault();act(a.dataset.act,a);return}
+  const th=e.target.closest('.th');if(th){const k=+th.dataset.k;picked.size?togglePick(k):openPhoto(k)}
+});
+$('#view').addEventListener('input',e=>{
+  const t=e.target;
+  if(t.id==='q'){q=t.value;$('#cards').innerHTML=cardsHTML()}
+  else if(t.id==='nameIn'){D.clients[cur].name=t.value;mark()}
+  else if(t.id==='dateIn'){D.clients[cur].date=t.value;mark()}
+});
+$('#view').addEventListener('change',e=>{
+  if(e.target.id==='optim')localStorage.setItem('gm_opt',e.target.checked?'1':'0');
+  if(e.target.id==='pkey'){localStorage.setItem('gm_pkey',e.target.value);render()}
+});
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
+
+/* drag to reorder */
+const view$=$('#view');
+view$.addEventListener('dragstart',e=>{const th=e.target.closest?.('.th');if(!th)return;dragFrom=+th.dataset.k;th.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain','move')});
+view$.addEventListener('dragend',()=>{dragFrom=-1;$$('.th').forEach(x=>x.classList.remove('dragging','before','after'))});
+view$.addEventListener('dragover',e=>{const th=e.target.closest?.('.th');if(!th||dragFrom<0)return;e.preventDefault();$$('.th').forEach(x=>x.classList.remove('before','after'));const r=th.getBoundingClientRect();th.classList.add(e.clientX<r.left+r.width/2?'before':'after')});
+view$.addEventListener('drop',e=>{
+  const th=e.target.closest?.('.th');if(!th||dragFrom<0)return;e.preventDefault();
+  const cx=ctx(),r=th.getBoundingClientRect(),after=e.clientX>r.left+r.width/2;let dest=+th.dataset.k+(after?1:0);
+  const [it]=cx.arr.splice(dragFrom,1);if(dragFrom<dest)dest--;cx.arr.splice(Math.max(0,Math.min(cx.arr.length,dest)),0,it);
+  dragFrom=-1;picked.clear();mark();render();
+});
+
+/* ---------- photo viewer ---------- */
+function openPhoto(k){photoIdx=k;renderModal()}
+function renderModal(){
+  const m=$('#modal');
+  if(photoIdx<0||!['client','portfolio'].includes(view)){m.classList.remove('on');m.innerHTML='';return}
+  const cx=ctx(),p=cx.list[photoIdx];if(!p){photoIdx=-1;return renderModal()}
+  const isC=cx.kind==='client',cov=isC&&cx.c.cover===p,xy=focusOf(p).split(' ').map(x=>parseFloat(x)||50),n=cx.list.length;
+  m.classList.add('on');
+  m.innerHTML=`<div class="mstage"><button class="mnav l" data-m="prev" aria-label="Previous photo" ${photoIdx===0?'disabled':''}>‹</button><img src="${esc(imgUrl(p))}" alt="Photo ${photoIdx+1}"><button class="mnav r" data-m="next" aria-label="Next photo" ${photoIdx===n-1?'disabled':''}>›</button></div>
+  <aside class="mside"><div class="dh"><h2>Photo ${photoIdx+1} of ${n}</h2><button class="x" data-m="close" aria-label="Close">✕</button></div>
+  ${isC?`<button class="primary" data-m="cover" style="width:100%" ${cov?'disabled':''}>${cov?'This is the cover':'Set as gallery cover'}</button>
+  <div class="field" style="margin-top:20px"><label>Crop focus</label><div class="focusbox" id="fbox"><img src="${esc(imgUrl(p))}" style="object-position:${xy[0]}% ${xy[1]}%" alt=""><i class="focusdot" id="fdot" style="left:${xy[0]}%;top:${xy[1]}%"></i></div>
+  <small>Drag the dot to choose what stays in view when this photo is cropped as a thumbnail or cover.</small></div>`:''}
+  <div class="actions"><button data-m="earlier" ${photoIdx===0?'disabled':''}>Move earlier</button><button data-m="later" ${photoIdx===n-1?'disabled':''}>Move later</button></div><hr>
+  <button class="danger" data-m="remove" style="width:100%">Remove from ${isC?'gallery':'portfolio'}</button>
+  <small>The image file stays in your repository storage.</small></aside>`;
+  const box=$('#fbox');
+  if(box){let mv=false;const set=e=>{const r=box.getBoundingClientRect(),x=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100)),y=Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100));
+    D.focus=D.focus||{};D.focus[p]=Math.round(x)+'% '+Math.round(y)+'%';cx.c.ogs='';box.querySelector('img').style.objectPosition=D.focus[p];const d=$('#fdot');d.style.left=x+'%';d.style.top=y+'%';mark()};
+    box.onpointerdown=e=>{mv=true;box.setPointerCapture(e.pointerId);set(e)};box.onpointermove=e=>{if(mv)set(e)};box.onpointerup=box.onpointercancel=()=>{mv=false;render()}}
+}
+$('#modal').addEventListener('click',e=>{
+  const b=e.target.closest('[data-m]');if(!b)return;const a=b.dataset.m,cx=ctx();
+  if(a==='close'){photoIdx=-1;renderModal();return}
+  if(a==='prev'&&photoIdx>0)photoIdx--;
+  else if(a==='next'&&photoIdx<cx.list.length-1)photoIdx++;
+  else if(a==='cover'){cx.c.cover=cx.list[photoIdx];cx.c.ogs='';mark();render()}
+  else if(a==='earlier'&&photoIdx>0){const x=cx.arr.splice(photoIdx,1)[0];photoIdx--;cx.arr.splice(photoIdx,0,x);mark();render()}
+  else if(a==='later'&&photoIdx<cx.arr.length-1){const x=cx.arr.splice(photoIdx,1)[0];photoIdx++;cx.arr.splice(photoIdx,0,x);mark();render()}
+  else if(a==='remove'){
+    if(!confirm('Remove this photo? The image file stays in your repository storage.'))return;
+    const gone=cx.list[photoIdx];cx.arr.splice(photoIdx,1);
+    if(cx.kind==='client'&&cx.c.cover===gone)cx.c.cover=cx.c.photos[0]||'';
+    photoIdx=Math.min(photoIdx,cx.arr.length-1);mark();tree=null;render();
+  }
+  renderModal();
+});
+
+/* ---------- settings drawer ---------- */
+const F=(l,k,v,area,h)=>`<div class="field"><label>${l}</label>${area?`<textarea data-f="${k}" rows="4">${esc(v)}</textarea>`:`<input data-f="${k}" value="${esc(v)}">`}${h?`<small>${h}</small>`:''}</div>`;
+const CK=(l,k,on,h)=>`<label class="check"><input type="checkbox" data-c="${k}" ${on?'checked':''}><span>${l}${h?`<small>${h}</small>`:''}</span></label>`;
+const SEL=(l,k,v,o)=>`<div class="field"><label>${l}</label><select data-f="${k}" style="width:100%">${o.map(([x,t])=>`<option value="${x}" ${String(v)===String(x)?'selected':''}>${t}</option>`).join('')}</select></div>`;
+function renderDrawer(){
+  const c=D.clients[cur];if(!c)return;c.lay=c.lay||{};const L=c.lay,url=location.origin+'/g/'+c.slug+'/';
+  $('#drawer').innerHTML=`<div class="dh"><h2>Gallery settings</h2><button class="x" data-d="close" aria-label="Close settings">✕</button></div>
+  <h3>Details</h3>${F('Gallery name','name',c.name||'')}${F('Date','date',c.date||'')}${F('Short story','story',c.story||'',true)}
+  <div class="field"><label>Gallery link</label><div class="row"><input readonly value="${esc(url)}"><button data-d="copy">Copy</button></div><small>The link name is managed from the main Studio, since changing it breaks links already sent.</small></div>
+  <h3>Access</h3>${CK('Hide from the public galleries page','private',c.private,'The direct link keeps working.')}${CK('Show on the home page','onHome',c.onHome)}${CK('Use the cover for link previews','ogOn',c.ogOn!==false)}
+  <div class="field"><label>${c.pinHash?'PIN protection is on. Set a new PIN':'PIN protection'}</label><div class="row"><input id="pin" type="password" inputmode="numeric" placeholder="4–10 characters"><button class="primary" data-d="setpin">${c.pinHash?'Change':'Set'} PIN</button></div></div>
+  ${c.pinHash?'<button class="ghost danger" data-d="rmpin">Remove PIN protection</button>':''}
+  <h3>Layout</h3>${CK('Show large cover at top','showCover',c.showCover!==false)}
+  ${SEL('Cover height','coverSize',c.coverSize||'full',[['full','Full screen'],['tall','Tall'],['half','Half']])}
+  ${SEL('Photo arrangement','lay.style',L.style||'masonry',[['masonry','Masonry'],['rows','Even rows'],['grid','Square grid'],['pair','Side by side'],['story','Left and right'],['portrait','Portrait'],['stack','One by one'],['strip','Film strip']])}
+  ${SEL('Desktop columns','lay.cols',L.cols??3,[[2,'2'],[3,'3'],[4,'4'],[5,'5']])}
+  ${SEL('Phone columns','lay.mcols',L.mcols??2,[[1,'1 (large)'],[2,'2']])}
+  ${SEL('Photo corners','lay.round',L.round??0,[[0,'Square'],[8,'Soft'],[18,'Round']])}
+  <div class="field"><label>Space between photos: <span id="gapval">${L.gap??14}</span> px</label><input type="range" min="0" max="48" data-f="lay.gap" value="${L.gap??14}" style="accent-color:var(--gold)"></div>
+  ${SEL('Visitor downloads','download',c.download||'off',[['off','Off'],['std','Standard size'],['high','High resolution'],['orig','Original files']])}
+  <hr><button class="danger" data-d="delete" style="width:100%">Delete this gallery</button><small>Photo files stay in your repository storage.</small>`;
+}
+function openDrawer(){drawerOpen=true;renderDrawer();$('#drawer').classList.add('on')}
+function closeDrawer(){drawerOpen=false;$('#drawer').classList.remove('on')}
+$('#drawer').addEventListener('input',e=>{
+  const el=e.target,f=el.dataset.f;if(!f||cur<0)return;const c=D.clients[cur];
+  let v=el.value;if(f.startsWith('lay.')&&f!=='lay.style')v=+v;setf(c,f,v);
+  if(f==='lay.gap')$('#gapval').textContent=v;
+  if(f==='name'){const i=$('#nameIn');if(i)i.value=v}
+  if(f==='date'){const i=$('#dateIn');if(i)i.value=v}
+  mark();
+});
+$('#drawer').addEventListener('change',e=>{const k=e.target.dataset.c;if(k&&cur>=0){D.clients[cur][k]=e.target.checked;mark()}});
+$('#drawer').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-d]');if(!b)return;const a=b.dataset.d,c=D.clients[cur];
+  if(a==='close')closeDrawer();
+  else if(a==='copy')navigator.clipboard.writeText(location.origin+'/g/'+c.slug+'/').then(()=>toast('Gallery link copied'));
+  else if(a==='setpin'){
+    const v=$('#pin').value.trim();if(v.length<4||v.length>10){toast('PIN must be 4–10 characters');return}
+    const salt=Array.from(crypto.getRandomValues(new Uint8Array(8))).map(x=>x.toString(16).padStart(2,'0')).join('');
+    const dg=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(salt+v));
+    c.pinSalt=salt;c.pinHash=Array.from(new Uint8Array(dg)).map(x=>x.toString(16).padStart(2,'0')).join('');
+    mark();toast('PIN set. Publish to apply.');renderDrawer();
+  }
+  else if(a==='rmpin'){if(confirm('Remove PIN protection from this gallery?')){delete c.pinHash;delete c.pinSalt;mark();renderDrawer()}}
+  else if(a==='delete'){if(confirm('Delete the gallery “'+(c.name||'Untitled')+'”? This takes effect when you publish.')){D.clients.splice(cur,1);mark();go('clients')}}
+});
+
+/* ---------- new client ---------- */
+function newClient(){
+  const d=$('#dlg');
+  d.innerHTML=`<div class="dbox"><h2>New client gallery</h2><div class="field"><label>Client or gallery name</label><input id="ncn" placeholder="For example, Priya and Arjun"></div><div class="field"><label>Date</label><input id="ncd" placeholder="For example, March 2026"></div><div class="actions"><button class="ghost" id="ncx">Cancel</button><button class="primary" id="ncc">Create gallery</button></div></div>`;
+  d.classList.add('on');$('#ncn').focus();
+  const close=()=>d.classList.remove('on');
+  const make=()=>{
+    const name=$('#ncn').value.trim();if(!name){toast('Enter a name for the gallery');return}
+    let base=name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'gallery',slug=base,i=2;
+    while(D.clients.some(c=>c.slug===slug))slug=base+'-'+i++;
+    D.clients.unshift({name,slug,date:$('#ncd').value.trim(),story:'',cover:'',photos:[],private:false,onHome:false,ogOn:true,showCover:true,coverSize:'full',download:'off',lay:{style:'masonry',gap:14,cols:3,mcols:2,round:0}});
+    mark();close();go('client/'+encodeURIComponent(slug));
+  };
+  $('#ncx').onclick=close;$('#ncc').onclick=make;d.onclick=e=>{if(e.target===d)close()};
+  d.querySelectorAll('input').forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')make()});
+}
+
+/* ---------- upload (straight to the GitHub repo) ---------- */
+const b64=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(b)});
+async function shrink(f){
+  const ext=(f.name.split('.').pop()||'jpg').toLowerCase();
+  if(!optim()||!/^image\/(jpeg|png|webp)$/.test(f.type))return{blob:f,ext};
+  try{
+    const bmp=await createImageBitmap(f),s=Math.min(1,2400/Math.max(bmp.width,bmp.height)),cv=document.createElement('canvas');
+    cv.width=Math.round(bmp.width*s);cv.height=Math.round(bmp.height*s);cv.getContext('2d').drawImage(bmp,0,0,cv.width,cv.height);
+    const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.88));
+    if(blob&&(s<1||blob.size<f.size))return{blob,ext:'jpg'};
+  }catch(e){}
+  return{blob:f,ext};
+}
+async function put(path,content,msg){
+  for(let t=0;t<3;t++){
+    const r=await fetch(API+'/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',headers:hdr(),body:JSON.stringify({message:msg,content,branch:BR})});
+    if(r.ok)return;
+    if(r.status===409||r.status===422||r.status>=500){await new Promise(s=>setTimeout(s,900*(t+1)));continue}
+    throw Error('GitHub upload failed ('+r.status+'). Check the token can write to the repository.');
+  }
+  throw Error('GitHub is busy. Try again in a moment.');
+}
+function folderFor(list,fallback){
+  const f=list[0];if(f&&!/^https?:/.test(f)){const d=norm(f).split('/').slice(0,-1).join('/');if(d)return d}
+  return fallback;
+}
+async function upload(files){
+  files=[...files].filter(f=>f.type.startsWith('image/'));
+  if(!files.length){toast('Choose image files to upload');return}
+  const cx=ctx(),isC=cx.kind==='client';
+  const folder=folderFor(cx.list,isC?'images/clients/'+cx.c.slug:'images/portfolio');
+  const P=$('#prog');P.classList.add('on');let ok=0;const failed=[];
+  for(let i=0;i<files.length;i++){
+    $('#progtitle').textContent='Uploading '+(i+1)+' of '+files.length;$('#progsub').textContent=files[i].name;$('#progbar').style.width=(i/files.length*100)+'%';
+    try{
+      const {blob,ext}=await shrink(files[i]);
+      const base=files[i].name.replace(/\.[^.]+$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)||'photo';
+      const path=folder+'/'+Date.now().toString(36)+i+'-'+base+'.'+ext;
+      await put(path,await b64(blob),'Upload '+path);
+      if(isC)cx.arr.push(path);
+      else{const first=cx.arr[0];if(first&&typeof first==='object'){const key=KEYS.find(k=>first[k])||'src';cx.arr.push({[key]:path})}else cx.arr.push(path)}
+      ok++;
+    }catch(e){failed.push(files[i].name+': '+e.message)}
+  }
+  P.classList.remove('on');$('#files').value='';
+  if(ok){mark();tree=null;if(isC&&!cx.c.cover)cx.c.cover=cx.arr[0];render()}
+  toast(ok?ok+' uploaded. Publish to make '+(ok===1?'it':'them')+' live.'+(failed.length?' '+failed.length+' failed.':''):failed[0]||'Upload failed');
+}
+$('#files').onchange=e=>upload(e.target.files);
+const hasFiles=e=>[...(e.dataTransfer?.types||[])].includes('Files'),canUp=()=>['client','portfolio'].includes(view);
+let dc=0;
+addEventListener('dragenter',e=>{if(hasFiles(e)&&canUp()){dc++;$('#dropov').classList.add('on')}});
+addEventListener('dragleave',e=>{if(hasFiles(e)){dc=Math.max(0,dc-1);if(!dc)$('#dropov').classList.remove('on')}});
+addEventListener('dragover',e=>{if(hasFiles(e))e.preventDefault()});
+addEventListener('drop',e=>{if(hasFiles(e)){e.preventDefault();dc=0;$('#dropov').classList.remove('on');if(canUp()){uploadKind=view;upload(e.dataTransfer.files)}}});
+
+/* ---------- load / publish ---------- */
+async function load(){
+  try{
+    const r=await fetch(API+'/contents/content.json?ref='+BR+'&t='+Date.now(),{headers:hdr()});
+    if(!r.ok)throw Error('Could not read content.json ('+r.status+'). Check token permissions.');
+    const j=await r.json();sha=j.sha;
+    D=JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))));
+    D.clients=D.clients||[];D.clients.forEach(c=>{c.photos=c.photos||[];c.lay=c.lay||{}});
+    $('#login').hidden=true;$('#status').textContent='Connected · '+D.clients.length+' galleries';
+    fetch(API,{headers:hdr()}).then(r=>r.ok?r.json():null).then(j=>{if(j){repoKB=j.size;chip()}}).catch(()=>{});
+    route();
+  }catch(e){$('#login').hidden=false;$('#err').textContent=e.message}
+}
+async function publish(){
+  if(!dirty)return;$('#save').disabled=true;$('#status').textContent='Publishing…';
+  try{
+    const body={message:'Update galleries and portfolio',content:btoa(unescape(encodeURIComponent(JSON.stringify(D,null,2)))),sha,branch:BR};
+    const r=await fetch(API+'/contents/content.json',{method:'PUT',headers:hdr(),body:JSON.stringify(body)});
+    if(!r.ok)throw Error('GitHub publish failed ('+r.status+').');
+    sha=(await r.json()).content.sha;dirty=false;$('#status').textContent='Published · the site may take a minute to update';toast('Published');
+  }catch(e){$('#status').textContent='Publish failed';$('#save').disabled=false;toast(e.message)}
+}
+addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if($('#dlg').classList.contains('on'))$('#dlg').classList.remove('on');
+    else if(photoIdx>=0){photoIdx=-1;renderModal()}
+    else if(drawerOpen)closeDrawer();
+    else if(picked.size){picked.clear();render()}
+  }
+  if(photoIdx>=0&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){
+    const n=ctx().list.length;
+    if(e.key==='ArrowLeft'&&photoIdx>0){photoIdx--;renderModal()}
+    if(e.key==='ArrowRight'&&photoIdx<n-1){photoIdx++;renderModal()}
+  }
+});
+$('#connect').onclick=()=>{token=$('#token').value.trim();localStorage.setItem('jp_tok',token);load()};
+$('#token').value=token;$('#save').onclick=publish;
 load();
 </script></body></html>
