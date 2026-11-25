@@ -841,7 +841,7 @@ async function publish(){
       throw Error('GitHub publish failed ('+r.status+')'+(detail?': '+detail:'')+'.');
     }
     const saved=await r.json();
-    sha=saved.content.sha;D=latest;dirty=false;
+    sha=saved.content.sha;D=latest;dirty=false;deployExpectedClients=JSON.stringify(D.clients||[]);
     if(view==='client'&&cur>=0)history.replaceState(null,'',location.pathname+location.search+'#client/'+encodeURIComponent(D.clients[cur].slug));
     $('#dot').classList.remove('dirty');$('#status').textContent='Published to GitHub. Site deployment is running in the background.';
     toast('Published to GitHub');render();
