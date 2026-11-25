@@ -745,13 +745,38 @@ async function load(){
   }catch(e){$('#login').hidden=false;$('#err').textContent=e.message}
 }
 async function publish(){
-  if(!dirty)return;$('#save').disabled=true;$('#status').textContent='Publishing…';
+  if(!dirty)return;
+  $('#save').disabled=true;$('#status').textContent='Publishing…';
   try{
-    const body={message:'Update galleries and portfolio',content:btoa(unescape(encodeURIComponent(JSON.stringify(D,null,2)))),sha,branch:BR};
+    // Fetch the current file version immediately before publishing. Studio or
+    // direct image uploads may have advanced content.json since this page loaded.
+    const latestRes=await fetch(API+'/contents/content.json?ref='+BR+'&t='+Date.now(),{headers:hdr(),cache:'no-store'});
+    if(!latestRes.ok)throw Error('Could not refresh content.json ('+latestRes.status+'). Check the token has repository Contents access.');
+    const latestJson=await latestRes.json();
+    const latest=JSON.parse(decodeURIComponent(escape(atob((latestJson.content||'').replace(/\\n/g,'')))));
+    const key=pKey();
+
+    // Gallery Manager owns client galleries and the selected portfolio image
+    // collection. Preserve other fields updated through the main Studio editor.
+    latest.clients=D.clients;
+    latest[key]=D[key]||[];
+    for(const field of ['dims','focus','hi']){
+      latest[field]=Object.assign({},latest[field]||{},D[field]||{});
+    }
+
+    const body={message:'Update galleries and portfolio',content:btoa(unescape(encodeURIComponent(JSON.stringify(latest,null,2)))),sha:latestJson.sha,branch:BR};
     const r=await fetch(API+'/contents/content.json',{method:'PUT',headers:hdr(),body:JSON.stringify(body)});
-    if(!r.ok)throw Error('GitHub publish failed ('+r.status+').');
-    sha=(await r.json()).content.sha;dirty=false;$('#dot').classList.remove('dirty');$('#status').textContent='Published. The site may take a minute to update.';toast('Published');
-  }catch(e){$('#status').textContent='Publish failed';$('#save').disabled=false;toast(e.message)}
+    if(!r.ok){
+      let detail='';try{const j=await r.json();detail=j.message||''}catch{}
+      throw Error('GitHub publish failed ('+r.status+')'+(detail?': '+detail:'')+'.');
+    }
+    const saved=await r.json();
+    sha=saved.content.sha;D=latest;dirty=false;
+    $('#dot').classList.remove('dirty');$('#status').textContent='Published. The site may take a minute to update.';
+    toast('Published');render();
+  }catch(e){
+    $('#status').textContent='Publish failed';$('#save').disabled=false;toast(e.message);
+  }
 }
 addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
 addEventListener('keydown',e=>{
