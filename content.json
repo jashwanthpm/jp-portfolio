@@ -313,7 +313,7 @@
       "coverSize": "full",
       "download": "off",
       "lay": {
-        "style": "masonry",
+        "style": "strip",
         "gap": 14,
         "cols": 3,
         "mcols": 2,
