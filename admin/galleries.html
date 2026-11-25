@@ -267,6 +267,12 @@ let tree=null,sizeMap={},repoKB=null,storLoading=false,storErr='';
 let ratio={};try{ratio=JSON.parse(localStorage.getItem('gm_ratio')||'{}')}catch(e){}
 const ROWH=[100,140,190,250,330],COLW=[110,140,170,220,280];
 let size=Math.min(5,Math.max(1,+localStorage.getItem('gm_size')||3));
+const DRIVE_W=2000;
+const isDrive=p=>/googleusercontent\.com\/d\//.test(p||'');
+const tsrc=(p,w=520)=>{const u=imgUrl(p);return isDrive(u)?u.replace(/=w\d+$/,'=w'+w):u};
+const driveSrc=id=>'https://lh3.googleusercontent.com/d/'+id+'=w'+DRIVE_W;
+const driveDl=id=>'https://drive.google.com/uc?export=download&id='+id;
+const measure=u=>new Promise(res=>{const i=new Image();i.onload=()=>res([i.naturalWidth,i.naturalHeight]);i.onerror=()=>res(null);i.src=u});
 const ratioOf=p=>{const d=D.dims?.[p];return d&&d[0]&&d[1]?d[0]/d[1]:(ratio[p]||1.5)};
 
 const toast=s=>{const t=$('#toast');t.textContent=s;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3200)};
@@ -316,7 +322,7 @@ function cardsHTML(){
   return items.map(({c})=>{
     const cv=c.cover||c.photos[0];
     return `<a class="card" href="#client/${encodeURIComponent(c.slug)}">
-      <div class="stack"><div class="cardimg">${cv?`<img loading="lazy" src="${esc(imgUrl(cv))}" style="object-position:${focusOf(cv)}" alt="">`:'<div class="noimg">No photos yet</div>'}</div>
+      <div class="stack"><div class="cardimg">${cv?`<img loading="lazy" src="${esc(tsrc(cv,800))}" style="object-position:${focusOf(cv)}" alt="">`:'<div class="noimg">No photos yet</div>'}</div>
       <div class="tags">${c.private?'<span class="tag">Hidden</span>':''}${c.pinHash?'<span class="tag">PIN</span>':''}</div></div>
       <div class="cardinfo"><h3>${esc(c.name||'Untitled gallery')}</h3><p>${c.photos.length} photos${c.date?' &nbsp;·&nbsp; '+esc(c.date):''}</p></div>
     </a>`}).join('');
@@ -334,7 +340,7 @@ const fitSeg=()=>`<label class="size">Size<input type="range" id="size" min="1" 
 function gridHTML(cx){
   if(!cx.list.length)return `<div class="empty"><h2>No photos yet</h2><p>Drag photos anywhere on this page, or use the upload button.</p><button class="primary" data-act="upload">Upload photos</button></div>`;
   return `<div class="grid ${fit}" style="--col:${COLW[size-1]}px">`+cx.list.map((p,k)=>`<div class="th ${picked.has(k)?'sel':''}" draggable="true" data-k="${k}">
-    <img loading="lazy" src="${esc(imgUrl(p))}" ${cx.kind==='client'?`style="object-position:${focusOf(p)}"`:''} draggable="false" alt="Photo ${k+1}">
+    <img loading="lazy" src="${esc(tsrc(p,520))}" ${cx.kind==='client'?`style="object-position:${focusOf(p)}"`:''} draggable="false" alt="Photo ${k+1}">
     <button class="chk" data-act="pick" data-k="${k}" aria-label="Select photo ${k+1}"></button>
     ${cx.kind==='client'&&p===cx.c.cover?'<span class="badge">Cover</span>':''}<span class="n">${k+1}</span></div>`).join('')+'</div>';
 }
@@ -381,13 +387,13 @@ function viewClient(){
   <div class="cmain"><div class="ctool"><button data-act="back">← Galleries</button>
     <div class="cstack"><input id="nameIn" class="cname" value="${esc(c.name)}" placeholder="Gallery name" aria-label="Gallery name"><br><input id="dateIn" class="cdate" value="${esc(c.date||'')}" placeholder="Add a date" aria-label="Date"></div>
     <span class="muted">${c.photos.length} photos</span>${fitSeg()}
-    <button class="setbtn" data-act="panel">Settings</button>${c.slug?'<button data-act="viewlive">View live ↗</button>':''}<button class="primary" data-act="upload">Upload photos</button></div>
+    <button class="setbtn" data-act="panel">Settings</button>${c.slug?'<button data-act="viewlive">View live ↗</button>':''}<button data-act="drive">Add from Drive</button><button class="primary" data-act="upload">Upload photos</button></div>
   <div class="cbody">${hintBar('Drag photos to reorder. Drag near the top or bottom edge to scroll. Click a photo to open it.')}${gridHTML(cx)}</div></div></div>`;
 }
 function viewPortfolio(){
   const cx=ctx(),k=pKey(),opts=arrays();if(!opts.includes(k))opts.push(k);
   const src=opts.length>1?`<label>Source <select id="pkey">${opts.map(o=>`<option ${o===k?'selected':''}>${esc(o)}</option>`).join('')}</select></label>`:`Source: content.json › ${esc(k)}`;
-  return `<div class="page"><div class="pagehead"><div><h1 class="big">Portfolio</h1><p class="muted">${cx.list.length} pictures on your public site. ${src}</p></div><div class="sp"></div>${fitSeg()}<button class="primary" data-act="upload">Upload pictures</button></div>
+  return `<div class="page"><div class="pagehead"><div><h1 class="big">Portfolio</h1><p class="muted">${cx.list.length} pictures on your public site. ${src}</p></div><div class="sp"></div>${fitSeg()}<button data-act="drive">Add from Drive</button><button class="primary" data-act="upload">Upload pictures</button></div>
     ${hintBar('Drag pictures to reorder. Drag near the top or bottom edge to scroll. Click one to open it.')}${gridHTML(cx)}</div>`;
 }
 
@@ -410,7 +416,7 @@ function viewStorage(){
   let oi=0;tree.forEach(t=>{if(/\.(jpe?g|png|webp|gif|avif|heic|svg)$/i.test(t.path)&&!seen.has(t.path))oi+=t.size||0});
   const other=Math.max(0,total-cl-port-oi),hist=Math.max(0,used-total);
   const segs=[['Client galleries',cl,'#c9a46a'],['Portfolio',port,'#e6d3ab'],['Other site images',oi,'#8a7a66'],['Code and other files',other,'#5b5148'],['Git history',hist,'#3a332d']];
-  const pct=Math.min(100,used/LIMIT*100);
+  const pct=Math.min(100,used/LIMIT*100),driveN=[...D.clients.flatMap(c=>c.photos),...pArr().map(srcOf)].filter(isDrive).length;
   const rows=D.clients.map(c=>{let s=0;new Set([...c.photos,c.cover].filter(Boolean).map(norm)).forEach(p=>s+=sizeMap[p]||0);return{c,s}}).sort((a,b)=>b.s-a.s),mx=Math.max(1,rows[0]?.s||1);
   return `<div class="page"><div class="pagehead"><div><h1 class="big">Storage</h1><p class="muted">Your photos live in your GitHub repository. GitHub recommends keeping a repository under about 1 GB.</p></div></div>
     ${storErr?`<p style="color:var(--red)">${esc(storErr)}</p>`:''}
@@ -419,7 +425,7 @@ function viewStorage(){
       <div class="legend">${segs.map(([n,v,col])=>`<div><i style="background:${col}"></i>${n} <span>${fmt(v)}</span></div>`).join('')}</div></div>
     <div class="panel"><h2>By gallery</h2>
       ${rows.map(({c,s},i)=>{const cv=c.cover||c.photos[0];return `<a class="srow ${i?'':'first'}" href="#client/${encodeURIComponent(c.slug)}"><div class="sth">${cv?`<img loading="lazy" src="${esc(imgUrl(cv))}" alt="">`:''}</div><div><div class="sname">${esc(c.name||'Untitled gallery')}</div><small style="margin:0">${c.photos.length} photos</small></div><div class="sbar"><b style="width:${s/mx*100}%"></b></div><div class="sz">${fmt(s)}</div></a>`}).join('')||'<p class="muted">No galleries yet.</p>'}</div>
-    <small>Removing a photo from a gallery does not delete its file, so it still counts here. File sizes come from the main branch; the total also includes Git history.</small></div>`;
+    <small>${driveN?driveN+' photos are stored on Google Drive and do not count toward this. ':''}Removing a photo from a gallery does not delete its file, so it still counts here. File sizes come from the main branch; the total also includes Git history.</small></div>`;
 }
 
 /* ---------- selection bar ---------- */
@@ -438,6 +444,7 @@ async function act(a,el){
   else if(a==='sec'){sec[el.dataset.id]=!sec[el.dataset.id];render()}
   else if(a==='viewlive')window.open('../g/'+c.slug+'/','_blank');
   else if(a==='upload')$('#files').click();
+  else if(a==='drive')driveDialog();
   else if(a==='newclient')newClient();
   else if(a==='pickcover')pickCover();
   else if(a==='copylink')navigator.clipboard.writeText(location.origin+'/g/'+c.slug+'/').then(()=>toast('Gallery link copied'));
@@ -576,7 +583,7 @@ $('#modal').addEventListener('click',e=>{
 function pickCover(){
   const c=D.clients[cur];if(!c.photos.length){toast('Upload photos first');return}
   const d=$('#dlg');
-  d.innerHTML=`<div class="dbox wide"><div class="dh"><h2>Choose a cover</h2><button class="x" id="pcx" aria-label="Close">✕</button></div><div class="pkgrid">${c.photos.map((p,k)=>`<button class="pk ${p===(c.cover||c.photos[0])?'on':''}" data-k="${k}" aria-label="Photo ${k+1}"><img loading="lazy" src="${esc(imgUrl(p))}" alt=""></button>`).join('')}</div></div>`;
+  d.innerHTML=`<div class="dbox wide"><div class="dh"><h2>Choose a cover</h2><button class="x" id="pcx" aria-label="Close">✕</button></div><div class="pkgrid">${c.photos.map((p,k)=>`<button class="pk ${p===(c.cover||c.photos[0])?'on':''}" data-k="${k}" aria-label="Photo ${k+1}"><img loading="lazy" src="${esc(tsrc(p,300))}" alt=""></button>`).join('')}</div></div>`;
   d.classList.add('on');
   d.onclick=e=>{
     const b=e.target.closest('.pk');
@@ -598,6 +605,73 @@ function newClient(){
   };
   $('#ncx').onclick=close;$('#ncc').onclick=make;d.onclick=e=>{if(e.target===d)close()};
   d.querySelectorAll('input').forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')make()});
+}
+
+/* ---------- add from Google Drive ---------- */
+const fileId=t=>(t.match(/\/d\/([\w-]{20,})/)||t.match(/[?&]id=([\w-]{20,})/)||[])[1];
+const folderId=t=>(t.match(/folders\/([\w-]{20,})/)||[])[1];
+async function listFolder(fid,key){
+  let out=[],tok='';
+  do{
+    const u='https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent("'"+fid+"' in parents and mimeType contains 'image/' and trashed=false")
+      +'&fields='+encodeURIComponent('nextPageToken,files(id,name,imageMediaMetadata(width,height))')+'&pageSize=1000&orderBy=name&key='+encodeURIComponent(key)+(tok?'&pageToken='+tok:'');
+    const r=await fetch(u);
+    if(!r.ok){let m='';try{m=(await r.json()).error.message}catch(e){}throw Error('Google Drive said: '+(m||r.status))}
+    const j=await r.json();out=out.concat(j.files||[]);tok=j.nextPageToken||'';
+  }while(tok);
+  return out;
+}
+function driveDialog(){
+  const d=$('#dlg'),cx=ctx();
+  d.innerHTML=`<div class="dbox" style="width:min(540px,94vw)"><h2>Add from Google Drive</h2>
+  <small style="margin-bottom:10px">Paste photo links or a folder link, one per line. Sharing must be set to “Anyone with the link can view”. Photos stay on Drive; your site shows them from there and visitors download the original file.</small>
+  <div class="field"><label>Drive links</label><textarea id="dl" rows="5" placeholder="https://drive.google.com/file/d/…&#10;https://drive.google.com/drive/folders/…"></textarea></div>
+  <div class="field"><label>Google API key (only needed for folder links)</label><input id="gk" value="${esc(localStorage.getItem('gm_gkey')||'')}" placeholder="Paste once. It is saved in this browser."><small>Create one in Google Cloud Console: enable the Google Drive API, then make an API key and limit it to your website address.</small></div>
+  <div class="actions"><button class="ghost" id="dx">Cancel</button><button class="primary" id="dgo">Add to ${cx.kind==='client'?'gallery':'portfolio'}</button></div></div>`;
+  d.classList.add('on');$('#dl').focus();
+  const close=()=>d.classList.remove('on');
+  $('#dx').onclick=close;d.onclick=e=>{if(e.target===d)close()};
+  $('#dgo').onclick=async()=>{
+    const lines=$('#dl').value.split(/\s+/).filter(Boolean),key=$('#gk').value.trim();
+    if(!lines.length){toast('Paste at least one Drive link');return}
+    if(key)localStorage.setItem('gm_gkey',key);
+    close();await addFromDrive(lines,key);
+  };
+}
+async function addFromDrive(lines,key){
+  const cx=ctx(),isC=cx.kind==='client',P=$('#prog');
+  P.classList.add('on');$('#progtitle').textContent='Reading Google Drive…';$('#progsub').textContent='';$('#progbar').style.width='5%';
+  try{
+    let items=[];
+    for(const l of lines){
+      const fo=folderId(l),fi=fileId(l);
+      if(fo){if(!key)throw Error('Folder links need a Google API key. Paste one, or add the photos as individual file links.');
+        (await listFolder(fo,key)).forEach(f=>items.push({id:f.id,w:f.imageMediaMetadata?.width,h:f.imageMediaMetadata?.height}))}
+      else if(fi)items.push({id:fi});
+      else throw Error('This does not look like a Drive link: '+l.slice(0,60));
+    }
+    const have=new Set(cx.list),seen=new Set();
+    items=items.filter(it=>{const u=driveSrc(it.id);if(have.has(u)||seen.has(u))return false;seen.add(u);return true});
+    if(!items.length)throw Error('Nothing new to add. Those photos are already here.');
+    let ok=0,bad=0;D.dims=D.dims||{};D.hi=D.hi||{};
+    for(let i=0;i<items.length;i+=4){
+      $('#progtitle').textContent='Adding '+Math.min(i+4,items.length)+' of '+items.length;$('#progbar').style.width=(i/items.length*100)+'%';
+      await Promise.all(items.slice(i,i+4).map(async it=>{
+        const u=driveSrc(it.id);let wh=it.w&&it.h?[it.w,it.h]:await measure(u);
+        if(!wh){bad++;return}
+        it.u=u;it.wh=wh;
+      }));
+    }
+    items.filter(it=>it.u).forEach(it=>{
+      D.dims[it.u]=it.wh;D.hi[it.u]=driveDl(it.id);
+      if(isC)cx.arr.push(it.u);
+      else{const first=cx.arr[0];if(first&&typeof first==='object'){const k=KEYS.find(x=>first[x])||'src';cx.arr.push({[k]:it.u})}else cx.arr.push(it.u)}
+      ok++;
+    });
+    P.classList.remove('on');
+    if(ok){mark();if(isC&&!cx.c.cover)cx.c.cover=cx.arr[0];render()}
+    toast(ok?ok+' added from Drive. Publish to make '+(ok===1?'it':'them')+' live.'+(bad?' '+bad+' could not be read. Check their sharing.':''):'None could be read. Check that sharing is set to Anyone with the link.');
+  }catch(e){P.classList.remove('on');toast(e.message)}
 }
 
 /* ---------- upload (straight to the GitHub repo) ---------- */
