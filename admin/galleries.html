@@ -224,13 +224,21 @@ hr{border:0;border-top:1px solid var(--line2);margin:16px 0}
   .srow{grid-template-columns:44px minmax(0,1fr) 70px}.srow .sbar{display:none}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.mode{font-size:11.5px;border-radius:20px;padding:2px 10px;border:1px solid var(--line);color:var(--muted)}
+.mode.cl{color:#8fc2ff;border-color:#2c4666}.mode.ws{color:var(--gold);border-color:#5b4a2e}
+.tag.tl{color:#8fc2ff}.tag.tw{color:var(--gold)}
+.sets{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line2)}
+.sets button{padding:5px 12px;border-radius:20px;font-size:12.5px}.sets button.on{background:var(--gold);color:#17120b;border-color:var(--gold)}.sets i{font-style:normal;opacity:.65;margin-left:4px}
+#deploybtn{background:none;border:1px solid var(--line);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--muted)}
+.deploypanel{top:56px;right:14px;width:min(320px,calc(100vw - 28px));padding:14px;border-radius:12px}.deployhead h2{font-size:19px}.deploystate{margin:10px 0;padding:10px;font-size:12.5px}.deploylist{max-height:130px}.deployactions button{padding:5px 8px;font-size:12px}
 </style></head><body>
 
 <header class="top">
   <div class="brand">Studio</div><span class="tsub">Gallery manager</span>
   <span class="dot" id="dot"></span><span class="status" id="status">Connect to your Studio</span>
   <span class="repo" id="repo"></span>
-  <div class="sp"></div><button id="deploybtn" title="Check whether the live site has finished updating">Deployment status</button>
+  <div class="sp"></div><button id="deploybtn" title="Check whether the live site has finished updating">Site status</button>
   <a class="tlink" href="index.html">Site editor ↗</a>
   <a class="tlink" href="../" target="_blank">View site ↗</a>
   <button id="save" class="primary" disabled>Publish changes</button>
@@ -239,8 +247,10 @@ hr{border:0;border-top:1px solid var(--line2);margin:16px 0}
 <div class="shell">
   <nav class="rail" aria-label="Sections">
     <button class="rb" data-go="clients"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Galleries</button>
+    <button class="rb" data-go="cloud"><svg viewBox="0 0 24 24"><path d="M17.5 19a4.5 4.5 0 1 0-1-8.9A6 6 0 0 0 5 12a3.5 3.5 0 0 0 .5 7z"/></svg>Sharing</button>
     <button class="rb" data-go="portfolio"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>Portfolio</button>
     <button class="rb" data-go="storage"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>Storage</button>
+    <div class="sp"></div><button class="rb" data-go="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</button>
   </nav>
   <div id="view"></div>
 </div>
@@ -270,6 +280,7 @@ let token=localStorage.getItem('jp_tok')||'',D=null,sha='',dirty=false;
 let view='clients',cur=-1,q='',filter='all',fit=localStorage.getItem('gm_fit')==='square'?'square':'full';
 let picked=new Set(),photoIdx=-1,dragFrom=-1,panelOpen=false;
 let sec={cover:true,details:false,access:false,layout:false};
+let isCloud=false,setIdx=0;const CUR=()=>(isCloud?D.cloud:D.clients)[cur];
 let tree=null,sizeMap={},repoKB=null,storLoading=false,storErr='';
 let ratio={};try{ratio=JSON.parse(localStorage.getItem('gm_ratio')||'{}')}catch(e){}
 const ROWH=[100,140,190,250,330],COLW=[110,140,170,220,280];
@@ -283,7 +294,7 @@ const measure=u=>new Promise(res=>{const i=new Image();i.onload=()=>res([i.natur
 const ratioOf=p=>{const d=D.dims?.[p];return d&&d[0]&&d[1]?d[0]/d[1]:(ratio[p]||1.5)};
 
 const toast=s=>{const t=$('#toast');t.textContent=s;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3200)};
-function mark(){dirty=true;$('#save').disabled=false;$('#status').textContent='Changes not published';$('#dot').classList.add('dirty')}
+function mark(){(D.cloud||[]).forEach(c=>c.photos=c.sets.flatMap(x=>x.photos));dirty=true;$('#save').disabled=false;$('#status').textContent='Changes not published';$('#dot').classList.add('dirty')}
 const focusOf=p=>(D.focus||{})[p]||'50% 50%';
 const optim=()=>localStorage.getItem('gm_opt')!=='0';
 function repoText(){$('#repo').textContent=repoKB?'Repo ~'+Math.round(repoKB/1024)+' MB / 1 GB':''}
@@ -297,15 +308,16 @@ const arrays=()=>Object.keys(D).filter(k=>k!=='clients'&&Array.isArray(D[k])&&D[
 function pKey(){const k=localStorage.getItem('gm_pkey'),a=arrays();if(k&&Array.isArray(D[k]))return k;return a.find(x=>CAND.includes(x))||a[0]||'portfolio'}
 function pArr(){const k=pKey();if(!Array.isArray(D[k]))D[k]=[];return D[k]}
 function ctx(){
-  if(view==='client'){const c=D.clients[cur];return{kind:'client',c,arr:c.photos,list:c.photos}}
+  if(view==='client'){const c=CUR(),a=isCloud?c.sets[Math.min(setIdx,c.sets.length-1)].photos:c.photos;return{kind:'client',c,arr:a,list:a}}
   const arr=pArr();return{kind:'portfolio',arr,list:arr.map(srcOf)}
 }
 
 /* ---------- routing ---------- */
 function route(){
   const h=location.hash.slice(1)||'clients';
-  if(h.startsWith('client/')){const slug=decodeURIComponent(h.slice(7));cur=D.clients.findIndex(c=>c.slug===slug);view=cur<0?'clients':'client'}
-  else view=['clients','portfolio','storage'].includes(h)?h:'clients';
+  isCloud=h.startsWith('cloud/');setIdx=0;
+  if(isCloud||h.startsWith('client/')){const slug=decodeURIComponent(h.slice(isCloud?6:7)),L=isCloud?D.cloud:D.clients;cur=L.findIndex(c=>c.slug===slug);view=cur<0?(isCloud?'cloud':'clients'):'client'}
+  else view=['clients','cloud','portfolio','storage','settings'].includes(h)?h:'clients';
   picked.clear();photoIdx=-1;panelOpen=false;renderModal();render(true);
 }
 const go=h=>{if(location.hash==='#'+h)route();else location.hash=h};
@@ -315,31 +327,31 @@ addEventListener('hashchange',()=>D&&route());
 function render(reset){
   if(!D)return;
   const keep=['#view','.cmain','.cpanel'].map(s=>[s,$(s)?.scrollTop||0]);
-  $$('.rb').forEach(b=>b.classList.toggle('on',b.dataset.go===(view==='client'?'clients':view)));
-  $('#view').innerHTML=view==='client'?viewClient():view==='portfolio'?viewPortfolio():view==='storage'?viewStorage():viewClients();
+  $$('.rb').forEach(b=>b.classList.toggle('on',b.dataset.go===(view==='client'?(isCloud?'cloud':'clients'):view)));
+  $('#view').innerHTML=view==='client'?viewClient():view==='portfolio'?viewPortfolio():view==='storage'?viewStorage():view==='settings'?viewSettings():viewClients();
   if(!reset)keep.forEach(([s,t])=>{const e=$(s);if(e)e.scrollTop=t});
   selbar();repoText();layout();
 }
 
-function cardsHTML(){
-  const ql=q.toLowerCase();
-  const items=D.clients.map((c,i)=>({c,i})).filter(({c})=>((c.name||'')+' '+(c.slug||'')).toLowerCase().includes(ql))
-    .filter(({c})=>filter==='all'||(filter==='public'&&!c.private)||(filter==='hidden'&&c.private)||(filter==='pin'&&c.pinHash));
-  if(!items.length)return `<div class="empty" style="grid-column:1/-1"><h2>${D.clients.length?'No galleries match':'No galleries yet'}</h2><p>${D.clients.length?'Try a different search or filter.':'Create your first client gallery to start adding photos.'}</p>${D.clients.length?'':'<button class="primary" data-act="newclient">New gallery</button>'}</div>`;
+function cardsHTML(cl=view==='cloud'){
+  const LST=cl?D.cloud:D.clients,ql=q.toLowerCase();
+  const items=LST.map((c,i)=>({c,i})).filter(({c})=>((c.name||'')+' '+(c.slug||'')).toLowerCase().includes(ql))
+    .filter(({c})=>cl||filter==='all'||(filter==='public'&&!c.private)||(filter==='hidden'&&c.private)||(filter==='pin'&&c.pinHash));
+  if(!items.length)return `<div class="empty" style="grid-column:1/-1"><h2>${LST.length?'No galleries match':'No galleries yet'}</h2><p>${LST.length?'Try a different search or filter.':'Create your first client gallery to start adding photos.'}</p>${LST.length?'':`<button class="primary" data-act="${cl?'newcloud':'newclient'}">New gallery</button>`}</div>`;
   return items.map(({c})=>{
     const cv=c.cover||c.photos[0];
-    return `<a class="card" href="#client/${encodeURIComponent(c.slug)}">
+    return `<a class="card" href="#${cl?'cloud':'client'}/${encodeURIComponent(c.slug)}">
       <div class="stack"><div class="cardimg">${cv?`<img loading="lazy" src="${esc(tsrc(cv,800))}" style="object-position:${focusOf(cv)}" alt="">`:'<div class="noimg">No photos yet</div>'}</div>
-      <div class="tags">${c.private?'<span class="tag">Hidden</span>':''}${c.pinHash?'<span class="tag">PIN</span>':''}</div></div>
+      <div class="tags"><span class="tag ${cl?'tl':'tw'}">${cl?'Private link':'On website'}</span>${c.private?'<span class="tag">Hidden</span>':''}${c.pinHash?'<span class="tag">PIN</span>':''}</div></div>
       <div class="cardinfo"><h3>${esc(c.name||'Untitled gallery')}</h3><p>${c.photos.length} photos${c.date?' &nbsp;·&nbsp; '+esc(c.date):''}</p></div>
     </a>`}).join('');
 }
-function viewClients(){
+function viewClients(cl=view==='cloud'){
   const f=[['all','All'],['public','Public'],['hidden','Hidden'],['pin','PIN']];
-  return `<div class="page"><div class="pagehead"><div><h1 class="big">Client <em>galleries</em></h1><p class="muted">${D.clients.length} galleries. Open one to arrange photos and change its cover.</p></div><div class="sp"></div>
+  return `<div class="page"><div class="pagehead"><div><h1 class="big">${cl?'Client <em>sharing</em>':'Website <em>galleries</em>'}</h1><p class="muted">${cl?D.cloud.length+' private galleries. Only people with the link can open them, and they never appear on your website.':D.clients.length+' galleries shown on your website.'}</p></div><div class="sp"></div>
     <input class="search" id="q" placeholder="Search galleries…" value="${esc(q)}" aria-label="Search galleries">
-    <div class="seg">${f.map(([k,t])=>`<button data-act="filter" data-v="${k}" class="${filter===k?'on':''}">${t}</button>`).join('')}</div>
-    <button class="primary" data-act="newclient">＋ New gallery</button></div>
+    <div class="seg" ${cl?'hidden':''}>${f.map(([k,t])=>`<button data-act="filter" data-v="${k}" class="${filter===k?'on':''}">${t}</button>`).join('')}</div>
+    <button class="primary" data-act="${cl?'newcloud':'newclient'}">＋ New ${cl?'client gallery':'gallery'}</button></div>
     <div class="cards" id="cards">${cardsHTML()}</div></div>`;
 }
 
@@ -371,6 +383,7 @@ function coverBody(c){
   <div class="actions"><button class="primary" data-act="pickcover">Change cover</button></div>`;
 }
 function panelHTML(c){
+  if(isCloud)return cloudPanel(c);
   c.lay=c.lay||{};const L=c.lay,url=location.origin+'/g/'+c.slug+'/';
   return SEC('cover','Cover preview','Desktop and mobile cover banner',coverBody(c))
   +SEC('details','Details','Name, date and story',F('Gallery name','name',c.name||'')+F('Date','date',c.date||'')+F('Short story','story',c.story||'',true)
@@ -402,9 +415,9 @@ function viewClient(){
   return `<div class="cwrap"><aside class="cpanel ${panelOpen?'open':''}" aria-label="Gallery settings">${panelHTML(c)}</aside>
   <div class="cmain"><div class="ctool"><button data-act="back">← Galleries</button>
     <div class="cstack"><input id="nameIn" class="cname" value="${esc(c.name)}" placeholder="Gallery name" aria-label="Gallery name"><br><input id="dateIn" class="cdate" value="${esc(c.date||'')}" placeholder="Add a date" aria-label="Date"></div>
-    <span class="muted">${c.photos.length} photos</span>${fitSeg()}
-    <button class="setbtn" data-act="panel">Settings</button>${c.slug?'<button data-act="viewlive">View live ↗</button>':''}<button data-act="drive">Add from Drive</button><button class="primary" data-act="upload">Upload photos</button></div>
-  <div class="cbody">${hintBar('Drag photos to reorder. Drag near the top or bottom edge to scroll. Click a photo to open it.')}${gridHTML(cx)}</div></div></div>`;
+    <span class="mode ${isCloud?'cl':'ws'}">${isCloud?'Client sharing':'On website'}</span><span class="muted">${c.photos.length} photos</span>${fitSeg()}
+    <button class="setbtn" data-act="panel">Settings</button>${c.slug?'<button data-act="viewlive">'+(isCloud?'Preview ↗':'View live ↗')+'</button>':''}<button data-act="drive">Add from Drive</button><button class="primary" data-act="upload">Upload photos</button></div>
+  <div class="cbody">${isCloud?setsBar(c):''}${hintBar('Drag photos to reorder. Drag near the top or bottom edge to scroll. Click a photo to open it.')}${gridHTML(cx)}</div></div></div>`;
 }
 function viewPortfolio(){
   const cx=ctx(),k=pKey(),opts=arrays();if(!opts.includes(k))opts.push(k);
@@ -448,20 +461,28 @@ function viewStorage(){
 function selbar(){
   const s=$('#selbar'),n=picked.size;if(!n||!['client','portfolio'].includes(view)){s.classList.remove('on');return}
   s.classList.add('on');
-  s.innerHTML=`<b>${n} selected</b>${view==='client'&&n===1?'<button data-act="bulkcover">Set as cover</button>':''}<button data-act="selectall">Select all</button><button class="danger" data-act="bulkremove">Remove</button><button class="ghost" data-act="clearpick">Clear</button>`;
+  s.innerHTML=`<b>${n} selected</b>${view==='client'&&n===1?'<button data-act="bulkcover">Set as cover</button>':''}<button data-act="selectall">Select all</button><button data-act="dlsel">Download</button><button class="danger" data-act="bulkremove">Remove</button><button class="ghost" data-act="clearpick">Clear</button>`;
 }
 function togglePick(k){picked.has(k)?picked.delete(k):picked.add(k);render()}
 
 /* ---------- actions ---------- */
 async function act(a,el){
-  const cx=['client','portfolio'].includes(view)?ctx():null,c=view==='client'?D.clients[cur]:null;
-  if(a==='back')go('clients');
+  const cx=['client','portfolio'].includes(view)?ctx():null,c=view==='client'?CUR():null;
+  if(a==='back')go(isCloud?'cloud':'clients');
   else if(a==='panel'){panelOpen=!panelOpen;$('.cpanel')?.classList.toggle('open',panelOpen)}
   else if(a==='sec'){sec[el.dataset.id]=!sec[el.dataset.id];render()}
-  else if(a==='viewlive')window.open('../g/'+c.slug+'/','_blank');
+  else if(a==='viewlive')window.open(isCloud?shareUrl(c):'../g/'+c.slug+'/','_blank');
   else if(a==='upload')$('#files').click();
   else if(a==='drive')driveDialog();
   else if(a==='newclient')newClient();
+  else if(a==='newcloud')newClient(true);
+  else if(a==='addset'){const n=prompt('Set name (like a sub-folder), for example Wedding highlights');if(n){c.sets.push({id:'s'+Date.now().toString(36),name:n.trim(),photos:[]});setIdx=c.sets.length-1;mark();render()}}
+  else if(a==='set'){setIdx=+el.dataset.i;picked.clear();render()}
+  else if(a==='renset'){const n=prompt('Rename set',c.sets[setIdx].name);if(n){c.sets[setIdx].name=n.trim();mark();render()}}
+  else if(a==='delset'){if(c.sets.length<2){toast('A gallery needs at least one set');return}if(confirm('Delete the set “'+c.sets[setIdx].name+'” and remove its photos from this gallery?')){c.sets.splice(setIdx,1);setIdx=0;mark();render()}}
+  else if(a==='dlsel'){[...picked].forEach((k,i)=>setTimeout(()=>dlOne(cx.list[k]),i*700))}
+  else if(a==='dlone')dlOne(cx.list[photoIdx]);
+  else if(a==='copyshare'){navigator.clipboard.writeText(shareUrl(c)).then(()=>toast('Client link copied'))}
   else if(a==='pickcover')pickCover();
   else if(a==='laystyle'){c.lay=c.lay||{};c.lay.style=el.dataset.v;mark();render()}
   else if(a==='copylink')navigator.clipboard.writeText(location.origin+'/g/'+c.slug+'/').then(()=>toast('Gallery link copied'));
@@ -485,7 +506,7 @@ async function act(a,el){
     mark();toast('PIN set. Publish to apply.');render();
   }
   else if(a==='rmpin'){if(confirm('Remove PIN protection from this gallery?')){delete c.pinHash;delete c.pinSalt;mark();render()}}
-  else if(a==='delclient'){if(confirm('Delete the gallery “'+(c.name||'Untitled')+'”? This takes effect when you publish.')){D.clients.splice(cur,1);mark();go('clients')}}
+  else if(a==='delclient'){if(confirm('Delete the gallery “'+(c.name||'Untitled')+'”? This takes effect when you publish.')){(isCloud?D.cloud:D.clients).splice(cur,1);mark();go(isCloud?'cloud':'clients')}}
 }
 const V=$('#view');
 V.addEventListener('click',e=>{
@@ -495,8 +516,10 @@ V.addEventListener('click',e=>{
 V.addEventListener('input',e=>{
   const t=e.target,f=t.dataset.f;
   if(t.id==='size'){size=+t.value;localStorage.setItem('gm_size',size);const g=$('.grid');if(g)g.style.setProperty('--col',COLW[size-1]+'px');layout();return}
+  if(t.id==='skey'){localStorage.setItem('gm_gkey',t.value.trim());return}
+  if(t.id==='sstudio'||t.id==='semail'){D.cloudSettings=D.cloudSettings||{};D.cloudSettings[t.id==='semail'?'emailEndpoint':'studio']=t.value.trim();mark();return}
   if(t.id==='q'){q=t.value;$('#cards').innerHTML=cardsHTML();return}
-  if(view!=='client'||cur<0)return;const c=D.clients[cur];
+  if(view!=='client'||cur<0)return;const c=CUR();
   if(t.id==='nameIn'){c.name=t.value;mark();const d=$('[data-f="name"]');if(d)d.value=t.value;return}
   if(t.id==='dateIn'){c.date=t.value;mark();const d=$('[data-f="date"]');if(d)d.value=t.value;return}
   if(!f)return;
@@ -520,14 +543,14 @@ V.addEventListener('change',e=>{
   const t=e.target;
   if(t.id==='optim')localStorage.setItem('gm_opt',t.checked?'1':'0');
   else if(t.id==='pkey'){localStorage.setItem('gm_pkey',t.value);render()}
-  else if(t.dataset.c&&view==='client'){D.clients[cur][t.dataset.c]=t.checked;mark()}
+  else if(t.dataset.c&&view==='client'){CUR()[t.dataset.c]=t.checked;mark()}
 });
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
 
 /* cover crop focus: drag the dot on the cover photo */
 let fmove=false;
 function setFocus(e){
-  const box=$('#fbox');if(!box)return;const c=D.clients[cur],p=c.cover||c.photos[0],r=box.getBoundingClientRect();
+  const box=$('#fbox');if(!box)return;const c=CUR(),p=c.cover||c.photos[0],r=box.getBoundingClientRect();
   const x=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100)),y=Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100)),val=Math.round(x)+'% '+Math.round(y)+'%';
   D.focus=D.focus||{};D.focus[p]=val;c.ogs='';
   const d=$('#fdot');d.style.left=x+'%';d.style.top=y+'%';$$('.pv img').forEach(i=>i.style.objectPosition=val);mark();
@@ -585,7 +608,7 @@ function renderModal(){
   m.innerHTML=`<div class="mstage"><button class="mnav l" data-m="prev" aria-label="Previous photo" ${photoIdx===0?'disabled':''}>‹</button><img src="${esc(imgUrl(p))}" alt="Photo ${photoIdx+1}"><button class="mnav r" data-m="next" aria-label="Next photo" ${photoIdx===n-1?'disabled':''}>›</button></div>
   <aside class="mside"><div class="dh"><h2>Photo ${photoIdx+1} of ${n}</h2><button class="x" data-m="close" aria-label="Close">✕</button></div>
   ${isC?`<button class="primary" data-m="cover" style="width:100%" ${cov?'disabled':''}>${cov?'This is the cover':'Set as cover'}</button><small>Adjust the crop from Cover and thumbnail in the gallery settings.</small>`:''}
-  <div class="actions"><button data-m="earlier" ${photoIdx===0?'disabled':''}>Move earlier</button><button data-m="later" ${photoIdx===n-1?'disabled':''}>Move later</button></div><hr>
+  <button data-act="dlone" style="width:100%;margin-top:12px">Download original</button><div class="actions"><button data-m="earlier" ${photoIdx===0?'disabled':''}>Move earlier</button><button data-m="later" ${photoIdx===n-1?'disabled':''}>Move later</button></div><hr>
   <button class="danger" data-m="remove" style="width:100%">Remove from ${isC?'gallery':'portfolio'}</button>
   <small>The image file stays in your repository storage.</small></aside>`;
 }
@@ -608,7 +631,7 @@ $('#modal').addEventListener('click',e=>{
 
 /* ---------- dialogs ---------- */
 function pickCover(){
-  const c=D.clients[cur];if(!c.photos.length){toast('Upload photos first');return}
+  const c=CUR();if(!c.photos.length){toast('Upload photos first');return}
   const d=$('#dlg');
   d.innerHTML=`<div class="dbox wide"><div class="dh"><h2>Choose a cover</h2><button class="x" id="pcx" aria-label="Close">✕</button></div><div class="pkgrid">${c.photos.map((p,k)=>`<button class="pk ${p===(c.cover||c.photos[0])?'on':''}" data-k="${k}" aria-label="Photo ${k+1}"><img loading="lazy" src="${esc(tsrc(p,300))}" alt=""></button>`).join('')}</div></div>`;
   d.classList.add('on');
@@ -618,15 +641,39 @@ function pickCover(){
     if(e.target===d||e.target.id==='pcx')d.classList.remove('on');
   };
 }
-function newClient(){
+function dlOne(p){
+  if(!p)return;const id=isDrive(p)?(p.match(/\/d\/([\w-]+)/)||[])[1]:null,u=(D.hi||{})[p]||(id?driveDl(id):imgUrl(p));
+  const a=document.createElement('a');a.href=u;a.download=(p.split('/').pop()||'photo').replace(/=w\d+$/,'')+(isDrive(p)?'.jpg':'');a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
+}
+const shareUrl=c=>location.origin+'/cloud.html?g='+encodeURIComponent(c.slug);
+function setsBar(c){return `<div class="sets">${c.sets.map((x,i)=>`<button data-act="set" data-i="${i}" class="${i===setIdx?'on':''}">${esc(x.name)} <i>${x.photos.length}</i></button>`).join('')}<button class="ghost" data-act="addset">＋ Add set</button><div class="sp"></div><button class="ghost" data-act="renset">Rename</button><button class="ghost danger" data-act="delset">Delete set</button></div>`}
+function cloudPanel(c){
+  const L=c.lay=c.lay||{};
+  return SEC('cover','Cover and thumbnail','What your client sees first',coverBody(c))
+  +SEC('details','Details','Name, date and welcome note',F('Gallery name','name',c.name||'')+F('Date','date',c.date||'')+F('Welcome note','story',c.story||'',true))
+  +SEC('access','Access and downloads','PIN, email and downloads',`<div class="field"><label>Client link</label><div class="row"><input readonly value="${esc(shareUrl(c))}"><button data-act="copyshare">Copy</button></div><small>Unlisted and hidden from search engines. Anyone with the link can open it.</small></div>`
+    +CK('Ask for email before opening','emailGate',c.emailGate,'Emails go to the address set in Settings.')
+    +SEL('Client downloads','download',c.download||'orig',[['off','Off'],['orig','Original files']])
+    +`<div class="field"><label>${c.pinHash?'PIN protection is on. Set a new PIN':'PIN protection'}</label><div class="row"><input id="pin" type="password" inputmode="numeric" placeholder="4–10 characters"><button class="primary" data-act="setpin">${c.pinHash?'Change':'Set'} PIN</button></div></div>`+(c.pinHash?'<button class="ghost danger" data-act="rmpin">Remove PIN</button>':''))
+  +`<button class="ghost danger" data-act="delclient" style="width:100%;margin-top:6px">Delete this gallery</button>`;
+}
+function viewSettings(){
+  const cs=D.cloudSettings||{};
+  return `<div class="page" style="max-width:720px"><div class="pagehead"><div><h1 class="big">Settings</h1><p class="muted">Connections used by the gallery manager and client galleries.</p></div></div>
+  <div class="panel"><h2>Google Drive</h2><div class="field"><label>Google API key</label><input id="skey" value="${esc(localStorage.getItem('gm_gkey')||'')}" placeholder="Paste your API key"><small>Needed to import Drive folders. Enable the Google Drive API in Google Cloud Console, create an API key and limit it to your site. Saved in this browser only.</small></div></div>
+  <div class="panel"><h2>Client galleries</h2><div class="field"><label>Studio name</label><input id="sstudio" value="${esc(cs.studio||'')}" placeholder="${esc(D.name||'Your name')}"></div>
+  <div class="field"><label>Email collection address</label><input id="semail" value="${esc(cs.emailEndpoint||'')}" placeholder="https://formspree.io/f/…"><small>Where emails entered on gallery gates are sent: a Formspree, Google Apps Script or similar form address. Without one, the email gate still asks but nothing is saved. Publish after changing.</small></div></div></div>`;
+}
+function newClient(cl=false){
   const d=$('#dlg');
-  d.innerHTML=`<div class="dbox"><h2>New client gallery</h2><div class="field"><label>Client or gallery name</label><input id="ncn" placeholder="For example, Priya and Arjun"></div><div class="field"><label>Date</label><input id="ncd" placeholder="For example, March 2026"></div><div class="actions"><button class="ghost" id="ncx">Cancel</button><button class="primary" id="ncc">Create gallery</button></div></div>`;
+  d.innerHTML=`<div class="dbox"><h2>${cl?'New client sharing gallery':'New website gallery'}</h2><div class="field"><label>Client or gallery name</label><input id="ncn" placeholder="For example, Priya and Arjun"></div><div class="field"><label>Date</label><input id="ncd" placeholder="For example, March 2026"></div><div class="actions"><button class="ghost" id="ncx">Cancel</button><button class="primary" id="ncc">Create gallery</button></div></div>`;
   d.classList.add('on');$('#ncn').focus();
   const close=()=>d.classList.remove('on');
   const make=()=>{
     const name=$('#ncn').value.trim();if(!name){toast('Enter a name for the gallery');return}
     const base=name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'gallery';let slug=base,i=2;
     while(D.clients.some(c=>c.slug===slug))slug=base+'-'+i++;
+    if(cl){const slug=base+'-'+Math.random().toString(36).slice(2,8);D.cloud.unshift({name,slug,date:$('#ncd').value.trim(),story:'',cover:'',photos:[],sets:[{id:'s1',name:'Photos',photos:[]}],emailGate:false,download:'orig'});mark();close();go('cloud/'+slug);return}
     D.clients.unshift({name,slug,date:$('#ncd').value.trim(),story:'',cover:'',photos:[],private:false,onHome:false,ogOn:true,showCover:true,coverSize:'full',download:'off',lay:{style:'masonry',gap:14,cols:3,mcols:2,round:0}});
     mark();close();go('client/'+encodeURIComponent(slug));
   };
@@ -651,19 +698,21 @@ async function listFolder(fid,key){
 function driveDialog(){
   const d=$('#dlg'),cx=ctx();
   d.innerHTML=`<div class="dbox" style="width:min(540px,94vw)"><h2>Add from Google Drive</h2>
-  <small style="margin-bottom:10px">Paste photo links or a folder link, one per line. Sharing must be set to “Anyone with the link can view”. Photos stay on Drive; your site shows them from there and visitors download the original file.</small>
-  <div class="field"><label>Drive links</label><textarea id="dl" rows="5" placeholder="https://drive.google.com/file/d/…&#10;https://drive.google.com/drive/folders/…"></textarea></div>
-  <div class="field"><label>Google API key (only needed for folder links)</label><input id="gk" value="${esc(localStorage.getItem('gm_gkey')||'')}" placeholder="Paste once. It is saved in this browser."><small>Create one in Google Cloud Console: enable the Google Drive API, then make an API key and limit it to your website address.</small></div>
+  <small style="margin-bottom:10px">Paste a Drive folder link${isCloud?' (its sub-folders become sets)':''}. Sharing must be set to “Anyone with the link can view”. Photos stay on Drive; your site shows them from there and visitors download the original file.</small>
+  <div class="field"><label>Drive links</label><textarea id="dl" rows="5" placeholder="https://drive.google.com/drive/folders/…"></textarea></div>
   <div class="actions"><button class="ghost" id="dx">Cancel</button><button class="primary" id="dgo">Add to ${cx.kind==='client'?'gallery':'portfolio'}</button></div></div>`;
   d.classList.add('on');$('#dl').focus();
   const close=()=>d.classList.remove('on');
   $('#dx').onclick=close;d.onclick=e=>{if(e.target===d)close()};
   $('#dgo').onclick=async()=>{
-    const lines=$('#dl').value.split(/\s+/).filter(Boolean),key=$('#gk').value.trim();
+    const lines=$('#dl').value.split(/\s+/).filter(Boolean),key=localStorage.getItem('gm_gkey')||'';
     if(!lines.length){toast('Paste at least one Drive link');return}
-    if(key)localStorage.setItem('gm_gkey',key);
     close();await addFromDrive(lines,key);
   };
+}
+async function listSub(fid,key){
+  const r=await fetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent("'"+fid+"' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false")+'&fields=files(id,name)&orderBy=name&pageSize=200&key='+encodeURIComponent(key));
+  return r.ok?(await r.json()).files||[]:[];
 }
 async function addFromDrive(lines,key){
   const cx=ctx(),isC=cx.kind==='client',P=$('#prog');
@@ -672,12 +721,14 @@ async function addFromDrive(lines,key){
     let items=[];
     for(const l of lines){
       const fo=folderId(l),fi=fileId(l);
-      if(fo){if(!key)throw Error('Folder links need a Google API key. Paste one, or add the photos as individual file links.');
-        (await listFolder(fo,key)).forEach(f=>items.push({id:f.id,w:f.imageMediaMetadata?.width,h:f.imageMediaMetadata?.height}))}
+      if(fo){if(!key){P.classList.remove('on');toast('Add your Google API key in Settings first');go('settings');return}
+        const add=(fs,set)=>fs.forEach(f=>items.push({id:f.id,set,w:f.imageMediaMetadata?.width,h:f.imageMediaMetadata?.height}));
+        add(await listFolder(fo,key));
+        if(isCloud)for(const sf of await listSub(fo,key))add(await listFolder(sf.id,key),sf.name)}
       else if(fi)items.push({id:fi});
       else throw Error('This does not look like a Drive link: '+l.slice(0,60));
     }
-    const have=new Set(cx.list),seen=new Set();
+    const have=new Set(isCloud?CUR().photos:cx.list),seen=new Set();
     items=items.filter(it=>{const u=driveSrc(it.id);if(have.has(u)||seen.has(u))return false;seen.add(u);return true});
     if(!items.length)throw Error('Nothing new to add. Those photos are already here.');
     let ok=0,bad=0;D.dims=D.dims||{};D.hi=D.hi||{};
@@ -691,7 +742,8 @@ async function addFromDrive(lines,key){
     }
     items.filter(it=>it.u).forEach(it=>{
       D.dims[it.u]=it.wh;D.hi[it.u]=driveDl(it.id);
-      if(isC)cx.arr.push(it.u);
+      if(isCloud&&it.set){let st=CUR().sets.find(x=>x.name===it.set);if(!st){st={id:'s'+Math.random().toString(36).slice(2,7),name:it.set,photos:[]};CUR().sets.push(st)}st.photos.push(it.u)}
+      else if(isC)cx.arr.push(it.u);
       else{const first=cx.arr[0];if(first&&typeof first==='object'){const k=KEYS.find(x=>first[x])||'src';cx.arr.push({[k]:it.u})}else cx.arr.push(it.u)}
       ok++;
     });
@@ -765,7 +817,7 @@ async function load(){
     if(!r.ok)throw Error('Could not read content.json ('+r.status+'). Check token permissions.');
     const j=await r.json();sha=j.sha;
     D=JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))));
-    D.clients=D.clients||[];D.clients.forEach(c=>{c.photos=c.photos||[];c.lay=c.lay||{}});deployExpectedClients=JSON.stringify(D.clients);
+    D.clients=D.clients||[];D.clients.forEach(c=>{c.photos=c.photos||[];c.lay=c.lay||{}});D.cloud=D.cloud||[];D.cloud.forEach(c=>{c.sets=c.sets&&c.sets.length?c.sets:[{id:'s1',name:'Photos',photos:c.photos||[]}];c.photos=c.sets.flatMap(x=>x.photos);c.lay=c.lay||{}});D.cloudSettings=D.cloudSettings||{};deployExpectedClients=JSON.stringify(D.clients);
     $('#login').hidden=true;$('#status').textContent='All changes saved';
     fetch(API,{headers:hdr()}).then(r=>r.ok?r.json():null).then(j=>{if(j){repoKB=j.size;repoText()}}).catch(()=>{});
     route();
@@ -828,7 +880,7 @@ async function publish(){
 
     // Gallery Manager owns client galleries and the selected portfolio image
     // collection. Preserve other fields updated through the main Studio editor.
-    latest.clients=D.clients;
+    latest.clients=D.clients;latest.cloud=D.cloud;latest.cloudSettings=D.cloudSettings;
     latest[key]=D[key]||[];
     for(const field of ['dims','focus','hi']){
       latest[field]=Object.assign({},latest[field]||{},D[field]||{});
@@ -846,7 +898,7 @@ async function publish(){
     }
     const saved=await r.json();
     sha=saved.content.sha;D=latest;dirty=false;deployExpectedClients=JSON.stringify(D.clients||[]);
-    if(view==='client'&&cur>=0)history.replaceState(null,'',location.pathname+location.search+'#client/'+encodeURIComponent(D.clients[cur].slug));
+    if(view==='client'&&cur>=0)history.replaceState(null,'',location.pathname+location.search+'#'+(isCloud?'cloud/':'client/')+encodeURIComponent(CUR().slug));
     $('#dot').classList.remove('dirty');$('#status').textContent='Published to GitHub. Site deployment is running in the background.';
     toast('Published to GitHub');render();
     startDeploymentCheck();
@@ -891,7 +943,7 @@ async function checkLiveGalleryPages(){
     }
     const done=contentReady&&rows.length===clients.length&&rows.every(x=>x.startsWith('<div>✓'));
     deploySet(done?'Fully deployed':'Deployment in progress',done?'All client gallery URLs are responding with the published page.':'Published to GitHub. GitHub Pages is still updating; this check will continue in the background.',rows.join(''));
-    if(done){if(deployTimer){clearInterval(deployTimer);deployTimer=null}$('#deploybtn').textContent='Live ✓';$('#status').textContent='All gallery pages live'}
+    if(done){if(deployTimer){clearInterval(deployTimer);deployTimer=null}$('#deploybtn').textContent='● Live';$('#status').textContent='All gallery pages live'}
     else $('#deploybtn').textContent='Deployment status';
   }finally{deployBusy=false}
 }
