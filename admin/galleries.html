@@ -800,7 +800,7 @@ async function syncPublicGalleryPages(data,options={}){
     const html=template.replace(/<!--og-->[\s\S]*?<!--\/og-->/,()=>block).replace(/(href|src)="assets\//g,'$1="/assets/').replace(/<script\s+src="\/assets\/site\.js(?:\?[^"]*)?"><\/script>/,m=>`<script>window.GSLUG=${JSON.stringify(slug)}<\/script>`+m);
     const path='g/'+slug+'/index.html',old=await get(path);
     if(repairOnly&&old){
-      const current=decodeURIComponent(escape(atob((old.content||'').replace(/\\n/g,''))));
+      const current=decodeURIComponent(escape(atob((old.content||'').replace(/\n/g,''))));
       const expected=location.origin+'/g/'+slug+'/';
       if(current.includes('window.GSLUG='+JSON.stringify(slug))&&current.includes('content="'+expected+'"'))continue;
     }
