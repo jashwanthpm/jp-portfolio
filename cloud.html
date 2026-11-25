@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>Gallery</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0d0c;--p:#171513;--line:#302a25;--fg:#efe9df;--muted:#9d9387;--gold:#c9a46a;--serif:'Cormorant Garamond',Georgia,serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,Inter,system-ui,sans-serif}
+button,input{font:inherit;color:inherit}
+.btn{background:none;border:1px solid #ffffff44;border-radius:30px;padding:10px 22px;cursor:pointer;letter-spacing:.04em;transition:.2s}.btn:hover{border-color:var(--gold);color:var(--gold)}
+.btn.f{background:var(--gold);border-color:var(--gold);color:#17120b;font-weight:600}.btn.f:hover{color:#17120b;background:#d6b57d}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.hero{position:relative;height:100svh;min-height:420px;display:grid;place-items:center;text-align:center;overflow:hidden;background:var(--p)}
+.hero i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1s,transform 8s;transform:scale(1.04)}.hero i.on{opacity:1;transform:none}
+.hero:after{content:'';position:absolute;inset:0;background:linear-gradient(#0e0d0c55,#0e0d0cbb)}
+.hero div{position:relative;z-index:1;padding:20px}
+.hero small{display:block;color:#e6dccb;letter-spacing:.3em;font-size:12px;margin-bottom:14px}
+.hero h1{font:400 clamp(44px,8vw,96px)/1 var(--serif);margin:0 0 14px}.hero p{max-width:520px;margin:0 auto 28px;color:#e6dccb;font:italic 400 20px/1.4 var(--serif)}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;padding:12px 24px;background:#0e0d0ced;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar b{font:500 22px var(--serif);white-space:nowrap}.tabs{display:flex;gap:4px;overflow:auto;flex:1;scrollbar-width:none}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:6px 12px;cursor:pointer;white-space:nowrap}.tabs button.on{color:var(--fg);border-color:var(--gold)}
+.grid{display:flex;flex-wrap:wrap;gap:6px;padding:20px 24px 80px;max-width:1700px;margin:0 auto}
+.t{position:relative;flex:none;overflow:hidden;background:var(--p);cursor:zoom-in;border:0;padding:0;border-radius:3px}
+.t img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s,opacity .4s}.t:hover img{transform:scale(1.03)}
+.t a{position:absolute;right:8px;bottom:8px;width:34px;height:34px;border-radius:50%;background:#000a;display:grid;place-items:center;color:#fff;text-decoration:none;opacity:0;transition:.2s}.t:hover a{opacity:1}@media(hover:none){.t a{opacity:1}}
+.lb{position:fixed;inset:0;background:#0b0a09f5;z-index:20;display:none;place-items:center}.lb.on{display:grid}
+.lb img{max-width:94vw;max-height:88vh;object-fit:contain}
+.lb .c{position:absolute;top:14px;left:20px;color:var(--muted)}.lb .x{position:absolute;top:10px;right:14px;display:flex;gap:8px}
+.lb .n{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid #ffffff33;background:#0008;cursor:pointer;font-size:22px}
+.lb .n.l{left:14px}.lb .n.r{right:14px}
+.gate{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg)}
+.gate form{width:min(380px,90vw);text-align:center}.gate h2{font:400 40px var(--serif);margin:0 0 6px}.gate p{color:var(--muted)}
+.gate input{width:100%;background:#100e0d;border:1px solid var(--line);border-radius:30px;padding:12px 18px;margin:10px 0;text-align:center}
+.gate small{display:block;color:#ff8f80;min-height:18px}
+footer{text-align:center;color:var(--muted);padding:30px;font-size:12px}
+</style></head><body>
+<main id="app"></main>
+<div class="lb" id="lb"><span class="c" id="lc"></span><div class="x"><a class="btn" id="ld" style="text-decoration:none;display:none">Download</a><button class="btn" id="lx" aria-label="Close">✕</button></div><button class="n l" id="lp" aria-label="Previous">‹</button><img id="li" alt=""><button class="n r" id="ln" aria-label="Next">›</button></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let C={},G=null,si=0,LB=[],LI=0;
+const slug=new URLSearchParams(location.search).get('g')||location.hash.slice(1);
+const ratio=p=>{const d=(C.dims||{})[p];return d&&d[0]?d[0]/d[1]:1.5};
+const dlUrl=p=>(C.hi||{})[p]||p;
+const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
+function gate(h,fn){document.body.insertAdjacentHTML('beforeend',`<div class="gate" id="gate"><form>${h}</form></div>`);const f=$('#gate form');f.onsubmit=async e=>{e.preventDefault();if(await fn(f)!==false)$('#gate').remove()};f.querySelector('input').focus()}
+async function boot(){
+  try{C=await (await fetch('/content.json?t='+Date.now(),{cache:'no-store'})).json()}catch{}
+  G=(C.cloud||[]).find(g=>g.slug===slug);
+  if(!G){$('#app').innerHTML='<div class="gate"><div style="text-align:center"><h2 style="font:400 40px var(--serif)">Gallery not found</h2><p class="muted" style="color:var(--muted)">Please check the link you were sent.</p></div></div>';return}
+  document.title=G.name;
+  const stages=[];
+  if(G.pinHash&&sessionStorage.getItem('pin_'+G.slug)!==G.pinHash)stages.push(()=>new Promise(r=>gate(`<h2>${esc(G.name)}</h2><p>Enter the PIN you were given.</p><input type="password" placeholder="PIN" aria-label="PIN"><button class="btn f">Open gallery</button><small id="pe"></small>`,async f=>{const v=f.querySelector('input').value.trim();if(await sha((G.pinSalt||'')+v)===G.pinHash){sessionStorage.setItem('pin_'+G.slug,G.pinHash);r();return true}$('#pe').textContent='That PIN is not correct.';f.querySelector('input').value='';return false})));
+  if(G.emailGate&&!localStorage.getItem('cg_email_'+G.slug))stages.push(()=>new Promise(r=>gate(`<h2>${esc(G.name)}</h2><p>Enter your email to view and download your photos.</p><input type="email" placeholder="you@example.com" aria-label="Email"><button class="btn f">View gallery</button><small id="pe"></small>`,async f=>{const v=f.querySelector('input').value.trim();if(!/^\S+@\S+\.\S+$/.test(v)){$('#pe').textContent='Please enter a valid email.';return false}const ep=(C.cloudSettings||{}).emailEndpoint;if(ep)try{fetch(ep,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({email:v,gallery:G.name,slug:G.slug,time:new Date().toISOString()})})}catch{}localStorage.setItem('cg_email_'+G.slug,v);r();return true})));
+  for(const s of stages)await s();
+  render();
+}
+function render(){
+  const cv=G.cover||G.photos[0],f=((C.focus||{})[cv]||'50% 50%'),studio=(C.cloudSettings||{}).studio||C.name||'';
+  $('#app').innerHTML=`<section class="hero"><i id="hb" style="background-position:${f}"></i><div><small>${esc(G.date||'')}</small><h1>${esc(G.name)}</h1>${G.story?`<p>${esc(G.story)}</p>`:''}<button class="btn" id="go">View gallery</button></div></section>
+  <div class="bar" id="bar"><b>${esc(G.name)}</b><div class="tabs">${G.sets.map((s,i)=>`<button data-i="${i}" class="${i===si?'on':''}">${esc(s.name)}</button>`).join('')}</div>${G.download!=='off'?'<button class="btn" id="all">Download all</button>':''}</div>
+  <div class="grid" id="g"></div><footer>${esc(studio)}</footer>`;
+  if(cv){const im=new Image();im.onload=()=>{$('#hb').style.backgroundImage=`url('${cv}')`;$('#hb').classList.add('on')};im.src=cv}
+  $('#go').onclick=()=>$('#bar').scrollIntoView({behavior:'smooth'});
+  $('.tabs').onclick=e=>{const b=e.target.closest('button');if(b){si=+b.dataset.i;$$('.tabs button').forEach(x=>x.classList.toggle('on',x===b));grid()}};
+  const all=$('#all');if(all)all.onclick=()=>G.sets.flatMap(s=>s.photos).forEach((p,i)=>setTimeout(()=>dl(p),i*700));
+  grid();
+}
+const $$=s=>[...document.querySelectorAll(s)];
+const dl=p=>{const a=document.createElement('a');a.href=dlUrl(p);a.download='';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()};
+function grid(){
+  const g=$('#g');LB=G.sets[si].photos;
+  g.innerHTML=LB.map((p,i)=>`<button class="t" data-i="${i}" aria-label="Open photo ${i+1}"><img loading="lazy" src="${esc(/googleusercontent\.com\/d\//.test(p)?p.replace(/=w\d+$/,'=w900'):p)}" alt="">${G.download!=='off'?`<a href="${esc(dlUrl(p))}" download data-d="${i}" aria-label="Download">↓</a>`:''}</button>`).join('');
+  layout();
+}
+function layout(){
+  const g=$('#g');if(!g)return;const W=g.clientWidth-48,gap=6,H=innerWidth<600?130:240,t=$$('.t'),rs=LB.map(ratio);let row=[],sum=0;
+  const place=h=>{row.forEach(i=>{t[i].style.width=Math.floor(rs[i]*h)+'px';t[i].style.height=Math.round(h)+'px'});row=[];sum=0};
+  rs.forEach((r,i)=>{row.push(i);sum+=r;const gp=gap*(row.length-1);if(sum*H+gp>=W)place((W-gp)/sum)});
+  if(row.length){const gp=gap*(row.length-1);place(Math.min(H,(W-gp)/sum))}
+}
+addEventListener('resize',()=>layout());
+document.addEventListener('click',e=>{
+  if(e.target.closest('a[data-d]')){e.preventDefault();e.stopPropagation();dl(LB[+e.target.closest('a').dataset.d]);return}
+  const t=e.target.closest('.t');if(t)show(+t.dataset.i);
+});
+function show(i){LI=(i+LB.length)%LB.length;const p=LB[LI];$('#lb').classList.add('on');$('#li').src=p;$('#lc').textContent=(LI+1)+' / '+LB.length;const d=$('#ld');d.style.display=G.download!=='off'?'':'none';d.href=dlUrl(p);d.setAttribute('download','')}
+$('#lx').onclick=()=>$('#lb').classList.remove('on');$('#lp').onclick=()=>show(LI-1);$('#ln').onclick=()=>show(LI+1);
+addEventListener('keydown',e=>{if(!$('#lb').classList.contains('on'))return;if(e.key==='Escape')$('#lb').classList.remove('on');if(e.key==='ArrowLeft')show(LI-1);if(e.key==='ArrowRight')show(LI+1)});
+boot();
+</script></body></html>
