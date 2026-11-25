@@ -794,7 +794,10 @@ async function syncPublicGalleryPages(data,options={}){
     const slug=String(c.slug||'').trim();if(!slug)continue;
     const locked=!!(c.private||c.pinHash),title=(c.name||'Gallery')+' — '+name;
     const desc=(!locked&&c.story)?c.story.replace(/\s+/g,' ').trim().slice(0,160):'View the pictures from this session.';
-    const image=(c.ogImg&&c.ogOn!==false)?location.origin+c.ogImg+'?v='+(c.ogv||1):(share.image?location.origin+share.image+'?v='+(share.v||1):'');
+    // Use the gallery's selected cover as the social preview image.
+    // Covers may be hosted externally (e.g. Google Photos/Drive), so keep their
+    // complete URL unchanged. Fall back to the legacy per-gallery/share image.
+    const image=c.ogOn===false?'':(c.cover||((c.ogImg)?location.origin+c.ogImg+'?v='+(c.ogv||1):(share.image?location.origin+share.image+'?v='+(share.v||1):'')));
     const canonical=location.origin+'/g/'+slug+'/';
     const block=['<!--og-->',`<title>${esc(title)}</title>`, `<meta name="description" content="${esc(desc)}">`,locked?'<meta name="robots" content="noindex,nofollow">':'','<meta property="og:type" content="website">',`<meta property="og:site_name" content="${esc(name)}">`,`<meta property="og:title" content="${esc(title)}">`,`<meta property="og:description" content="${esc(desc)}">`,`<meta property="og:url" content="${canonical}">`,image?`<meta property="og:image" content="${image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${esc(c.name)}">`:'',`<meta name="twitter:card" content="${image?'summary_large_image':'summary'}">`,'<!--/og-->'].filter(Boolean).join('\n');
     const html=template.replace(/<!--og-->[\s\S]*?<!--\/og-->/,()=>block).replace(/(href|src)="assets\//g,'$1="/assets/').replace(/<script\s+src="\/assets\/site\.js(?:\?[^"]*)?"><\/script>/,m=>`<script>window.GSLUG=${JSON.stringify(slug)}<\/script>`+m);
@@ -802,7 +805,8 @@ async function syncPublicGalleryPages(data,options={}){
     if(repairOnly&&old){
       const current=decodeURIComponent(escape(atob((old.content||'').replace(/\n/g,''))));
       const expected=location.origin+'/g/'+slug+'/';
-      if(current.includes('window.GSLUG='+JSON.stringify(slug))&&current.includes('content="'+expected+'"'))continue;
+      const expectedImage=c.ogOn===false?'':(c.cover||((c.ogImg)?location.origin+c.ogImg+'?v='+(c.ogv||1):(share.image?location.origin+share.image+'?v='+(share.v||1):'')));
+      if(current.includes('window.GSLUG='+JSON.stringify(slug))&&current.includes('content="'+expected+'"')&&(!expectedImage||current.includes('property="og:image" content="'+esc(expectedImage)+'"')))continue;
     }
     await put(path,html,old?.sha);
   }
