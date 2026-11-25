@@ -115,6 +115,43 @@
   ],
   "clients": [
     {
+      "name": "Meher & Deekshith",
+      "slug": "demo",
+      "date": "",
+      "story": "",
+      "cover": "https://lh3.googleusercontent.com/d/1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo=w2000",
+      "photos": [
+        "https://lh3.googleusercontent.com/d/1h1xWrkdnKqSfMXRBgQNKKqC-l2doUz-3=w2000",
+        "https://lh3.googleusercontent.com/d/1WZ17kVQTmH7OULiQIBs7lZLZc-y75rcj=w2000",
+        "https://lh3.googleusercontent.com/d/1P4gmLeN6VU9gPw8DO0Chj2E4fJjMUkeW=w2000",
+        "https://lh3.googleusercontent.com/d/1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo=w2000",
+        "https://lh3.googleusercontent.com/d/1zfNodFiib9uLszy23uHMcsUd-XdZXCBC=w2000",
+        "https://lh3.googleusercontent.com/d/1DYAcgSrVoJvAhTshaxS1zFkJRAHZdngN=w2000",
+        "https://lh3.googleusercontent.com/d/1S9_nGmu62zph2WEbgIrLdxELRuXC5_tk=w2000",
+        "https://lh3.googleusercontent.com/d/1EstmWSxa77ToqhYWV31Y6cUbbYW4dZjj=w2000",
+        "https://lh3.googleusercontent.com/d/1RhYqnxC056P8AQCr9hi_YZdnz_QaFfkk=w2000",
+        "https://lh3.googleusercontent.com/d/1DJ1evlWfFKe3byJKk1VFt_yvBD3QCSqP=w2000",
+        "https://lh3.googleusercontent.com/d/14PPTH4cEIpuiamiIhpGrRG62AGmn9blI=w2000",
+        "https://lh3.googleusercontent.com/d/1Wt26F-uIUEtny8vsh3en5V7-0csbh5O-=w2000",
+        "https://lh3.googleusercontent.com/d/1DNBv0fmeFtb4U9E3L84uHaE3G3dOWRyx=w2000",
+        "https://lh3.googleusercontent.com/d/1qbaCOesglYv4t1yY-bF5zePcJ3oga8f5=w2000"
+      ],
+      "private": false,
+      "onHome": false,
+      "ogOn": true,
+      "showCover": true,
+      "coverSize": "full",
+      "download": "off",
+      "lay": {
+        "style": "masonry",
+        "gap": 14,
+        "cols": 3,
+        "mcols": 2,
+        "round": 0
+      },
+      "ogs": ""
+    },
+    {
       "name": "Abhay & Sanjivani",
       "slug": "abhay-sanjivani",
       "date": "2026",
@@ -743,7 +780,8 @@
     "/images/1791559879975-qbyp.jpg": "48% 28%",
     "/images/1791559880232-m5xb.jpg": "45% 61%",
     "/images/1791570376509-8v37.jpg": "38% 30%",
-    "/images/1791739469410-2em5.jpg": "38% 18%"
+    "/images/1791739469410-2em5.jpg": "38% 18%",
+    "https://lh3.googleusercontent.com/d/1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo=w2000": "54% 33%"
   },
   "favicon": "/images/favicon-1791284648615.png",
   "dims": {
@@ -2354,9 +2392,80 @@
     "/images/1793881905255-gbn9.jpg": [
       1500,
       2000
+    ],
+    "https://lh3.googleusercontent.com/d/1h1xWrkdnKqSfMXRBgQNKKqC-l2doUz-3=w2000": [
+      3301,
+      4952
+    ],
+    "https://lh3.googleusercontent.com/d/1WZ17kVQTmH7OULiQIBs7lZLZc-y75rcj=w2000": [
+      4672,
+      7008
+    ],
+    "https://lh3.googleusercontent.com/d/1P4gmLeN6VU9gPw8DO0Chj2E4fJjMUkeW=w2000": [
+      4672,
+      7008
+    ],
+    "https://lh3.googleusercontent.com/d/1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo=w2000": [
+      4531,
+      6796
+    ],
+    "https://lh3.googleusercontent.com/d/1zfNodFiib9uLszy23uHMcsUd-XdZXCBC=w2000": [
+      4672,
+      7008
+    ],
+    "https://lh3.googleusercontent.com/d/1DYAcgSrVoJvAhTshaxS1zFkJRAHZdngN=w2000": [
+      4672,
+      7008
+    ],
+    "https://lh3.googleusercontent.com/d/1S9_nGmu62zph2WEbgIrLdxELRuXC5_tk=w2000": [
+      4672,
+      7008
+    ],
+    "https://lh3.googleusercontent.com/d/1EstmWSxa77ToqhYWV31Y6cUbbYW4dZjj=w2000": [
+      7008,
+      4672
+    ],
+    "https://lh3.googleusercontent.com/d/1RhYqnxC056P8AQCr9hi_YZdnz_QaFfkk=w2000": [
+      3864,
+      5796
+    ],
+    "https://lh3.googleusercontent.com/d/1DJ1evlWfFKe3byJKk1VFt_yvBD3QCSqP=w2000": [
+      7008,
+      4672
+    ],
+    "https://lh3.googleusercontent.com/d/14PPTH4cEIpuiamiIhpGrRG62AGmn9blI=w2000": [
+      4672,
+      7008
+    ],
+    "https://lh3.googleusercontent.com/d/1Wt26F-uIUEtny8vsh3en5V7-0csbh5O-=w2000": [
+      4518,
+      6777
+    ],
+    "https://lh3.googleusercontent.com/d/1DNBv0fmeFtb4U9E3L84uHaE3G3dOWRyx=w2000": [
+      4672,
+      7008
+    ],
+    "https://lh3.googleusercontent.com/d/1qbaCOesglYv4t1yY-bF5zePcJ3oga8f5=w2000": [
+      4672,
+      7008
     ]
   },
-  "hi": {},
+  "hi": {
+    "https://lh3.googleusercontent.com/d/1h1xWrkdnKqSfMXRBgQNKKqC-l2doUz-3=w2000": "https://drive.google.com/uc?export=download&id=1h1xWrkdnKqSfMXRBgQNKKqC-l2doUz-3",
+    "https://lh3.googleusercontent.com/d/1WZ17kVQTmH7OULiQIBs7lZLZc-y75rcj=w2000": "https://drive.google.com/uc?export=download&id=1WZ17kVQTmH7OULiQIBs7lZLZc-y75rcj",
+    "https://lh3.googleusercontent.com/d/1P4gmLeN6VU9gPw8DO0Chj2E4fJjMUkeW=w2000": "https://drive.google.com/uc?export=download&id=1P4gmLeN6VU9gPw8DO0Chj2E4fJjMUkeW",
+    "https://lh3.googleusercontent.com/d/1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo=w2000": "https://drive.google.com/uc?export=download&id=1JJnAa36Ze5CKOrZv_4ktcPRPE0f_9mHo",
+    "https://lh3.googleusercontent.com/d/1zfNodFiib9uLszy23uHMcsUd-XdZXCBC=w2000": "https://drive.google.com/uc?export=download&id=1zfNodFiib9uLszy23uHMcsUd-XdZXCBC",
+    "https://lh3.googleusercontent.com/d/1DYAcgSrVoJvAhTshaxS1zFkJRAHZdngN=w2000": "https://drive.google.com/uc?export=download&id=1DYAcgSrVoJvAhTshaxS1zFkJRAHZdngN",
+    "https://lh3.googleusercontent.com/d/1S9_nGmu62zph2WEbgIrLdxELRuXC5_tk=w2000": "https://drive.google.com/uc?export=download&id=1S9_nGmu62zph2WEbgIrLdxELRuXC5_tk",
+    "https://lh3.googleusercontent.com/d/1EstmWSxa77ToqhYWV31Y6cUbbYW4dZjj=w2000": "https://drive.google.com/uc?export=download&id=1EstmWSxa77ToqhYWV31Y6cUbbYW4dZjj",
+    "https://lh3.googleusercontent.com/d/1RhYqnxC056P8AQCr9hi_YZdnz_QaFfkk=w2000": "https://drive.google.com/uc?export=download&id=1RhYqnxC056P8AQCr9hi_YZdnz_QaFfkk",
+    "https://lh3.googleusercontent.com/d/1DJ1evlWfFKe3byJKk1VFt_yvBD3QCSqP=w2000": "https://drive.google.com/uc?export=download&id=1DJ1evlWfFKe3byJKk1VFt_yvBD3QCSqP",
+    "https://lh3.googleusercontent.com/d/14PPTH4cEIpuiamiIhpGrRG62AGmn9blI=w2000": "https://drive.google.com/uc?export=download&id=14PPTH4cEIpuiamiIhpGrRG62AGmn9blI",
+    "https://lh3.googleusercontent.com/d/1Wt26F-uIUEtny8vsh3en5V7-0csbh5O-=w2000": "https://drive.google.com/uc?export=download&id=1Wt26F-uIUEtny8vsh3en5V7-0csbh5O-",
+    "https://lh3.googleusercontent.com/d/1DNBv0fmeFtb4U9E3L84uHaE3G3dOWRyx=w2000": "https://drive.google.com/uc?export=download&id=1DNBv0fmeFtb4U9E3L84uHaE3G3dOWRyx",
+    "https://lh3.googleusercontent.com/d/1qbaCOesglYv4t1yY-bF5zePcJ3oga8f5=w2000": "https://drive.google.com/uc?export=download&id=1qbaCOesglYv4t1yY-bF5zePcJ3oga8f5"
+  },
   "hdr": {
     "style": "classic"
   },
