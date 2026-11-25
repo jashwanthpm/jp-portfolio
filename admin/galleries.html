@@ -113,11 +113,13 @@ hr{border:0;border-top:1px solid var(--line2);margin:16px 0}
 .pvrow figcaption{color:var(--muted);font-size:11px;margin-top:4px}
 
 /* thumbnails */
-.grid.square{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px}
+.grid.square{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--col,170px),1fr));gap:6px}
 .grid.square .th{aspect-ratio:1}
 .grid.full{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start}
-.grid.full::after{content:'';flex-grow:100000}
-.grid.full .th{flex:var(--r,1.5) 1 calc(var(--r,1.5)*190px);aspect-ratio:var(--r,1.5);min-width:0}
+.grid.full .th{flex:none;width:160px;height:110px}
+.grid.full .th img{object-fit:contain}
+.size{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px}
+.size input{width:90px;padding:0;background:none;border:0;accent-color:var(--gold)}
 .th{position:relative;border-radius:6px;overflow:hidden;background:var(--p2);cursor:pointer;user-select:none;border:2px solid transparent}
 .th img{display:block;pointer-events:none;width:100%;height:100%;object-fit:cover}
 .th.sel{border-color:var(--gold)}
@@ -212,7 +214,6 @@ hr{border:0;border-top:1px solid var(--line2);margin:16px 0}
   .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}
   .cbody{padding:12px 10px 110px}.ctool{padding:8px 12px}
   .grid.square{grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
-  .grid.full .th{flex-basis:calc(var(--r,1.5)*120px)}
   .search{width:100%}
   .srow{grid-template-columns:44px minmax(0,1fr) 70px}.srow .sbar{display:none}
 }
@@ -264,6 +265,9 @@ let picked=new Set(),photoIdx=-1,dragFrom=-1,panelOpen=false;
 let sec={cover:true,details:false,access:false,layout:false};
 let tree=null,sizeMap={},repoKB=null,storLoading=false,storErr='';
 let ratio={};try{ratio=JSON.parse(localStorage.getItem('gm_ratio')||'{}')}catch(e){}
+const ROWH=[100,140,190,250,330],COLW=[110,140,170,220,280];
+let size=Math.min(5,Math.max(1,+localStorage.getItem('gm_size')||3));
+const ratioOf=p=>{const d=D.dims?.[p];return d&&d[0]&&d[1]?d[0]/d[1]:(ratio[p]||1.5)};
 
 const toast=s=>{const t=$('#toast');t.textContent=s;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3200)};
 function mark(){dirty=true;$('#save').disabled=false;$('#status').textContent='Changes not published';$('#dot').classList.add('dirty')}
@@ -301,7 +305,7 @@ function render(reset){
   $$('.rb').forEach(b=>b.classList.toggle('on',b.dataset.go===(view==='client'?'clients':view)));
   $('#view').innerHTML=view==='client'?viewClient():view==='portfolio'?viewPortfolio():view==='storage'?viewStorage():viewClients();
   if(!reset)keep.forEach(([s,t])=>{const e=$(s);if(e)e.scrollTop=t});
-  selbar();repoText();
+  selbar();repoText();layout();
 }
 
 function cardsHTML(){
@@ -326,10 +330,10 @@ function viewClients(){
     <div class="cards" id="cards">${cardsHTML()}</div></div>`;
 }
 
-const fitSeg=()=>`<div class="seg" role="group" aria-label="Thumbnail view"><button data-act="fit" data-v="square" class="${fit==='square'?'on':''}">Square</button><button data-act="fit" data-v="full" class="${fit==='full'?'on':''}">Full photo</button></div>`;
+const fitSeg=()=>`<label class="size">Size<input type="range" id="size" min="1" max="5" value="${size}" aria-label="Thumbnail size"></label><div class="seg" role="group" aria-label="Thumbnail view"><button data-act="fit" data-v="square" class="${fit==='square'?'on':''}">Square</button><button data-act="fit" data-v="full" class="${fit==='full'?'on':''}">Full photo</button></div>`;
 function gridHTML(cx){
   if(!cx.list.length)return `<div class="empty"><h2>No photos yet</h2><p>Drag photos anywhere on this page, or use the upload button.</p><button class="primary" data-act="upload">Upload photos</button></div>`;
-  return `<div class="grid ${fit}">`+cx.list.map((p,k)=>`<div class="th ${picked.has(k)?'sel':''}" draggable="true" data-k="${k}" style="--r:${ratio[p]||1.5}">
+  return `<div class="grid ${fit}" style="--col:${COLW[size-1]}px">`+cx.list.map((p,k)=>`<div class="th ${picked.has(k)?'sel':''}" draggable="true" data-k="${k}">
     <img loading="lazy" src="${esc(imgUrl(p))}" ${cx.kind==='client'?`style="object-position:${focusOf(p)}"`:''} draggable="false" alt="Photo ${k+1}">
     <button class="chk" data-act="pick" data-k="${k}" aria-label="Select photo ${k+1}"></button>
     ${cx.kind==='client'&&p===cx.c.cover?'<span class="badge">Cover</span>':''}<span class="n">${k+1}</span></div>`).join('')+'</div>';
@@ -378,13 +382,13 @@ function viewClient(){
     <div class="cstack"><input id="nameIn" class="cname" value="${esc(c.name)}" placeholder="Gallery name" aria-label="Gallery name"><br><input id="dateIn" class="cdate" value="${esc(c.date||'')}" placeholder="Add a date" aria-label="Date"></div>
     <span class="muted">${c.photos.length} photos</span>${fitSeg()}
     <button class="setbtn" data-act="panel">Settings</button>${c.slug?'<button data-act="viewlive">View live ↗</button>':''}<button class="primary" data-act="upload">Upload photos</button></div>
-  <div class="cbody">${hintBar('Drag to reorder. Click a photo to open it. The order here is the order on your site.')}${gridHTML(cx)}</div></div></div>`;
+  <div class="cbody">${hintBar('Drag photos to reorder. Drag near the top or bottom edge to scroll. Click a photo to open it.')}${gridHTML(cx)}</div></div></div>`;
 }
 function viewPortfolio(){
   const cx=ctx(),k=pKey(),opts=arrays();if(!opts.includes(k))opts.push(k);
   const src=opts.length>1?`<label>Source <select id="pkey">${opts.map(o=>`<option ${o===k?'selected':''}>${esc(o)}</option>`).join('')}</select></label>`:`Source: content.json › ${esc(k)}`;
   return `<div class="page"><div class="pagehead"><div><h1 class="big">Portfolio</h1><p class="muted">${cx.list.length} pictures on your public site. ${src}</p></div><div class="sp"></div>${fitSeg()}<button class="primary" data-act="upload">Upload pictures</button></div>
-    ${hintBar('Drag to reorder. Click a picture to open it or remove it.')}${gridHTML(cx)}</div>`;
+    ${hintBar('Drag pictures to reorder. Drag near the top or bottom edge to scroll. Click one to open it.')}${gridHTML(cx)}</div>`;
 }
 
 /* ---------- storage ---------- */
@@ -466,6 +470,7 @@ V.addEventListener('click',e=>{
 });
 V.addEventListener('input',e=>{
   const t=e.target,f=t.dataset.f;
+  if(t.id==='size'){size=+t.value;localStorage.setItem('gm_size',size);const g=$('.grid');if(g)g.style.setProperty('--col',COLW[size-1]+'px');layout();return}
   if(t.id==='q'){q=t.value;$('#cards').innerHTML=cardsHTML();return}
   if(view!=='client'||cur<0)return;const c=D.clients[cur];
   if(t.id==='nameIn'){c.name=t.value;mark();const d=$('[data-f="name"]');if(d)d.value=t.value;return}
@@ -498,20 +503,38 @@ V.addEventListener('pointermove',e=>{if(fmove)setFocus(e)});
 V.addEventListener('pointerup',()=>{if(fmove){fmove=false;render()}});
 V.addEventListener('pointercancel',()=>{fmove=false});
 
-/* real photo shapes, so "Full photo" keeps your order and each photo's own proportions */
+/* justified rows: every photo shown whole, in your order, using the sizes saved in content.json */
+function layout(){
+  const g=$('.grid.full');if(!g)return;
+  const W=g.clientWidth,gap=6;if(!W)return;
+  const H=ROWH[size-1]*(W<560?.62:1),tiles=$$('.th',g),rs=ctx().list.map(ratioOf);
+  let row=[],sum=0;
+  const place=h=>{row.forEach(i=>{tiles[i].style.width=Math.floor(rs[i]*h)+'px';tiles[i].style.height=Math.round(h)+'px'});row=[];sum=0};
+  rs.forEach((r,i)=>{row.push(i);sum+=r;const gaps=gap*(row.length-1);if(sum*H+gaps>=W)place((W-gaps)/sum)});
+  if(row.length){const gaps=gap*(row.length-1);place(Math.min(H,(W-gaps)/sum))}
+}
+let lt;addEventListener('resize',()=>{clearTimeout(lt);lt=setTimeout(layout,80)});
+/* fallback for photos with no saved size: learn it when the image loads */
 let rsave;
 addEventListener('load',e=>{
   const im=e.target;if(!(im instanceof HTMLImageElement))return;const th=im.closest?.('.th');if(!th||!im.naturalWidth||!['client','portfolio'].includes(view))return;
-  const p=ctx().list[+th.dataset.k];if(!p)return;const r=+(im.naturalWidth/im.naturalHeight).toFixed(3);
-  if(Math.abs((ratio[p]||0)-r)>.001){ratio[p]=r;th.style.setProperty('--r',r);clearTimeout(rsave);rsave=setTimeout(()=>localStorage.setItem('gm_ratio',JSON.stringify(ratio)),800)}
+  const p=ctx().list[+th.dataset.k];if(!p||D.dims?.[p])return;const r=+(im.naturalWidth/im.naturalHeight).toFixed(3);
+  if(Math.abs((ratio[p]||0)-r)>.001){ratio[p]=r;clearTimeout(rsave);rsave=setTimeout(()=>{localStorage.setItem('gm_ratio',JSON.stringify(ratio));layout()},300)}
 },true);
 
 /* drag to reorder */
 V.addEventListener('dragstart',e=>{const th=e.target.closest?.('.th');if(!th)return;dragFrom=+th.dataset.k;th.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain','move')});
 V.addEventListener('dragend',()=>{dragFrom=-1;$$('.th').forEach(x=>x.classList.remove('dragging','before','after'))});
-V.addEventListener('dragover',e=>{const th=e.target.closest?.('.th');if(!th||dragFrom<0)return;e.preventDefault();$$('.th').forEach(x=>x.classList.remove('before','after'));const r=th.getBoundingClientRect();th.classList.add(e.clientX<r.left+r.width/2?'before':'after')});
+function nearTile(e){let best=null,bd=48;$$('.th').forEach(t=>{const r=t.getBoundingClientRect(),dx=Math.max(r.left-e.clientX,0,e.clientX-r.right),dy=Math.max(r.top-e.clientY,0,e.clientY-r.bottom),d=Math.hypot(dx,dy);if(d<bd){bd=d;best=t}});return best}
+V.addEventListener('dragover',e=>{
+  if(dragFrom<0)return;e.preventDefault();
+  const sc=$('.cmain')||V,sr=sc.getBoundingClientRect();
+  if(e.clientY<sr.top+90)sc.scrollTop-=20;else if(e.clientY>sr.bottom-90)sc.scrollTop+=20;
+  $$('.th').forEach(x=>x.classList.remove('before','after'));
+  const th=nearTile(e);if(!th)return;const r=th.getBoundingClientRect();th.classList.add(e.clientX<r.left+r.width/2?'before':'after');
+});
 V.addEventListener('drop',e=>{
-  const th=e.target.closest?.('.th');if(!th||dragFrom<0)return;e.preventDefault();
+  const th=nearTile(e);if(!th||dragFrom<0)return;e.preventDefault();
   const cx=ctx(),r=th.getBoundingClientRect(),after=e.clientX>r.left+r.width/2;let dest=+th.dataset.k+(after?1:0);
   const [it]=cx.arr.splice(dragFrom,1);if(dragFrom<dest)dest--;cx.arr.splice(Math.max(0,Math.min(cx.arr.length,dest)),0,it);
   dragFrom=-1;picked.clear();mark();render();
@@ -580,15 +603,15 @@ function newClient(){
 /* ---------- upload (straight to the GitHub repo) ---------- */
 const b64=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(b)});
 async function shrink(f){
-  const ext=(f.name.split('.').pop()||'jpg').toLowerCase();
-  if(!optim()||!/^image\/(jpeg|png|webp)$/.test(f.type))return{blob:f,ext};
-  try{
-    const bmp=await createImageBitmap(f),s=Math.min(1,2400/Math.max(bmp.width,bmp.height)),cv=document.createElement('canvas');
-    cv.width=Math.round(bmp.width*s);cv.height=Math.round(bmp.height*s);cv.getContext('2d').drawImage(bmp,0,0,cv.width,cv.height);
-    const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.88));
-    if(blob&&(s<1||blob.size<f.size))return{blob,ext:'jpg'};
-  }catch(e){}
-  return{blob:f,ext};
+  const ext=(f.name.split('.').pop()||'jpg').toLowerCase();let bmp=null;
+  try{bmp=await createImageBitmap(f)}catch(e){}
+  const w0=bmp?.width||0,h0=bmp?.height||0;
+  if(!bmp||!optim()||!/^image\/(jpeg|png|webp)$/.test(f.type))return{blob:f,ext,w:w0,h:h0};
+  const k=Math.min(1,2400/Math.max(w0,h0)),cv=document.createElement('canvas');cv.width=Math.round(w0*k);cv.height=Math.round(h0*k);
+  cv.getContext('2d').drawImage(bmp,0,0,cv.width,cv.height);
+  const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.88));
+  if(blob&&(k<1||blob.size<f.size))return{blob,ext:'jpg',w:cv.width,h:cv.height};
+  return{blob:f,ext,w:w0,h:h0};
 }
 async function put(path,content,msg){
   for(let t=0;t<3;t++){
@@ -607,15 +630,16 @@ async function upload(files){
   files=[...files].filter(f=>f.type.startsWith('image/'));
   if(!files.length){toast('Choose image files to upload');return}
   const cx=ctx(),isC=cx.kind==='client';
-  const folder=folderFor(cx.list,isC?'images/clients/'+cx.c.slug:'images/portfolio');
+  const folder=folderFor(cx.list,'images');
   const P=$('#prog');P.classList.add('on');let ok=0;const failed=[];
   for(let i=0;i<files.length;i++){
     $('#progtitle').textContent='Uploading '+(i+1)+' of '+files.length;$('#progsub').textContent=files[i].name;$('#progbar').style.width=(i/files.length*100)+'%';
     try{
-      const {blob,ext}=await shrink(files[i]);
-      const base=files[i].name.replace(/\.[^.]+$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)||'photo';
-      const path=folder+'/'+Date.now().toString(36)+i+'-'+base+'.'+ext;
-      await put(path,await b64(blob),'Upload '+path);
+      const {blob,ext,w,h}=await shrink(files[i]);
+      const name=Date.now()+'-'+Math.random().toString(36).slice(2,6)+'.'+ext;
+      await put(folder+'/'+name,await b64(blob),'Upload '+name);
+      const path='/'+folder+'/'+name;
+      if(w&&h){D.dims=D.dims||{};D.dims[path]=[w,h]}
       if(isC)cx.arr.push(path);
       else{const first=cx.arr[0];if(first&&typeof first==='object'){const key=KEYS.find(k=>first[k])||'src';cx.arr.push({[key]:path})}else cx.arr.push(path)}
       ok++;
