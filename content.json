@@ -683,7 +683,7 @@
       "download": "orig",
       "lay": {
         "style": "masonry",
-        "gap": 14,
+        "gap": 11,
         "cols": 3,
         "mcols": 2,
         "round": 0
