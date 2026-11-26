@@ -1063,6 +1063,21 @@ async function upload(files){
       const {blob,ext,w,h}=await shrink(files[i]);
       const name=Date.now()+'-'+Math.random().toString(36).slice(2,6)+'.'+ext;
       await put(folder+'/'+name,await b64(blob),'Upload '+name);
+      // Generate a matching lightweight thumbnail for local client-gallery uploads.
+      // Gallery pages use /images/t/<filename> first and fall back to the original.
+      if(isC&&folder==='images'){
+        try{
+          const bm=await createImageBitmap(blob),scale=Math.min(1,720/Math.max(bm.width,bm.height));
+          if(scale<1){
+            const cv=document.createElement('canvas');cv.width=Math.round(bm.width*scale);cv.height=Math.round(bm.height*scale);
+            cv.getContext('2d').drawImage(bm,0,0,cv.width,cv.height);
+            const mime=ext==='png'?'image/png':ext==='webp'?'image/webp':'image/jpeg';
+            const tb=await new Promise(resolve=>cv.toBlob(resolve,mime,mime==='image/jpeg'?.78:undefined));
+            if(tb)await put('images/t/'+name,await b64(tb),'Create gallery thumbnail '+name);
+          }
+          bm.close&&bm.close();
+        }catch(te){console.warn('Thumbnail creation skipped; original image remains available',te)}
+      }
       const path='/'+folder+'/'+name;
       if(w&&h){D.dims=D.dims||{};D.dims[path]=[w,h]}
       D.names=D.names||{};D.names[path]=files[i].name;
@@ -1214,12 +1229,24 @@ async function checkLiveGalleryPages(){
       try{
         const r=await fetch(url,{cache:'no-store'});
         const html=await r.text(),expected=location.origin+'/g/'+slug+'/';
-        const ok=r.ok&&html.includes('content="'+expected+'"');
-        rows.push('<div>'+(ok?'✓ ':'… ')+esc(c.name||slug)+' — '+(ok?'live':'waiting for Pages')+'</div>');
+        const pageOK=r.ok&&html.includes('content="'+expected+'"');
+        const cover=c.cover||(c.photos||[])[0];let imageOK=true;
+        if(cover){
+          const src=/^https?:\/\//i.test(cover)?cover:location.origin+'/'+String(cover).replace(/^\/+/, '');
+          imageOK=await new Promise(resolve=>{
+            const im=new Image();let settled=false;
+            const finish=v=>{if(settled)return;settled=true;clearTimeout(timer);resolve(v)};
+            const timer=setTimeout(()=>finish(false),12000);
+            im.onload=()=>finish(true);im.onerror=()=>finish(false);
+            im.src=src+(src.startsWith(location.origin)?(src.includes('?')?'&':'?')+'deploycheck='+Date.now():'');
+          });
+        }
+        const ok=pageOK&&imageOK;
+        rows.push('<div>'+(ok?'✓ ':'… ')+esc(c.name||slug)+' — '+(ok?'gallery and cover image live':pageOK?'waiting for cover image':'waiting for Pages')+'</div>');
       }catch{rows.push('<div>… '+esc(c.name||slug)+' — checking again</div>')}
     }
     const done=contentReady&&rows.length===clients.length&&rows.every(x=>x.startsWith('<div>✓'));
-    deploySet(done?'Fully deployed':'Deployment in progress',done?'All client gallery URLs are responding with the published page.':'Published to GitHub. GitHub Pages is still updating; this check will continue in the background.',rows.join(''));
+    deploySet(done?'Fully deployed':'Deployment in progress',done?'All client gallery pages and their cover images are responding.':'Published to GitHub. This check waits for each gallery page and cover image to load; it will continue in the background.',rows.join(''));
     if(done){if(deployTimer){clearInterval(deployTimer);deployTimer=null}$('#deploybtn').textContent='● Live';$('#status').textContent='All gallery pages live'}
     else $('#deploybtn').textContent='Deployment status';
   }finally{deployBusy=false}
