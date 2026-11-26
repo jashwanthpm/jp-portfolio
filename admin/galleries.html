@@ -1127,7 +1127,7 @@ async function syncPublicGalleryPages(data,options={}){
   if(!repairOnly)for(const item of existing){
     if(item.type!=='dir'||keep.has(item.name))continue;
     const children=await get('g/'+item.name);if(!Array.isArray(children))continue;
-    const page=children.find(x=>x.type==='file'&&x.name==='index.html');if(page)await del('g/'+item.name+'/index.html',page.sha);
+    const page=children.find(x=>x.type==='file'&&x.name==='index.html');if(page){const raw=decodeURIComponent(escape(atob((page.content||'').replace(/\\n/g,''))));if(raw.includes('<!--gallery-redirect-->'))continue;await del('g/'+item.name+'/index.html',page.sha)}
   }
   const name=data.name||'Jashwanth JP',share=data.share||{};
   for(const c of data.clients){
