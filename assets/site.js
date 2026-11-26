@@ -25,7 +25,7 @@ async function mason(el,all,lay){const gen=el._g=(el._g||0)+1;el._items=all;el._
  await Promise.all(items.map(async p=>{if(p.r==null)p.r=p.src?await getR(p.src):.8}));if(el._g!=gen)return;
  if(L.s=='portrait'){const f=items.filter(p=>p.r<=.92);if(f.length)items=f}
  const n=L.s=='pair'?2:(innerWidth<700?L.m:L.c);el.className='mas '+({grid:'gridl',rows:'rowsl',pair:'rowsl',stack:'stackl',strip:'stripl',story:'storyl',portrait:'portl'}[L.s]||'');el.style.setProperty('--g',L.g+'px');el.style.setProperty('--rd',L.r+'px');el.style.setProperty('--n',n);
- const tile=(p,i,sq)=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="aspect-ratio:${sq||p.r};--d:${Math.min(i,10)}">${p.src?thimg(p.src,i<8?'':' loading="lazy"'):`<span class="ph"></span>`}${window.__dlon&&p.src?`<a class="dli" href="${dlSrc(p.src)}" download="${dlName(p.src)}" title="Download" aria-label="Download">${DLI}</a>`:''}</figure>`;let html;
+ const tile=(p,i,sq)=>`<figure class="t" ${p.src?`data-s="${p.src}"`:''} style="aspect-ratio:${sq||p.r};--d:${Math.min(i,10)}">${p.src?thimg(p.src,i<8?'':' loading="lazy"'):`<span class="ph"></span>`}${window.__fav&&p.src?`<button class="fv${FAV.has(p.src)?' on':''}" data-fv="${p.src}" aria-label="Favorite">♥</button>`:''}${window.__dlon&&p.src?`<a class="dli" href="${dlSrc(p.src)}" download="${dlName(p.src)}" title="Download" aria-label="Download">${DLI}</a>`:''}</figure>`;let html;
  if(L.s=='grid')html=items.map((p,i)=>tile(p,i,1)).join('');
  else if(L.s=='portrait')html=items.map((p,i)=>tile(p,i,'2/3')).join('');
  else if(L.s=='story'){const m=innerWidth<700;html=items.map((p,i)=>tile(p,i).replace('style="','style="--w:'+(p.r>1?(m?92:68):(m?68:42))+'%;')).join('')}
@@ -43,12 +43,18 @@ const dlSrc=p=>(C.hi||{})[p]||p;
 const SBURL='https://kcihpkcpmklzytbsekhy.supabase.co',SBKEY='sb_publishable_nM8A5AzPXGZn_7phEIEy5Q_WommbEkU';
 const gid=u=>(String(u).match(/[?&]id=([\w-]+)/)||String(u).match(/\/d\/([\w-]+)/)||[])[1];
 const dlFetch=u=>/drive\.google\.com\/uc/.test(u)&&(C.cloudSettings||{}).driveKey?`https://www.googleapis.com/drive/v3/files/${gid(u)}?alt=media&key=${C.cloudSettings.driveKey}`:u;
-function needEmail(){const c=window.__dlc||{};if(!c.emailGate)return Promise.resolve(true);try{if(localStorage.getItem('em_'+c.slug))return Promise.resolve(true)}catch{}
- return new Promise(ok=>{document.body.insertAdjacentHTML('beforeend',`<div id="emg" style="position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#0e0d0ccc"><form style="width:min(380px,90vw);background:#171513;border:1px solid #302a25;border-radius:16px;padding:26px;text-align:center;color:#efe9df;font:14px system-ui"><h3 style="font:400 30px Georgia,serif;margin:0 0 6px">Download your photos</h3><p style="color:#9d9387;margin:0 0 14px">Enter your email to start the download.</p><input type="email" required placeholder="you@example.com" aria-label="Email" style="width:100%;padding:12px 16px;border-radius:30px;border:1px solid #302a25;background:#100e0d;color:inherit;text-align:center;margin-bottom:12px"><button class="btn f" style="width:100%">Download</button><button type="button" id="emx" style="background:none;border:0;color:#9d9387;margin-top:10px;cursor:pointer">Cancel</button></form></div>`);
+const FN=SBURL+'/functions/v1/gallery',FAV=new Set();
+const gcall=(action,x={})=>{const c=window.__dlc||{};if(c.type!=='client')return Promise.resolve({});let em='';try{em=localStorage.getItem('em_'+c.slug)||''}catch{}
+ return fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,slug:c.slug,name:c.name,email:em,...x}),keepalive:true}).then(r=>r.json()).catch(()=>({}))};
+function favPill(){if(!window.__fav)return;let p=document.getElementById('favp');if(!p){document.body.insertAdjacentHTML('beforeend','<button id="favp" style="position:fixed;right:18px;bottom:18px;z-index:50;background:#171513;color:#efe9df;border:1px solid #c9a46a;border-radius:30px;padding:10px 18px;cursor:pointer;font:13px system-ui"></button>');p=document.getElementById('favp');
+ p.onclick=()=>{const k='fl_'+window.__dlc.slug,n=prompt('Name your favorites list (optional)',localStorage.getItem(k)||'Favorites');if(n){localStorage.setItem(k,n.trim());gcall('rename',{list:n.trim()})}}}
+ p.style.display=FAV.size?'':'none';p.textContent='♥ '+FAV.size+' favorite'+(FAV.size==1?'':'s')+' · name your list'}
+function needEmail(force){const c=window.__dlc||{};if(!c.emailGate&&!force)return Promise.resolve(true);try{if(localStorage.getItem('em_'+c.slug))return Promise.resolve(true)}catch{}
+ return new Promise(ok=>{document.body.insertAdjacentHTML('beforeend',`<div id="emg" style="position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#0e0d0ccc"><form style="width:min(380px,90vw);background:#171513;border:1px solid #302a25;border-radius:16px;padding:26px;text-align:center;color:#efe9df;font:14px system-ui"><h3 style="font:400 30px Georgia,serif;margin:0 0 6px">Enter your email</h3><p style="color:#9d9387;margin:0 0 14px">We use it to keep your downloads and favorites together.</p><input type="email" required placeholder="you@example.com" aria-label="Email" style="width:100%;padding:12px 16px;border-radius:30px;border:1px solid #302a25;background:#100e0d;color:inherit;text-align:center;margin-bottom:12px"><button class="btn f" style="width:100%">Continue</button><button type="button" id="emx" style="background:none;border:0;color:#9d9387;margin-top:10px;cursor:pointer">Cancel</button></form></div>`);
   const g=document.getElementById('emg'),f=g.querySelector('form'),i=f.querySelector('input');i.focus();
   document.getElementById('emx').onclick=()=>{g.remove();ok(false)};
   f.onsubmit=e=>{e.preventDefault();const v=i.value.trim();try{localStorage.setItem('em_'+c.slug,v)}catch{}
-   fetch(SBURL+'/rest/v1/gallery_emails',{method:'POST',headers:{apikey:SBKEY,Authorization:'Bearer '+SBKEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({gallery_slug:c.slug,gallery_name:c.name,email:v})}).catch(()=>{});g.remove();ok(true)}})}
+   gcall('email',{email:v});g.remove();ok(true)}})}
 const dlName=p=>{const c=window.__dlc||{},i=(c.photos||[]).indexOf(p),q=dlSrc(p),ext=(q.match(/\.(\w+)$/)||[0,'jpg'])[1];return `${c.slug||'photo'}-${String(i+1).padStart(3,'0')}.${ext}`};
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 function gate(c,ok){document.body.insertAdjacentHTML('beforeend',`<div id="gate"><i class="gbg"></i><form><span class="eb">Private gallery</span><h2>${c.name}</h2><p>Enter the PIN you were given to open this gallery.</p><input type="password" id="pin" autocomplete="off" placeholder="PIN" aria-label="PIN"><button class="btn f">Open gallery</button><small id="pe"></small></form></div>`);
@@ -58,13 +64,13 @@ function gate(c,ok){document.body.insertAdjacentHTML('beforeend',`<div id="gate"
   if(h==c.pinHash){try{sessionStorage.setItem('pin_'+c.slug,c.pinHash)}catch{}$('#gate').remove();ok()}
   else{$('#pe').textContent='That PIN is not correct.';f.classList.add('shake');setTimeout(()=>f.classList.remove('shake'),500);$('#pin').value=''}}}
 async function dlBlob(a){a.classList.add('busy');try{const r=await fetch(dlFetch(a.href));if(!r.ok)throw 0;const b=await r.blob(),u=URL.createObjectURL(b),t=document.createElement('a');t.href=u;t.download=a.getAttribute('download')||'photo.jpg';document.body.appendChild(t);t.click();t.remove();setTimeout(()=>URL.revokeObjectURL(u),30000)}catch{window.open(a.href,'_blank')}a.classList.remove('busy')}
-document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a.dl,a.dli');if(a&&a.href&&!PV){e.preventDefault();e.stopPropagation();needEmail().then(k=>k&&dlBlob(a))}},true);
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a.dl,a.dli');if(a&&a.href&&!PV){e.preventDefault();e.stopPropagation();needEmail().then(k=>{if(k){const f=(a.closest&&a.closest('.t')&&a.closest('.t').dataset.s)||(typeof LB!=='undefined'?LB[LI]:'');gcall('download',{file:f});dlBlob(a)}})}},true);
 async function gcover(c){const old=$('#gcov');if(old)old.remove();const pg=$('.pg');if(pg)pg.classList.remove('has-cover');
  const im=c.cover||(c.photos||[])[0];if(!im||c.showCover===false||!pg)return;pg.classList.add('has-cover');
  pg.insertAdjacentHTML('beforebegin',`<section id="gcov" class="gc-${c.coverSize||'full'}"><i class="gcb"></i><div class="gct">${c.date?`<span class="eb">${c.date}</span>`:''}<h1>${c.name}</h1><button class="gdn" aria-label="View pictures"><span></span></button></div></section>`);
  const b=$('#gcov .gcb'),t=new Image();t.onload=()=>b.classList.add('on');t.src=im;b.style.backgroundImage=`url('${im}')`;b.style.backgroundPosition=pos(im);
  $('#gcov .gdn').onclick=()=>pg.scrollIntoView({behavior:'smooth'})}
-async function zipAll(c,btn,list,zn){if(!(await needEmail()))return;const sp=$('#dlp')||{};btn.disabled=true;
+async function zipAll(c,btn,list,zn){if(!(await needEmail()))return;gcall('zip',{n:(list||c.photos||[]).length,file:zn||c.slug});const sp=$('#dlp')||{};btn.disabled=true;
  try{if(!window.JSZip)await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
   const z=new JSZip(),ps=list||c.photos;let n=0;for(const p of ps){const r=await fetch(dlFetch(dlSrc(p)));if(!r.ok)throw 0;z.file(dlName(p),await r.blob());n++;sp.textContent=`Preparing ${n} / ${ps.length}…`}
   const blob=await z.generateAsync({type:'blob',compression:'STORE'},m=>sp.textContent=`Zipping ${Math.round(m.percent)}%`),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(zn||c.slug)+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
@@ -168,7 +174,8 @@ gallery(){
  const s=new URLSearchParams(location.search).get('c')||window.GSLUG,c=(C.clients||[]).find(x=>x.slug==s);
  if(!c){$('#gt').textContent='Gallery not found';return}
  const run=()=>{document.title=c.name+' — '+C.name;$('#gt').textContent=c.name;txt('gd',c.date);txt('gs',c.story);
-  window.__dlc=c;window.__dlon=!!c.download&&c.download!='off';
+  window.__dlc=c;window.__dlon=!!c.download&&c.download!='off';window.__fav=c.type==='client'&&c.favorites!==false;try{JSON.parse(localStorage.getItem('fv_'+c.slug)||'[]').forEach(x=>FAV.add(x))}catch{}
+  if(window.__fav&&!document.getElementById('fvcss'))document.head.insertAdjacentHTML('beforeend','<style id="fvcss">.fv{position:absolute;left:10px;bottom:10px;z-index:3;width:36px;height:36px;border-radius:50%;border:0;background:#000a;color:#fff;font-size:17px;cursor:pointer;opacity:0;transition:.2s}.t:hover .fv,.fv.on{opacity:1}.fv.on{color:#ff6b81}@media(hover:none){.fv{opacity:1}}</style>');
   if((c.private||c.pinHash)&&!document.querySelector('meta[name=robots]'))document.head.insertAdjacentHTML('beforeend','<meta name="robots" content="noindex,nofollow">');
   const sets=(c.sets||[]).filter(x=>x.photos&&x.photos.length);let si=0;
   const draw=()=>{const l=sets.length?sets[si].photos:(c.photos||[]);mason($('#grid'),l.length?l.map(src=>({src,client:c.name})):demo(9),c.lay)};draw();
@@ -191,7 +198,7 @@ gallery(){
   const galleryBack=$('.pg .wrap > a.eb, #gbar > a.eb');if(galleryBack)galleryBack.style.display=c.private?'none':'';
   let bar=$('#gbar');if(!bar){const back=$('.pg .wrap > a.eb');if(back){bar=document.createElement('div');bar.id='gbar';back.parentNode.insertBefore(bar,back);bar.appendChild(back)}}
   if(bar&&ga&&ga.parentNode!==bar)bar.appendChild(ga);
-  gcover(c)};
+  favPill();gcover(c)};
  let ok=false;try{ok=sessionStorage.getItem('pin_'+c.slug)==c.pinHash}catch{}
  if(c.pinHash&&!PV&&!ok){$('#gt').textContent='';gate(c,run)}else run()
 },
@@ -309,3 +316,7 @@ if(NOSITE){}else if(PV){addEventListener('message',e=>{if(e.origin!=location.ori
  document.addEventListener('paste',e=>{const el=e.target.closest&&e.target.closest('[data-f]');if(!el)return;e.preventDefault();document.execCommand('insertText',false,(e.clipboardData||window.clipboardData).getData('text/plain'))});
  parent.postMessage({type:'ready'},location.origin)}
 else fetch('/content.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).catch(()=>({})).then(boot);
+
+document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('.fv');if(!b)return;e.preventDefault();e.stopPropagation();
+ if(!(await needEmail(true)))return;const f=b.dataset.fv,on=!FAV.has(f),c=window.__dlc||{};on?FAV.add(f):FAV.delete(f);b.classList.toggle('on',on);
+ try{localStorage.setItem('fv_'+c.slug,JSON.stringify([...FAV]))}catch{}gcall(on?'fav':'unfav',{file:f,list:localStorage.getItem('fl_'+c.slug)||'Favorites'});favPill()},true);
