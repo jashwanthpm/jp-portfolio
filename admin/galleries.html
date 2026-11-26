@@ -263,6 +263,50 @@ hr{border:0;border-top:1px solid var(--line2);margin:16px 0}
 .tbl{width:100%;border-collapse:collapse}.tbl th{text-align:left;color:var(--muted);font-weight:500;font-size:12px;padding:6px 8px}.tbl td{padding:8px;border-top:1px solid var(--line2)}
 .toprow{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;padding:5px 0}.toprow img{width:40px;height:40px;object-fit:cover;border-radius:5px}.toprow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:900px){.gwrap{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}.gtabs{order:2;flex-direction:row;justify-content:center;border-right:0;border-top:1px solid var(--line);padding:4px}.ghead{flex-wrap:wrap}.stats{grid-template-columns:repeat(2,1fr)}.bar2{flex-direction:column}}
+
+.ingal .rail{display:none}
+.gpage{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr)}
+.gtop{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--bg)}
+.icb{width:34px;height:34px;padding:0;border:0;background:none;font-size:26px;line-height:1;border-radius:50%;color:var(--muted)}
+.gname{display:flex;flex-direction:column;min-width:120px;flex:0 1 250px}
+.gsearch{flex:1;max-width:380px;padding-left:36px;background:#100e0d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%239d9387' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E") 12px center no-repeat}
+.gbodyrow{display:grid;grid-template-columns:310px minmax(0,1fr);min-height:0}
+.gside{border-right:1px solid var(--line);background:var(--rail);overflow:auto;display:flex;flex-direction:column}
+.gcover{position:relative;aspect-ratio:3/2;background:var(--p2);flex:none;overflow:hidden}
+.gcover img{width:100%;height:100%;object-fit:cover;display:block}
+.covph2{height:100%;display:grid;place-items:center;color:var(--muted);background:linear-gradient(135deg,var(--p2),var(--p))}
+.gcover .chg{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:#0e0d0ccc;opacity:0;transition:opacity .2s}
+.gcover:hover .chg,.gcover .chg:focus-visible{opacity:1}
+@media(hover:none){.gcover .chg{opacity:1}}
+.stabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);flex:none}
+.stabs button{border:0;border-radius:0;background:none;padding:14px 0;color:var(--muted);border-bottom:2px solid transparent;display:grid;place-items:center}
+.stabs button:hover{color:var(--fg)}.stabs button.on{color:var(--gold);border-color:var(--gold)}
+.stabs svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.sbody{padding:10px 0 40px;flex:1}
+.slabel{display:flex;justify-content:space-between;align-items:center;padding:6px 18px 8px;color:var(--muted);font-size:12px;letter-spacing:.06em}
+.srow2{display:flex;align-items:center;gap:12px;padding:13px 10px 13px 18px;cursor:pointer;color:#d7cec2;border-left:2px solid transparent}
+.srow2:hover{background:var(--p)}.srow2.on{background:var(--p2);color:var(--fg);border-color:var(--gold)}
+.srow2 .grip{color:var(--muted);width:14px}.srow2 .sn{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow2 .dots{border:0;background:none;padding:2px 8px;color:var(--muted);font-size:18px;opacity:0}.srow2:hover .dots,.srow2.on .dots{opacity:1}
+.srow2.dropt{background:#c9a46a22}
+.statcol{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 18px}
+.sbody .blk{border-radius:0;border-width:1px 0;margin:0 0 -1px;background:none}
+.sbody .bh,.sbody .bb{padding-left:18px;padding-right:18px}.sbody .bh b{font-size:20px}
+.gmain2{overflow:auto;padding:22px 28px 110px;min-width:0}
+.gmain2 .gbody{max-width:980px;margin:0;padding:0}
+.mhead{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+.mhead h2{font:500 30px var(--serif);margin:0;flex:1}
+.tb{background:none;border:0;color:var(--muted);padding:6px 9px;display:flex;gap:6px;align-items:center}.tb:hover{color:var(--fg)}
+.tb svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tb.gold{color:var(--gold)}
+.grid.cell{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--col,190px),1fr));gap:12px}
+.grid.cell .th{aspect-ratio:4/5;padding:9%;background:var(--p2);animation:none;border-radius:6px}
+.grid.cell .th img{object-fit:contain}
+.th[hidden]{display:none}
+.pop{position:fixed;z-index:60;background:var(--p3);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 14px 40px #000b}
+.pop>button{display:block;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:9px 12px}.pop>button:hover{background:var(--p2)}
+.pop .opt{padding:9px 12px}
+@media(max-width:900px){.gbodyrow{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.gside{max-height:46dvh;border-right:0;border-bottom:1px solid var(--line)}.gtop{flex-wrap:wrap}.gsearch{order:9;max-width:none;flex-basis:100%}}
 </style></head><body>
 
 <header class="top">
@@ -309,12 +353,13 @@ function setf(o,k,v){const ks=k.split('.');const last=ks.pop();ks.forEach(x=>o=o
 let token=localStorage.getItem('jp_tok')||'',D=null,sha='',dirty=false;
 let view='clients',cur=-1,q='',filter='all',fit=localStorage.getItem('gm_fit')==='square'?'square':'full';
 let picked=new Set(),photoIdx=-1,dragFrom=-1,panelOpen=false;
+let gq='',setDrag=-1,popEl=null;
 let gTab='photos',actData=null,actFor='',actErr='',favGroups=[];
 const TABSEC={design:['cover','layout'],settings:['details','access']};
 let isCloud=false,setIdx=0;const CUR=()=>D.clients[cur];
 let tree=null,sizeMap={},repoKB=null,storLoading=false,storErr='';
 let ratio={};try{ratio=JSON.parse(localStorage.getItem('gm_ratio')||'{}')}catch(e){}
-const ROWH=[100,140,190,250,330],COLW=[110,140,170,220,280];
+const ROWH=[100,140,190,250,330],COLW=[150,190,240,300,380];
 let size=Math.min(5,Math.max(1,+localStorage.getItem('gm_size')||3));
 const DRIVE_W=2000;
 const isDrive=p=>/googleusercontent\.com\/d\//.test(p||'');
@@ -346,7 +391,7 @@ function ctx(){
 /* ---------- routing ---------- */
 function route(){
   const h=location.hash.slice(1)||'clients';
-  setIdx=0;isCloud=false;gTab='photos';
+  setIdx=0;isCloud=false;gTab='photos';gq='';closePop();
   if(h.startsWith('client/')){const slug=decodeURIComponent(h.slice(7));cur=D.clients.findIndex(c=>c.slug===slug);view=cur<0?'clients':'client';isCloud=cur>=0&&D.clients[cur].type==='client'}
   else view=['clients','portfolio','storage','settings'].includes(h)?h:'clients';
   picked.clear();photoIdx=-1;panelOpen=false;renderModal();render(true);
@@ -357,7 +402,8 @@ addEventListener('hashchange',()=>D&&route());
 /* ---------- render ---------- */
 function render(reset){
   if(!D)return;
-  const keep=['#view','.gmain'].map(s=>[s,$(s)?.scrollTop||0]);
+  const keep=['#view','.gmain2','.gside'].map(s=>[s,$(s)?.scrollTop||0]);
+  document.body.classList.toggle('ingal',view==='client');
   $$('.rb').forEach(b=>b.classList.toggle('on',b.dataset.go===(view==='client'?'clients':view)));
   $('#view').innerHTML=view==='client'?viewClient():view==='portfolio'?viewPortfolio():view==='storage'?viewStorage():view==='settings'?viewSettings():viewClients();
   if(!reset)keep.forEach(([s,t])=>{const e=$(s);if(e)e.scrollTop=t});
@@ -389,7 +435,7 @@ function viewClients(cl=false){
 const fitSeg=()=>`<label class="size">Size<input type="range" id="size" min="1" max="5" value="${size}" aria-label="Thumbnail size"></label><div class="seg" role="group" aria-label="Thumbnail view"><button data-act="fit" data-v="square" class="${fit==='square'?'on':''}">Square</button><button data-act="fit" data-v="full" class="${fit==='full'?'on':''}">Full photo</button></div>`;
 function gridHTML(cx){
   if(!cx.list.length)return `<div class="empty"><h2>No photos yet</h2><p>Drag photos anywhere on this page, or use the upload button.</p><button class="primary" data-act="upload">Upload photos</button></div>`;
-  return `<div class="grid ${fit}" style="--col:${COLW[size-1]}px">`+cx.list.map((p,k)=>`<div class="th ${picked.has(k)?'sel':''}" draggable="true" data-k="${k}">
+  return `<div class="grid cell" style="--col:${COLW[size-1]}px">`+cx.list.map((p,k)=>`<div class="th ${picked.has(k)?'sel':''}" draggable="true" data-k="${k}" ${gq&&!fname(p).toLowerCase().includes(gq)?'hidden':''}>
     <img loading="lazy" src="${esc(tsrc(p,520))}" ${cx.kind==='client'?`style="object-position:${focusOf(p)}"`:''} draggable="false" alt="Photo ${k+1}">
     <button class="chk" data-act="pick" data-k="${k}" aria-label="Select photo ${k+1}"></button>
     ${cx.kind==='client'&&p===cx.c.cover?'<span class="badge">Cover</span>':''}<span class="n">${k+1}</span></div>`).join('')+'</div>';
@@ -441,23 +487,64 @@ function panelHTML(c){
     +SEL('Visitor downloads','download',c.download||'off',[['off','Off'],['std','Standard size'],['high','High resolution'],['orig','Original files']]))
   +(gTab==='settings'?`<button class="ghost danger" data-act="delclient" style="width:100%;margin-top:6px">Delete this gallery</button>`:'');
 }
+function sideHTML(c,cx){
+  const cv=c.cover||c.photos[0];
+  const cover=`<div class="gcover">${cv?`<img src="${esc(tsrc(cv,900))}" style="object-position:${focusOf(cv)}" alt="Cover">`:'<div class="covph2">No cover yet</div>'}<button class="chg" data-act="pickcover">${cv?'Change cover':'Choose cover'}</button></div>`;
+  const tabs=[['photos','Photos'],['design','Design'],['settings','Settings'],['activity','Activity']].map(([t,l])=>`<button data-act="gtab" data-t="${t}" class="${gTab===t?'on':''}" aria-label="${l}" title="${l}"><svg viewBox="0 0 24 24">${GI[t]}</svg></button>`).join('');
+  let body;
+  if(gTab==='photos'){
+    body=isCloud?`<div class="slabel"><span>PHOTOS</span><button class="tb gold" data-act="addset">＋ Add Set</button></div>`+c.sets.map((x,i)=>`<div class="srow2 ${i===setIdx?'on':''}" data-act="set" data-i="${i}" draggable="true"><span class="grip">≡</span><span class="sn">${esc(x.name)} (${x.photos.length})</span><button class="dots" data-act="setmenu" data-i="${i}" aria-label="Set options">⋯</button></div>`).join('')
+      :`<div class="slabel"><span>PHOTOS</span></div><div class="srow2 on"><span class="grip"> </span><span class="sn">All photos (${c.photos.length})</span></div>`;
+  }else if(gTab==='activity')body=isCloud?(actStatsHTML||'<small style="padding:0 18px">Loading…</small>'):'<small style="padding:0 18px">Activity is tracked for client sharing galleries.</small>';
+  else body=panelHTML(c);
+  return cover+`<div class="stabs">${tabs}</div><div class="sbody">${body}</div>`;
+}
 function viewClient(){
   const cx=ctx(),c=cx.c;
-  const tabs=[['photos','Photos'],['design','Design'],['settings','Settings'],['activity','Activity']];
-  return `<div class="gwrap"><nav class="gtabs" aria-label="Gallery sections">${tabs.map(([t,l])=>`<button data-act="gtab" data-t="${t}" class="${gTab===t?'on':''}" aria-label="${l}"><svg viewBox="0 0 24 24">${GI[t]}</svg>${l}</button>`).join('')}</nav>
-  <div class="gmain"><div class="ghead"><button data-act="back">← Galleries</button>
-    <div class="cstack"><input id="nameIn" class="cname" value="${esc(c.name)}" placeholder="Gallery name" aria-label="Gallery name"><input id="dateIn" class="cdate" value="${esc(c.date||'')}" placeholder="Add a date" aria-label="Date"></div>
-    <span class="mode ${isCloud?'cl':'ws'}">${isCloud?'Client sharing':'On website'}</span><span class="muted">${c.photos.length} photos</span><div class="sp"></div>
-    ${c.slug?'<button data-act="viewlive">'+(isCloud?'Preview ↗':'View live ↗')+'</button>':''}<button data-act="drive">Add from Drive</button><button class="primary" data-act="upload">Upload</button></div>
-  ${gTab==='photos'?`<div class="gbody wide">${isCloud?setsBar(c):''}${hintBar(fitSeg())}${gridHTML(cx)}</div>`:gTab==='activity'?activityHTML(c):`<div class="gbody">${panelHTML(c)}</div>`}</div></div>`;
+  const title=isCloud?c.sets[Math.min(setIdx,c.sets.length-1)].name:'Photos';
+  const main=gTab==='activity'?activityHTML(c):gridHTML(cx);
+  const I=d=>`<svg viewBox="0 0 24 24">${d}</svg>`;
+  return `<div class="gpage"><div class="gtop"><button class="icb" data-act="back" aria-label="Back to galleries">‹</button>
+    <div class="gname"><input id="nameIn" class="cname" value="${esc(c.name)}" placeholder="Gallery name" aria-label="Gallery name"><input id="dateIn" class="cdate" value="${esc(c.date||'')}" placeholder="Add event date" aria-label="Date"></div>
+    <span class="mode ${isCloud?'cl':'ws'}">${isCloud?'Client sharing':'On website'}</span>
+    <input class="gsearch" id="gq" placeholder="Search photos" value="${esc(gq)}" aria-label="Search photos"><div class="sp"></div>
+    <button class="ghost" data-act="pop" data-p="more">More ▾</button><button class="ghost" data-act="viewlive">Preview</button><button class="primary" data-act="pop" data-p="share">Share ▾</button></div>
+  <div class="gbodyrow"><aside class="gside">${sideHTML(c,cx)}</aside>
+  <div class="gmain2"><div class="mhead"><h2>${esc(title)}</h2><button class="tb" data-act="pop" data-p="sort" aria-label="Sort">${I('<path d="M3 6h13M3 12h9M3 18h5M18 8v10m0 0-3-3m3 3 3-3"/>')}</button><button class="tb" data-act="pop" data-p="grid" aria-label="Thumbnail size">${I('<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>')}</button><button class="tb gold" data-act="pop" data-p="add">⊕ Add Media</button></div>${main}</div></div></div>`;
 }
+/* small pop-up menus */
+function closePop(){if(popEl){popEl.remove();popEl=null}}
+function openPop(btn,html,key,w=230){
+  if(popEl&&popEl.dataset.k===key){closePop();return}
+  closePop();const r=btn.getBoundingClientRect();popEl=document.createElement('div');popEl.className='pop';popEl.dataset.k=key;popEl.innerHTML=html;
+  popEl.style.cssText=`top:${r.bottom+6}px;left:${Math.max(8,Math.min(innerWidth-w-8,r.right-w))}px;width:${w}px`;document.body.appendChild(popEl);
+}
+function popFor(el){
+  const p=el.dataset.p,c=view==='client'?CUR():null;
+  const H={
+    add:`<button data-act="upload">Upload from computer</button><button data-act="drive">Import from Google Drive</button><label class="opt"><input type="checkbox" id="optim" ${optim()?'checked':''}> Resize big photos on upload</label>`,
+    sort:'<button data-act="sortaz">Name A to Z</button><button data-act="sortza">Name Z to A</button><button data-act="sortrev">Reverse order</button>',
+    grid:`<label class="size" style="padding:10px 12px">Size<input type="range" id="size" min="1" max="5" value="${size}" aria-label="Thumbnail size"></label>`,
+    more:'<button data-act="selectall">Select all photos</button><button data-act="copyall">Copy all file names</button><button data-act="delclient" style="color:var(--red)">Delete gallery</button>',
+    share:c?`<div class="field" style="padding:10px 12px"><label>${isCloud?'Client link':'Gallery link'}</label><div class="row"><input readonly value="${esc(shareUrl(c))}"><button data-act="copyshare" data-keep="1">Copy</button></div><small>${isCloud?'Not listed on your website. Anyone with the link can open it.':'This gallery is public on your website.'}</small></div>`:''
+  }[p];
+  if(H)openPop(el,H,p,p==='share'?330:p==='grid'?200:240);
+}
+document.addEventListener('click',e=>{
+  if(popEl&&!popEl.contains(e.target)&&!e.target.closest('[data-act="pop"],[data-act="setmenu"]'))closePop();
+  const pa=e.target.closest('.pop [data-act]');if(pa){act(pa.dataset.act,pa);if(!pa.dataset.keep)closePop()}
+},true);
+document.addEventListener('input',e=>{if(e.target.id==='size'&&e.target.closest('.pop')){size=+e.target.value;localStorage.setItem('gm_size',size);const g=$('.grid');if(g)g.style.setProperty('--col',COLW[size-1]+'px')}});
+document.addEventListener('change',e=>{if(e.target.id==='optim')localStorage.setItem('gm_opt',e.target.checked?'1':'0')});
 const GI={"photos": "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><circle cx=\"9\" cy=\"9\" r=\"2\"/><path d=\"m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21\"/>", "design": "<circle cx=\"13.5\" cy=\"6.5\" r=\"1.5\"/><circle cx=\"17.5\" cy=\"10.5\" r=\"1.5\"/><circle cx=\"8.5\" cy=\"7.5\" r=\"1.5\"/><circle cx=\"6.5\" cy=\"12.5\" r=\"1.5\"/><path d=\"M12 2a10 10 0 1 0 0 20 2 2 0 0 0 1.4-3.4 2 2 0 0 1 1.4-3.4H17a5 5 0 0 0 5-5C22 6 17.5 2 12 2z\"/>", "settings": "<path d=\"M4 6h10M18 6h2M4 12h2M10 12h10M4 18h12\"/><circle cx=\"16\" cy=\"6\" r=\"2\"/><circle cx=\"8\" cy=\"12\" r=\"2\"/><circle cx=\"18\" cy=\"18\" r=\"2\"/>", "activity": "<path d=\"M3 12h4l3-8 4 16 3-8h4\"/>"};
 const FN='https://kcihpkcpmklzytbsekhy.supabase.co/functions/v1/gallery';
 async function loadActivity(){const c=CUR();actFor=c.slug;actData=null;actErr='';render(true);
   try{const r=await fetch(FN+'?slug='+encodeURIComponent(c.slug),{headers:{'x-gh-token':token}});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||('Error '+r.status));actData=j}catch(e){actErr=e.message}render(true)}
 const when=t=>new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});
 const fname=p=>(D.names||{})[p]||(()=>{try{return decodeURIComponent(String(p).split('/').pop().replace(/=w\d+$/,''))}catch(e){return String(p)}})();
+let actStatsHTML='';
 function activityHTML(c){
+  actStatsHTML='';
   if(!isCloud)return '<div class="gbody"><div class="empty"><h2>Activity</h2><p>Emails, downloads and favorites are tracked for client sharing galleries.</p></div></div>';
   if(actErr)return `<div class="gbody"><div class="empty"><h2>Could not load activity</h2><p>${esc(actErr)}</p><button data-act="actreload">Try again</button></div></div>`;
   if(!actData||actFor!==c.slug)return '<div class="gbody"><p class="muted">Loading activity…</p></div>';
@@ -471,7 +558,8 @@ function activityHTML(c){
   const top={};events.filter(e=>e.kind==='download'&&e.file).forEach(e=>top[e.file]=(top[e.file]||0)+1);
   const tops=Object.entries(top).sort((a,b)=>b[1]-a[1]).slice(0,8);
   const stat=(n,l)=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`;
-  return `<div class="gbody"><div class="bar2"><div class="stats">${stat(emails.length,'Emails collected')}${stat(dls,'Photos downloaded')}${stat(favorites.length,'Favorites')}${stat(favGroups.length,'Favorite lists')}</div><button data-act="actreload">Refresh</button></div>
+  actStatsHTML=`<div class="statcol">${stat(emails.length,'Emails collected')}${stat(dls,'Photos downloaded')}${stat(favorites.length,'Favorites')}${stat(favGroups.length,'Favorite lists')}<button data-act="actreload" style="grid-column:1/-1">Refresh</button></div>`;
+  return `<div class="gbody">
   <section class="blk"><div class="bh"><b>Favorites</b><small>Lists your clients made. Copy the file names to find the photos.</small></div><div class="bb">${favGroups.map((f,i)=>`<div class="fav"><div class="favh"><div><b>${esc(f.name)}</b><small style="margin:0">${esc(f.email)}, ${f.files.length} photos</small></div><button class="primary" data-act="copyfav" data-i="${i}">Copy file names</button></div><div class="favt">${f.files.slice(0,14).map(p=>`<img loading="lazy" src="${esc(tsrc(p,200))}" alt="" title="${esc(fname(p))}">`).join('')}</div></div>`).join('')||'<small>No favorites yet.</small>'}</div></section>
   <section class="blk"><div class="bh"><b>Visitors</b><small>Everyone who entered their email</small></div><div class="bb">${people.length?`<table class="tbl"><tr><th>Email</th><th>Downloaded</th><th>Favorites</th><th>Last active</th></tr>${people.map(r=>`<tr><td>${esc(r.email)}</td><td>${r.d}</td><td>${r.f}</td><td>${r.t?when(r.t):''}</td></tr>`).join('')}</table>`:'<small>No visitors yet.</small>'}</div></section>
   ${tops.length?`<section class="blk"><div class="bh"><b>Most downloaded</b><small>Single photo downloads</small></div><div class="bb">${tops.map(([p,n])=>`<div class="toprow"><img src="${esc(tsrc(p,120))}" alt=""><span>${esc(fname(p))}</span><b>${n}</b></div>`).join('')}</div></section>`:''}</div>`;
@@ -492,7 +580,7 @@ function copyNames(paths){
 function viewPortfolio(){
   const cx=ctx(),k=pKey(),opts=arrays();if(!opts.includes(k))opts.push(k);
   const src=opts.length>1?`<label>Source <select id="pkey">${opts.map(o=>`<option ${o===k?'selected':''}>${esc(o)}</option>`).join('')}</select></label>`:`Source: content.json › ${esc(k)}`;
-  return `<div class="page"><div class="pagehead"><div><h1 class="big">Portfolio</h1><p class="muted">${cx.list.length} pictures on your public site. ${src}</p></div><div class="sp"></div>${fitSeg()}<button data-act="drive">Add from Drive</button><button class="primary" data-act="upload">Upload pictures</button></div>
+  return `<div class="page"><div class="pagehead"><div><h1 class="big">Portfolio</h1><p class="muted">${cx.list.length} pictures on your public site. ${src}</p></div><div class="sp"></div><button data-act="pop" data-p="grid">Size</button><button data-act="drive">Add from Drive</button><button class="primary" data-act="upload">Upload pictures</button></div>
     ${hintBar('Drag pictures to reorder. Drag near the top or bottom edge to scroll. Click one to open it.')}${gridHTML(cx)}</div>`;
 }
 
@@ -540,6 +628,10 @@ async function act(a,el){
   const cx=['client','portfolio'].includes(view)?ctx():null,c=view==='client'?CUR():null;
   if(a==='back')go('clients');
   else if(a==='panel'){panelOpen=!panelOpen;$('.cpanel')?.classList.toggle('open',panelOpen)}
+  else if(a==='pop')popFor(el);
+  else if(a==='setmenu'){setIdx=+el.dataset.i;openPop(el,'<button data-act="renset">Rename set</button><button data-act="delset" style="color:var(--red)">Delete set</button>','setmenu',190)}
+  else if(a==='sortaz'||a==='sortza'||a==='sortrev'){if(a==='sortrev')cx.arr.reverse();else{const k=a==='sortaz'?1:-1;cx.arr.sort((x,y)=>k*fname(srcOf(x)).localeCompare(fname(srcOf(y)),undefined,{numeric:true,sensitivity:'base'}))}picked.clear();mark();render();toast('Order updated. Publish to apply.')}
+  else if(a==='copyall')copyNames(cx.list);
   else if(a==='gtab'){gTab=el.dataset.t;render(true);if(gTab==='activity'&&isCloud)loadActivity()}
   else if(a==='actreload')loadActivity();
   else if(a==='copynames')copyNames([...picked].map(k=>cx.list[k]));
@@ -588,6 +680,7 @@ V.addEventListener('click',e=>{
 V.addEventListener('input',e=>{
   const t=e.target,f=t.dataset.f;
   if(t.id==='size'){size=+t.value;localStorage.setItem('gm_size',size);const g=$('.grid');if(g)g.style.setProperty('--col',COLW[size-1]+'px');layout();return}
+  if(t.id==='gq'){gq=t.value.toLowerCase();const L=ctx().list;$$('.th').forEach(th=>{th.hidden=!!gq&&!fname(L[+th.dataset.k]).toLowerCase().includes(gq)});return}
   if(t.id==='skey'){localStorage.setItem('gm_gkey',t.value.trim());D.cloudSettings=D.cloudSettings||{};D.cloudSettings.driveKey=t.value.trim();mark();return}
   if(t.id==='q'){q=t.value;$('#cards').innerHTML=cardsHTML();return}
   if(view!=='client'||cur<0)return;const c=CUR();
@@ -654,9 +747,15 @@ addEventListener('load',e=>{
 V.addEventListener('dragstart',e=>{const th=e.target.closest?.('.th');if(!th)return;dragFrom=+th.dataset.k;th.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain','move')});
 V.addEventListener('dragend',()=>{dragFrom=-1;$$('.th').forEach(x=>x.classList.remove('dragging','before','after'))});
 function nearTile(e){let best=null,bd=48;$$('.th').forEach(t=>{const r=t.getBoundingClientRect(),dx=Math.max(r.left-e.clientX,0,e.clientX-r.right),dy=Math.max(r.top-e.clientY,0,e.clientY-r.bottom),d=Math.hypot(dx,dy);if(d<bd){bd=d;best=t}});return best}
+V.addEventListener('dragstart',e=>{const r=e.target.closest?.('.srow2');if(r&&!e.target.closest('.th')){setDrag=+r.dataset.i;e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain','set')}});
+V.addEventListener('dragover',e=>{const r=e.target.closest?.('.srow2');if(r&&(setDrag>=0||dragFrom>=0)){e.preventDefault();$$('.srow2').forEach(x=>x.classList.toggle('dropt',x===r))}});
+V.addEventListener('dragend',()=>{setDrag=-1;$$('.srow2').forEach(x=>x.classList.remove('dropt'))});
+V.addEventListener('drop',e=>{const r=e.target.closest?.('.srow2');if(!r)return;e.preventDefault();const c=CUR(),ti=+r.dataset.i;
+  if(setDrag>=0){const [m]=c.sets.splice(setDrag,1);c.sets.splice(ti,0,m);setIdx=ti;setDrag=-1;mark();render()}
+  else if(dragFrom>=0&&ti!==setIdx){const [ph]=c.sets[setIdx].photos.splice(dragFrom,1);c.sets[ti].photos.push(ph);dragFrom=-1;mark();render();toast('Moved to “'+c.sets[ti].name+'”')}});
 V.addEventListener('dragover',e=>{
   if(dragFrom<0)return;e.preventDefault();
-  const sc=$('.gmain')||V,sr=sc.getBoundingClientRect();
+  const sc=$('.gmain2')||V,sr=sc.getBoundingClientRect();
   if(e.clientY<sr.top+90)sc.scrollTop-=20;else if(e.clientY>sr.bottom-90)sc.scrollTop+=20;
   $$('.th').forEach(x=>x.classList.remove('before','after'));
   const th=nearTile(e);if(!th)return;const r=th.getBoundingClientRect();th.classList.add(e.clientX<r.left+r.width/2?'before':'after');
@@ -969,6 +1068,7 @@ async function publish(){
 addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
 addEventListener('keydown',e=>{
   if(e.key==='Escape'){
+    closePop();
     if($('#dlg').classList.contains('on'))$('#dlg').classList.remove('on');
     else if(photoIdx>=0){photoIdx=-1;renderModal()}
     else if(picked.size){picked.clear();render()}
