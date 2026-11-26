@@ -46,15 +46,19 @@ const dlFetch=u=>/drive\.google\.com\/uc/.test(u)&&(C.cloudSettings||{}).driveKe
 const FN=SBURL+'/functions/v1/gallery',FAV=new Set();
 const gcall=(action,x={})=>{const c=window.__dlc||{};if(c.type!=='client')return Promise.resolve({});let em='';try{em=localStorage.getItem('em_'+c.slug)||''}catch{}
  return fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,slug:c.slug,name:c.name,email:em,...x}),keepalive:true}).then(r=>r.json()).catch(()=>({}))};
-function favPill(){if(!window.__fav)return;let p=document.getElementById('favp');if(!p){document.body.insertAdjacentHTML('beforeend','<button id="favp" style="position:fixed;right:18px;bottom:18px;z-index:50;background:#171513;color:#efe9df;border:1px solid #c9a46a;border-radius:30px;padding:10px 18px;cursor:pointer;font:13px system-ui"></button>');p=document.getElementById('favp');
- p.onclick=()=>{const k='fl_'+window.__dlc.slug,n=prompt('Name your favorites list (optional)',localStorage.getItem(k)||'Favorites');if(n){localStorage.setItem(k,n.trim());gcall('rename',{list:n.trim()})}}}
- p.style.display=FAV.size?'':'none';p.textContent='♥ '+FAV.size+' favorite'+(FAV.size==1?'':'s')+' · name your list'}
+async function loadFavs(){const c=window.__dlc||{};const r=await gcall('myfavs');(r.files||[]).forEach(f=>FAV.add(f));if(r.list)try{localStorage.setItem('fl_'+c.slug,r.list)}catch{}
+ try{localStorage.setItem('fv_'+c.slug,JSON.stringify([...FAV]))}catch{}document.querySelectorAll('.fv').forEach(b=>b.classList.toggle('on',FAV.has(b.dataset.fv)));favPill()}
+function favPill(){if(!window.__fav)return;const c=window.__dlc;let p=document.getElementById('favp');if(!p){document.body.insertAdjacentHTML('beforeend','<button id="favp" style="position:fixed;right:18px;bottom:18px;z-index:50;background:#171513;color:#efe9df;border:1px solid #c9a46a;border-radius:30px;padding:10px 18px;cursor:pointer;font:13px system-ui"></button>');p=document.getElementById('favp');
+ p.onclick=async()=>{let em='';try{em=localStorage.getItem('em_'+c.slug)||''}catch{}
+  if(!em){if(!(await needEmail(true)))return;await loadFavs();return}
+  const k='fl_'+c.slug,n=prompt('Name your favorites list (optional)',localStorage.getItem(k)||'Favorites');if(n){localStorage.setItem(k,n.trim());gcall('rename',{list:n.trim()})}}}
+ p.textContent='♥ '+(FAV.size||'My')+(c.favLimit>0?' / '+c.favLimit:'')+' favorite'+(FAV.size==1?'':'s')}
 function needEmail(force){const c=window.__dlc||{};if(!c.emailGate&&!force)return Promise.resolve(true);try{if(localStorage.getItem('em_'+c.slug))return Promise.resolve(true)}catch{}
- return new Promise(ok=>{document.body.insertAdjacentHTML('beforeend',`<div id="emg" style="position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#0e0d0ccc"><form style="width:min(380px,90vw);background:#171513;border:1px solid #302a25;border-radius:16px;padding:26px;text-align:center;color:#efe9df;font:14px system-ui"><h3 style="font:400 30px Georgia,serif;margin:0 0 6px">Enter your email</h3><p style="color:#9d9387;margin:0 0 14px">We use it to keep your downloads and favorites together.</p><input type="email" required placeholder="you@example.com" aria-label="Email" style="width:100%;padding:12px 16px;border-radius:30px;border:1px solid #302a25;background:#100e0d;color:inherit;text-align:center;margin-bottom:12px"><button class="btn f" style="width:100%">Continue</button><button type="button" id="emx" style="background:none;border:0;color:#9d9387;margin-top:10px;cursor:pointer">Cancel</button></form></div>`);
-  const g=document.getElementById('emg'),f=g.querySelector('form'),i=f.querySelector('input');i.focus();
+ return new Promise(ok=>{document.body.insertAdjacentHTML('beforeend',`<div id="emg" style="position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#0e0d0ccc"><form style="width:min(380px,90vw);background:#171513;border:1px solid #302a25;border-radius:16px;padding:26px;text-align:center;color:#efe9df;font:14px system-ui"><h3 style="font:400 30px Georgia,serif;margin:0 0 6px">Your details</h3><p style="color:#9d9387;margin:0 0 14px">We use it to keep your downloads and favorites together.</p><input type="text" required placeholder="Your name" aria-label="Name" style="width:100%;padding:12px 16px;border-radius:30px;border:1px solid #302a25;background:#100e0d;color:inherit;text-align:center;margin-bottom:10px"><input type="email" required placeholder="you@example.com" aria-label="Email" style="width:100%;padding:12px 16px;border-radius:30px;border:1px solid #302a25;background:#100e0d;color:inherit;text-align:center;margin-bottom:12px"><button class="btn f" style="width:100%">Continue</button><button type="button" id="emx" style="background:none;border:0;color:#9d9387;margin-top:10px;cursor:pointer">Cancel</button></form></div>`);
+  const g=document.getElementById('emg'),f=g.querySelector('form'),nm=f.querySelector('input[type=text]'),i=f.querySelector('input[type=email]');nm.focus();
   document.getElementById('emx').onclick=()=>{g.remove();ok(false)};
-  f.onsubmit=e=>{e.preventDefault();const v=i.value.trim();try{localStorage.setItem('em_'+c.slug,v)}catch{}
-   gcall('email',{email:v});g.remove();ok(true)}})}
+  f.onsubmit=e=>{e.preventDefault();const v=i.value.trim();try{localStorage.setItem('em_'+c.slug,v);localStorage.setItem('nm_'+c.slug,nm.value.trim())}catch{}
+   gcall('email',{email:v,visitor:nm.value.trim()});g.remove();ok(true)}})}
 const dlName=p=>{const c=window.__dlc||{},i=(c.photos||[]).indexOf(p),q=dlSrc(p),ext=(q.match(/\.(\w+)$/)||[0,'jpg'])[1];return `${c.slug||'photo'}-${String(i+1).padStart(3,'0')}.${ext}`};
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 function gate(c,ok){document.body.insertAdjacentHTML('beforeend',`<div id="gate"><i class="gbg"></i><form><span class="eb">Private gallery</span><h2>${c.name}</h2><p>Enter the PIN you were given to open this gallery.</p><input type="password" id="pin" autocomplete="off" placeholder="PIN" aria-label="PIN"><button class="btn f">Open gallery</button><small id="pe"></small></form></div>`);
@@ -198,7 +202,7 @@ gallery(){
   const galleryBack=$('.pg .wrap > a.eb, #gbar > a.eb');if(galleryBack)galleryBack.style.display=c.private?'none':'';
   let bar=$('#gbar');if(!bar){const back=$('.pg .wrap > a.eb');if(back){bar=document.createElement('div');bar.id='gbar';back.parentNode.insertBefore(bar,back);bar.appendChild(back)}}
   if(bar&&ga&&ga.parentNode!==bar)bar.appendChild(ga);
-  favPill();gcover(c)};
+  favPill();if(window.__fav){let em='';try{em=localStorage.getItem('em_'+c.slug)||''}catch{}if(em)loadFavs()}gcover(c)};
  let ok=false;try{ok=sessionStorage.getItem('pin_'+c.slug)==c.pinHash}catch{}
  if(c.pinHash&&!PV&&!ok){$('#gt').textContent='';gate(c,run)}else run()
 },
@@ -318,5 +322,5 @@ if(NOSITE){}else if(PV){addEventListener('message',e=>{if(e.origin!=location.ori
 else fetch('/content.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).catch(()=>({})).then(boot);
 
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('.fv');if(!b)return;e.preventDefault();e.stopPropagation();
- if(!(await needEmail(true)))return;const f=b.dataset.fv,on=!FAV.has(f),c=window.__dlc||{};on?FAV.add(f):FAV.delete(f);b.classList.toggle('on',on);
+ if(!(await needEmail(true)))return;const f=b.dataset.fv,on=!FAV.has(f),c=window.__dlc||{};if(on&&c.favLimit>0&&FAV.size>=c.favLimit){alert('You can choose up to '+c.favLimit+' favorites. Remove one to pick another.');return}on?FAV.add(f):FAV.delete(f);b.classList.toggle('on',on);
  try{localStorage.setItem('fv_'+c.slug,JSON.stringify([...FAV]))}catch{}gcall(on?'fav':'unfav',{file:f,list:localStorage.getItem('fl_'+c.slug)||'Favorites'});favPill()},true);
