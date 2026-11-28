@@ -76,6 +76,7 @@ select option{background:#1a1714}
 .dz{display:flex;gap:8px;flex-wrap:wrap}
 /* modal */
 .md{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(0,0,0,.6);padding:16px}.mb{width:100%;max-width:440px;max-height:92dvh;overflow:auto;background:var(--p);border:1px solid var(--l);border-radius:18px;padding:22px}.mb h3{font:500 26px 'Cormorant Garamond',serif;margin-bottom:4px}.npo{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:rgba(0,0,0,.64);padding:18px;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}.npb{width:100%;max-width:390px;background:var(--p);border:1px solid var(--l2);border-radius:20px;padding:25px;box-shadow:0 24px 70px rgba(0,0,0,.45)}.npicon{width:46px;height:46px;border-radius:14px;background:rgba(201,164,106,.13);color:var(--a);display:grid;place-items:center;margin-bottom:15px}.npb h3{font:500 29px/1.1 'Cormorant Garamond',serif;margin-bottom:8px}.npb p{font-size:13px;color:var(--m);line-height:1.65}.npacts{display:flex;gap:8px;margin-top:20px}.npacts button{flex:1}
+.notifbtn{position:relative;overflow:visible}.notifbtn .newbadge{position:absolute;right:-5px;top:-5px;min-width:18px;height:18px;padding:0 4px;border:2px solid var(--p);font-size:9px;background:#c9a46a;color:#18120a}.notiflist{display:grid;gap:8px;margin:16px 0}.notifitem{display:flex;gap:10px;align-items:center;padding:12px;background:var(--p2);border:1px solid var(--l);border-radius:12px}.notifitem .ni{flex:1;min-width:0}.notifitem b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.notifitem small{display:block;color:var(--m);font-size:11.5px;margin-top:3px}.notifitem .btn{flex:none}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 #toast{position:fixed;left:50%;bottom:calc(24px + var(--sa));transform:translate(-50%,20px);background:var(--fg);color:#18120a;padding:10px 18px;border-radius:99px;font-weight:500;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:80;max-width:90vw;text-align:center}#toast.on{opacity:1;transform:translate(-50%,0)}
 @media(max-width:800px){
@@ -95,7 +96,7 @@ select option{background:#1a1714}
 </style></head><body>
 <header class="top">
  <div class="brand"><img src="/images/favicon-1791284648615.png" alt=""><div><b>Enquiries</b><small>Track every lead to a booking</small></div></div>
- <span id="newBadge" class="newbadge" hidden>0 new</span>
+ <button class="btn ic ghost notifbtn" id="notifBtn" aria-label="Notifications" title="Notifications"><svg class="i" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="newBadge" class="newbadge" hidden>0</span></button>
  
  <div class="sp"></div>
  <span id="upd" class="hm" style="color:var(--m);font-size:12px"></span>
@@ -131,6 +132,11 @@ const fdt=t=>new Date(t).toLocaleString('en-IN',{day:'numeric',month:'short',hou
 const fday=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}):'';
 const phone=v=>{v=String(v||'').replace(/\D/g,'');return v.length==10?'91'+v:v};
 let rows=[],flt='all',view=(()=>{try{return localStorage.getItem('jp_enq_view')||'list'}catch(e){return'list'}})(),cur=null,first=true,maxSeen=(()=>{try{return localStorage.getItem('jp_enq_last_seen')||''}catch(e){return''}})(),ownerName='',busy=false,tmr;
+let dismissedNotifIds=(()=>{try{return new Set(JSON.parse(localStorage.getItem('jp_enq_dismissed_notifications')||'[]'))}catch(e){return new Set()}})();
+function saveDismissedNotifs(){try{localStorage.setItem('jp_enq_dismissed_notifications',JSON.stringify([...dismissedNotifIds]))}catch(e){}}
+function pendingNotifications(){return rows.filter(r=>r.status==='new'&&!dismissedNotifIds.has(String(r.id))).sort((a,b)=>b.created_at.localeCompare(a.created_at))}
+function dismissNotification(id){dismissedNotifIds.add(String(id));saveDismissedNotifs();syncNewBadge();render();if(!$('#md').hidden)renderNotifications()}
+function renderNotifications(){const a=pendingNotifications();$('#mb').innerHTML='<div style="display:flex;align-items:center;gap:10px"><div style="flex:1"><h3>Notifications</h3><p style="color:var(--m);font-size:12.5px">Dismiss alerts here. Enquiries stay in your list.</p></div><button class="btn ic ghost" id="notifClose" aria-label="Close notifications">×</button></div>'+(a.length?'<div class="notiflist">'+a.map(r=>'<div class="notifitem"><div class="ni"><b>'+esc(r.name||'New enquiry')+'</b><small>'+esc([r.occasion,r.created_at?ago(r.created_at):''].filter(Boolean).join(' · '))+'</small></div><button class="btn sm" data-notif-open="'+esc(r.id)+'">Open</button><button class="btn ic sm ghost" data-notif-dismiss="'+esc(r.id)+'" aria-label="Dismiss">×</button></div>').join('')+'</div><button class="btn ghost" id="notifClear">Clear all notifications</button>':'<div class="empty" style="padding:28px 8px"><b>You’re all caught up</b>No unread enquiry notifications.</div>');$('#md').hidden=false;$('#notifClose').onclick=()=>$('#md').hidden=true;const clear=$('#notifClear');if(clear)clear.onclick=()=>{pendingNotifications().forEach(r=>dismissedNotifIds.add(String(r.id)));saveDismissedNotifs();syncNewBadge();render();renderNotifications()}}
 const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),2200)};
 const due=r=>!!r.follow_up_on&&!DONE.includes(r.status)&&r.follow_up_on<=today();
 const late=r=>!!r.follow_up_on&&!DONE.includes(r.status)&&r.follow_up_on<today();
@@ -160,8 +166,8 @@ function setTop(on){['#upd','#rf','#add','.menu'].forEach(s=>{const e=$(s);if(e)
 $('#out').onclick=()=>{location.href='/admin/'};
 /* ---------- data ---------- */
 function syncNewBadge(){
- const n=rows.filter(r=>r.status==='new').length,el=$('#newBadge');
- if(el){el.hidden=!n;el.textContent=n+' new';el.setAttribute('aria-label',n+' new enquiries')}
+ const n=pendingNotifications().length,el=$('#newBadge');
+ if(el){el.hidden=!n;el.textContent=n>99?'99+':String(n);el.setAttribute('aria-label',n+' unread notifications')}
  document.title=(n?'('+n+') ':'')+'Enquiries';
  try{if(n&&navigator.setAppBadge)navigator.setAppBadge(n);else if(!n&&navigator.clearAppBadge)navigator.clearAppBadge()}catch(e){}
 
@@ -221,6 +227,9 @@ document.addEventListener('click',e=>{const k=e.target.closest('[data-f]');if(k&
  const c=e.target.closest('.card[data-id]');if(c&&!e.target.closest('#dr')){openDr(c.dataset.id);return}
  if(!e.target.closest('.menu'))$('#pop').hidden=true});
 $('#mn').onclick=()=>{$('#pop').hidden=!$('#pop').hidden};
+$('#notifBtn').onclick=()=>{renderNotifications()};
+document.addEventListener('click',e=>{const d=e.target.closest('[data-notif-dismiss]');if(d){e.preventDefault();e.stopPropagation();dismissNotification(d.dataset.notifDismiss);return}const o=e.target.closest('[data-notif-open]');if(o){const id=o.dataset.notifOpen;dismissNotification(id);$('#md').hidden=true;openDr(id)}});
+
 $('#notifyMenu').onclick=async()=>{
  $('#pop').hidden=true;
  if(!('Notification'in window)){toast('Desktop notifications are not supported here');return}
