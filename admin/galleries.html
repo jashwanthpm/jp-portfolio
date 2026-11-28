@@ -348,13 +348,29 @@ hr{border:0;border-top:1px solid var(--line2);margin:16px 0}
 .favt figure{margin:0;width:78px}.favt figure img{width:78px;height:78px}.favt figcaption{font-size:10.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dlstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .keyhint{font-size:11.5px;margin-right:6px}
+
+.onb{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:20px;background:var(--p3);color:var(--muted);margin-right:6px}.onb.on{background:#25402e;color:#8fd19e}
+.wideb{max-width:1100px!important}.mh2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.tabs2{display:flex;gap:22px;border-bottom:1px solid var(--line2);margin:8px 0 14px}.tabs2 button{background:none;border:0;border-bottom:2px solid transparent;border-radius:0;padding:10px 0;color:var(--muted)}.tabs2 button.on{color:var(--fg);border-color:var(--gold)}
+.scard.tight{padding:4px 12px}.tbl td{vertical-align:middle}.tbl th{font-size:11px;letter-spacing:.06em;text-transform:none}
+.tbl tr.clk{cursor:pointer}.tbl tr.clk:hover td{background:var(--p2)}
+.thc{display:flex;align-items:center;gap:10px}.thc img{width:44px;height:44px;object-fit:cover;border-radius:6px;background:var(--p2)}
+.adr{position:fixed;top:52px;right:0;bottom:0;width:min(440px,100vw);background:var(--p);border-left:1px solid var(--line);z-index:30;overflow:auto;padding:20px;box-shadow:-14px 0 40px #000a}
+.adh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.adh h2{font:500 26px var(--serif);margin:0}
+.adt{display:flex;gap:8px;margin-bottom:14px}.adm{display:grid;grid-template-columns:110px 1fr;gap:6px 10px;margin:0 0 16px;padding:12px 0;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}.adm dt{color:var(--muted)}.adm dd{margin:0}
+.adi{display:flex;gap:12px;align-items:center;padding:8px 0}.adi img{width:72px;height:72px;object-fit:cover;border-radius:6px}.adi b{display:block;font-weight:600}
+.bellb{position:relative;width:36px;height:36px;padding:0;border-radius:50%;background:none;border:1px solid var(--line);display:grid;place-items:center;color:var(--muted)}.bellb:hover{color:var(--gold)}
+.bellb svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bellb b{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:9px;background:var(--gold);color:#17120b;font-size:10px;display:grid;place-items:center;padding:0 4px}
+.feed{max-height:70vh;overflow:auto}.feedh{padding:10px 12px;font:500 20px var(--serif)}
+.fitem{display:flex!important;gap:10px;align-items:flex-start}.fitem.new{background:#c9a46a14!important}.fic{width:26px;height:26px;border-radius:50%;background:var(--p2);display:grid;place-items:center;flex:none;font-size:12px}.fitem small{margin:2px 0 0}
 </style></head><body>
 
 <header class="top">
   <div class="brand">Studio</div><span class="tsub">Gallery manager</span>
   <span class="dot" id="dot"></span><span class="status" id="status">Connect to your Studio</span>
   <span class="repo" id="repo"></span>
-  <div class="sp"></div><button id="deploybtn" title="Check whether the live site has finished updating">Site status</button>
+  <div class="sp"></div><button id="bell" class="bellb" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><b id="bellc" hidden>0</b></button><button id="deploybtn" title="Check whether the live site has finished updating">Site status</button>
   <a class="tlink" href="index.html">Site editor ↗</a>
   <a class="tlink" href="../" target="_blank">View site ↗</a>
   <button id="save" class="primary" disabled>Publish changes</button>
@@ -394,7 +410,7 @@ function setf(o,k,v){const ks=k.split('.');const last=ks.pop();ks.forEach(x=>o=o
 let token=localStorage.getItem('jp_tok')||'',D=null,sha='',dirty=false;
 let view='clients',cur=-1,q='',filter='all',fit=localStorage.getItem('gm_fit')==='square'?'square':'full';
 let picked=new Set(),photoIdx=-1,dragFrom=-1,panelOpen=false;
-let lastPick=-1,gq='',setDrag=-1,popEl=null,dSec='cover',sSec='details',aSec='favorites';
+let lastPick=-1,gq='',setDrag=-1,popEl=null,dSec='cover',sSec='general',aSec='download',dlTab='gallery',favRows=[],favOpen=-1,pendingTab='',feed=null,seenAt=+localStorage.getItem('gm_seen')||0;
 let gTab='photos',actData=null,actFor='',actErr='',favGroups=[];
 const TABSEC={design:['cover','layout'],settings:['details','access']};
 let isCloud=false,setIdx=0;const CUR=()=>D.clients[cur];
@@ -435,7 +451,7 @@ function route(){
   setIdx=0;isCloud=false;gTab='photos';gq='';closePop();
   if(h.startsWith('client/')){const slug=decodeURIComponent(h.slice(7));cur=D.clients.findIndex(c=>c.slug===slug);view=cur<0?'clients':'client';isCloud=cur>=0&&D.clients[cur].type==='client'}
   else view=['clients','portfolio','storage','settings'].includes(h)?h:'clients';
-  picked.clear();photoIdx=-1;panelOpen=false;renderModal();render(true);
+  picked.clear();photoIdx=-1;panelOpen=false;favOpen=-1;if(pendingTab&&view==='client'){gTab=pendingTab;if(gTab==='activity'&&isCloud)loadActivity();pendingTab=''}renderModal();render(true);
 }
 const go=h=>{if(location.hash==='#'+h)route();else location.hash=h};
 addEventListener('hashchange',()=>D&&route());
@@ -528,7 +544,7 @@ function panelHTML(c){
     +SEL('Visitor downloads','download',c.download||'off',[['off','Off'],['std','Standard size'],['high','High resolution'],['orig','Original files']]))
   +(gTab==='settings'?`<button class="ghost danger" data-act="delclient" style="width:100%;margin-top:6px">Delete this gallery</button>`:'');
 }
-const NROW=(act,key,cur,t,sub)=>`<button class="nrow ${cur===key?'on':''}" data-act="${act}" data-s="${key}"><span><b>${t}</b><small>${sub}</small></span><i>›</i></button>`;
+const NROW=(act,key,cur,t,sub,bd)=>`<button class="nrow ${cur===key?'on':''}" data-act="${act}" data-s="${key}"><span><b>${t}</b><small>${sub}</small></span>${bd||''}<i>›</i></button>`;
 function sideHTML(c){
   const cv=c.cover||c.photos[0];
   const cover=`<div class="gcover">${cv?`<img src="${esc(tsrc(cv,900))}" style="object-position:${focusOf(cv)}" alt="Cover">`:'<div class="covph2">No cover yet</div>'}<button class="chg" data-act="pickcover">${cv?'Change cover':'Choose cover'}</button></div>`;
@@ -536,8 +552,9 @@ function sideHTML(c){
   let body;
   if(gTab==='photos')body=`<div class="slabel"><span>FOLDERS</span><button class="tb gold" data-act="addset">＋ Add Folder</button></div>`+c.sets.map((x,i)=>`<div class="srow2 ${i===setIdx?'on':''}" data-act="set" data-i="${i}" draggable="true"><span class="grip">≡</span><span class="sn">${esc(x.name)} (${x.photos.length})</span><button class="dots" data-act="setdrive" data-i="${i}" aria-label="Add from Google Drive" title="Add from Google Drive">☁</button><button class="dots" data-act="setmenu" data-i="${i}" aria-label="Folder options">⋯</button></div>`).join('');
   else if(gTab==='design')body=[['cover','Cover','Photo, height and visibility'],['crop','Crop','Focus for thumbnail and banner'],['look','Look','Layout, spacing and corners'],['link','Link preview','How the link looks when shared']].map(r=>NROW('dsec',r[0],dSec,r[1],r[2])).join('');
-  else if(gTab==='settings')body=[['details','Details','Name, date and story'],['share','Share','Link and visibility'],['access','Access','PIN protection'],['downloads','Downloads','Quality'+(isCloud?' and email':'')]].concat(isCloud?[['favorites','Favorites','Client picks and limits']]:[]).map(r=>NROW('ssec',r[0],sSec,r[1],r[2])).join('');
-  else body=isCloud?(actStatsHTML||'<small style="padding:0 18px">Loading…</small>')+[['favorites','Favorites','Lists from your clients'],['visitors','Visitors','Names and emails'],['downloads','Downloads','Most downloaded photos']].map(r=>NROW('asec',r[0],aSec,r[1],r[2])).join(''):'<small style="padding:0 18px">Activity is tracked for client sharing galleries.</small>';
+  else if(gTab==='settings'){const bd=on=>`<em class="onb ${on?'on':''}">${on?'ON':'OFF'}</em>`;
+    body=[['general','General','Name, date and links'],['privacy','Privacy','PIN and visibility'],['download','Download','Quality and access',bd((c.download||'off')!=='off')]].concat(isCloud?[['favorites','Favorites','Client picks and limits',bd(c.favorites!==false)],['email','Email registration','Name and email gate',bd(!!c.emailGate)]]:[]).map(r=>NROW('ssec',r[0],sSec,r[1],r[2],r[3])).join('')}
+  else body=isCloud?(actStatsHTML||'<small style="padding:0 18px">Loading…</small>')+[['download','Download Activity','Who downloaded what'],['favorites','Favorite Activity','Lists from your clients'],['email','Email Registration','Names and emails']].map(r=>NROW('asec',r[0],aSec,r[1],r[2])).join(''):'<small style="padding:0 18px">Activity is tracked for client sharing galleries.</small>';
   return cover+`<div class="stabs">${tabs}</div><div class="sbody">${body}</div>`;
 }
 const refreshPv=()=>{const pv=$('#dzpv');if(pv&&CUR())pv.innerHTML=previewHTML(CUR())};
@@ -578,13 +595,17 @@ function designControls(c){
 }
 function settingsForm(c){
   const url=shareUrl(c),H=(t,d)=>`<h2 class="sh">${t}</h2><p class="hp">${d}</p>`,card=x=>`<div class="scard">${x}</div>`;
-  if(sSec==='details')return H('Details','The name and story clients see.')+card(`<div class="two">${F('Gallery name','name',c.name||'')}${F('Event date','date',c.date||'')}</div>${F('Short story','story',c.story||'',true)}`)+card(`<div class="swrow"><span><b>Delete this gallery</b><small>Photo files stay in your repository storage.</small></span><button class="ghost danger" data-act="delclient">Delete</button></div>`);
-  if(sSec==='share')return H('Share',isCloud?'Send this private link to your client.':'This gallery is on your website.')+card(`<div class="linkbox"><input readonly value="${esc(url)}" aria-label="Gallery link"><button class="primary" data-act="copyshare">Copy link</button></div><div class="actions" style="margin-top:12px"><a class="btn2" href="https://wa.me/?text=${encodeURIComponent((c.name||'Gallery')+' '+url)}" target="_blank" rel="noopener">WhatsApp</a><a class="btn2" href="mailto:?subject=${encodeURIComponent(c.name||'Gallery')}&body=${encodeURIComponent(url)}">Email</a><button data-act="viewlive">Open ↗</button></div><small>${isCloud?'Not listed on your website and hidden from search engines. Anyone with the link can open it.':'Anyone can open it from your website.'}</small>`)
+  const sec=['general','privacy','download'].concat(isCloud?['favorites','email']:[]).includes(sSec)?sSec:'general';
+  if(sec==='general')return H('General Settings','Name, event date and links.')+card(`<div class="two">${F('Gallery name','name',c.name||'')}${F('Event date','date',c.date||'')}</div>${F('Short story','story',c.story||'',true)}`)
+    +card(`<div class="field"><label>Collection URL</label><div class="linkbox"><input readonly value="${esc(url)}" aria-label="Gallery link"><button class="primary" data-act="copyshare">Copy link</button></div></div><div class="actions" style="margin-top:0"><a class="btn2" href="https://wa.me/?text=${encodeURIComponent((c.name||'Gallery')+' '+url)}" target="_blank" rel="noopener">WhatsApp</a><a class="btn2" href="mailto:?subject=${encodeURIComponent(c.name||'Gallery')}&body=${encodeURIComponent(url)}">Email</a><button data-act="viewlive">Open ↗</button></div><small>${isCloud?'Not listed on your website and hidden from search engines.':'This gallery is on your website.'}</small>`)
+    +(isCloud?card(`<div class="field"><label>Logo link</label><input data-f="homeUrl" value="${esc(c.homeUrl||'')}" placeholder="https://jp.sakkhi.co.in"><small>Visitors who click your JP. logo on the client gallery go to this page. Leave empty to use your website home.</small></div>`):'')
+    +card(`<div class="swrow"><span><b>Delete this gallery</b><small>Photo files stay in your repository storage.</small></span><button class="ghost danger" data-act="delclient">Delete</button></div>`);
+  if(sec==='privacy')return H('Privacy','Control who can open this gallery.')+card(`<div class="swrow"><span><b>PIN protection</b><small>${c.pinHash?'Visitors must enter a PIN to open this gallery.':'Anyone with the link can open this gallery.'}</small></span><span class="pill ${c.pinHash?'g':''}">${c.pinHash?'Protected':'Open'}</span></div><div class="field"><label>${c.pinHash?'Set a new PIN':'Choose a PIN'}</label><div class="row"><input id="pin" type="password" inputmode="numeric" placeholder="4–10 characters"><button class="primary" data-act="setpin">${c.pinHash?'Change':'Set'} PIN</button></div></div>${c.pinHash?'<button class="ghost danger" data-act="rmpin">Remove PIN protection</button>':''}`)
     +(isCloud?'':card(SW('Hide from the public galleries page','private',c.private,'The direct link keeps working.')+SW('Show on the home page','onHome',c.onHome)));
-  if(sSec==='access')return H('Access','Keep the gallery behind a PIN.')+card(`<div class="swrow"><span><b>PIN protection</b><small>${c.pinHash?'Visitors must enter a PIN to open this gallery.':'Anyone with the link can open this gallery.'}</small></span><span class="pill ${c.pinHash?'g':''}">${c.pinHash?'Protected':'Open'}</span></div><div class="field"><label>${c.pinHash?'Set a new PIN':'Choose a PIN'}</label><div class="row"><input id="pin" type="password" inputmode="numeric" placeholder="4–10 characters"><button class="primary" data-act="setpin">${c.pinHash?'Change':'Set'} PIN</button></div></div>${c.pinHash?'<button class="ghost danger" data-act="rmpin">Remove PIN protection</button>':''}`);
-  if(sSec==='downloads'){const cur=c.download||(isCloud?'orig':'off'),o=isCloud?[['off','Off','No downloads'],['std','Standard','Web size'],['orig','Original','Full quality']]:[['off','Off','No downloads'],['std','Standard','Web size'],['high','High','High resolution'],['orig','Original','Original files']];
-    return H('Downloads','What visitors can download.')+card(`<div class="otiles ${o.length>3?'four':'three'}">${o.map(([v,t,d])=>TL('download',v,cur,'',t,d)).join('')}</div>`)+(isCloud?card(SW('Ask for name and email before download','emailGate',c.emailGate,'Asked once per visitor, then shown under Activity.')):'')}
-  return H('Favorites','Let clients pick their favorite photos.')+card(SW('Let clients mark favorites','favorites',c.favorites!==false,'Clients enter their name and email, and can come back to find their picks.')+`<div class="field"><label>Maximum favorites per client</label><input type="number" min="0" data-f="favLimit" value="${c.favLimit||0}" style="width:120px"><small>0 means no limit. Useful when clients choose photos for an album.</small></div>`);
+  if(sec==='download'){const cur=c.download||'off',on=cur!=='off',o=isCloud?[['std','Standard','Web size'],['orig','Original','Full quality']]:[['std','Standard','Web size'],['high','High','High resolution'],['orig','Original','Original files']];
+    return H('Download','Let visitors download photos.')+card(`<label class="swrow"><span><b>Download</b><small>${on?'Visitors can download photos.':'Downloads are turned off.'}</small></span><span class="sw"><input type="checkbox" id="dlsw" ${on?'checked':''}><i></i></span></label>`)+(on?card(`<div class="lbl" style="margin-top:0">Download size</div><div class="otiles three">${o.map(([v,t,d])=>TL('download',v,cur,'',t,d)).join('')}</div>`):'')}
+  if(sec==='favorites')return H('Favorites','Let clients pick their favorite photos.')+card(SW('Favorites','favorites',c.favorites!==false,'Clients enter their name and email, then heart photos into lists they name themselves.')+`<div class="field"><label>Maximum favorites per client</label><input type="number" min="0" data-f="favLimit" value="${c.favLimit||0}" style="width:120px"><small>0 means no limit. Useful when clients choose photos for an album.</small></div>`);
+  return H('Email registration','Know who is downloading and favoriting.')+card(SW('Ask for name and email','emailGate',c.emailGate,'Visitors enter their name and email before their first download. Favorites always ask once.'));
 }
 function viewClient(){
   const cx=ctx(),c=cx.c;
@@ -602,6 +623,20 @@ function viewClient(){
   <div class="gmain2"><div class="mhead"><h2>${esc(title)}</h2>${tools}</div>${main}</div></div></div>`;
 }
 /* small pop-up menus */
+function feedItems(){
+  if(!feed)return[];const gn=x=>(D.clients.find(c=>c.slug===x)||{}).name||x,nm={};feed.emails.forEach(e=>nm[e.gallery_slug+'|'+e.email]=e.visitor_name||'');
+  const who=(x,e)=>nm[x+'|'+e]||e||'Someone',it=[];
+  feed.emails.forEach(e=>it.push({t:e.created_at,s:e.gallery_slug,x:`${who(e.gallery_slug,e.email)} registered for “${gn(e.gallery_slug)}”`,ic:'✉'}));
+  feed.events.forEach(e=>it.push({t:e.created_at,s:e.gallery_slug,x:`${who(e.gallery_slug,e.email)} downloaded ${e.kind==='zip'?e.n+' photos':'a photo'} from “${gn(e.gallery_slug)}”`,ic:'⬇'}));
+  const g={};feed.favorites.forEach(f=>{const k=f.gallery_slug+'|'+f.email,r=g[k]=g[k]||{t:f.created_at,s:f.gallery_slug,e:f.email,n:0};r.n++;if(f.created_at>r.t)r.t=f.created_at});
+  Object.values(g).forEach(v=>it.push({t:v.t,s:v.s,x:`${who(v.s,v.e)} has ${v.n} favorite${v.n==1?'':'s'} in “${gn(v.s)}”`,ic:'♥'}));
+  return it.sort((a,b)=>b.t.localeCompare(a.t)).slice(0,40);
+}
+function bellBadge(){const n=feedItems().filter(i=>new Date(i.t).getTime()>seenAt).length,b=$('#bellc');if(b){b.hidden=!n;b.textContent=n>9?'9+':n}}
+async function loadFeed(){try{const r=await fetch(FN+'?feed=1',{headers:{'x-gh-token':token}});if(r.ok){feed=await r.json();bellBadge()}}catch(e){}}
+const ago=t=>{const m=Math.max(1,Math.round((Date.now()-new Date(t))/60000));return m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'};
+document.addEventListener('click',e=>{const b=e.target.closest('#bell');if(!b)return;const it=feedItems(),unseen=seenAt;seenAt=Date.now();localStorage.setItem('gm_seen',seenAt);bellBadge();
+  openPop(b,`<div class="feed"><div class="feedh">Notifications</div>${it.length?it.map(i=>`<button class="fitem ${new Date(i.t).getTime()>unseen?'new':''}" data-act="feedgo" data-s="${esc(i.s)}"><span class="fic">${i.ic}</span><span>${esc(i.x)}<small>${ago(i.t)}</small></span></button>`).join(''):'<p class="muted" style="padding:14px">Nothing yet. Downloads, favorites and registrations from your client galleries will show up here.</p>'}</div>`,'bell',380)});
 function closePop(){if(popEl){popEl.remove();popEl=null}}
 function openPop(btn,html,key,w=230){
   if(popEl&&popEl.dataset.k===key){closePop();return}
@@ -620,7 +655,7 @@ function popFor(el){
   if(H)openPop(el,H,p,p==='share'?330:p==='grid'?200:240);
 }
 document.addEventListener('click',e=>{
-  if(popEl&&!popEl.contains(e.target)&&!e.target.closest('[data-act="pop"],[data-act="setmenu"]'))closePop();
+  if(popEl&&!popEl.contains(e.target)&&!e.target.closest('[data-act="pop"],[data-act="setmenu"],#bell'))closePop();
   const pa=e.target.closest('.pop [data-act]');if(pa){act(pa.dataset.act,pa);if(!pa.dataset.keep)closePop()}
 },true);
 document.addEventListener('input',e=>{if(e.target.id==='size'&&e.target.closest('.pop')){size=+e.target.value;localStorage.setItem('gm_size',size);const g=$('.grid');if(g)g.style.setProperty('--col',COLW[size-1]+'px')}});
@@ -632,49 +667,44 @@ async function loadActivity(){const c=CUR();actFor=c.slug;actData=null;actErr=''
 const when=t=>new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});
 const fname=p=>(D.names||{})[p]||(()=>{try{return decodeURIComponent(String(p).split('/').pop().replace(/=w\d+$/,''))}catch(e){return String(p)}})();
 let actStatsHTML='',dlFiles=[];
+const dt=t=>new Date(t).toLocaleString(undefined,{day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'});
+function csv(rows,name){const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"',b=new Blob([rows.map(r=>r.map(q).join(',')).join('\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+const setOf=(c,f)=>(c.sets.find(x=>x.photos.includes(f))||{}).name||'';
 function activityHTML(c){
   actStatsHTML='';
   if(!isCloud)return '<div class="gbody"><div class="empty"><h2>Activity</h2><p>Emails, downloads and favorites are tracked for client sharing galleries.</p></div></div>';
   if(actErr)return `<div class="gbody"><div class="empty"><h2>Could not load activity</h2><p>${esc(actErr)}</p><button data-act="actreload">Try again</button></div></div>`;
   if(!actData||actFor!==c.slug)return '<div class="gbody"><p class="muted">Loading activity…</p></div>';
-  const {emails,events,favorites}=actData,dls=events.reduce((a,e)=>a+e.n,0),by={},nm={};
+  const {emails,events,favorites}=actData,dls=events.reduce((a,e)=>a+e.n,0),nm={};
   emails.forEach(e=>{nm[e.email]=e.visitor_name||''});
-  const who=e=>e?(nm[e]?esc(nm[e])+' <span class="muted">'+esc(e)+'</span>':esc(e)):'<span class="muted">Unknown</span>';
-  const row=e=>by[e]=by[e]||{email:e,d:0,f:0,t:''};
-  emails.forEach(e=>{const r=row(e.email);if(e.created_at>r.t)r.t=e.created_at});
-  events.forEach(e=>{if(!e.email)return;const r=row(e.email);r.d+=e.n;if(e.created_at>r.t)r.t=e.created_at});
-  favorites.forEach(f=>row(f.email).f++);
-  const people=Object.values(by).sort((a,b)=>b.t.localeCompare(a.t));
-  const g={};favorites.forEach(f=>{const k=f.email+'|'+f.list_name;(g[k]=g[k]||{email:f.email,name:f.list_name,files:[]}).files.push(f.file)});favGroups=Object.values(g);
-  const singles=events.filter(e=>e.kind==='download'),zips=events.filter(e=>e.kind==='zip');dlFiles=[...new Set(singles.map(e=>e.file).filter(Boolean))];
+  const who=e=>e?(nm[e]?`<b>${esc(nm[e])}</b><br><span class="muted">${esc(e)}</span>`:esc(e)):'<span class="muted">Unknown</span>';
+  const g={};favorites.forEach(f=>{const k=f.email+'|'+f.list_name,r=g[k]=g[k]||{email:f.email,name:f.list_name,items:[],created:f.created_at,updated:f.created_at};r.items.push({file:f.file,t:f.created_at});if(f.created_at<r.created)r.created=f.created_at;if(f.created_at>r.updated)r.updated=f.created_at});
+  favRows=Object.values(g).sort((a,b)=>a.email.localeCompare(b.email));
   const stat=(n,l)=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`;
-  actStatsHTML=`<div class="statcol">${stat(emails.length,'Visitors')}${stat(dls,'Photos downloaded')}${stat(favorites.length,'Favorites')}${stat(favGroups.length,'Favorite lists')}<button data-act="actreload" style="grid-column:1/-1">Refresh</button></div>`;
-  const lim=c.favLimit>0?' of '+c.favLimit:'';
+  actStatsHTML=`<div class="statcol">${stat(emails.length,'Visitors')}${stat(dls,'Photos downloaded')}${stat(favorites.length,'Favorites')}${stat(favRows.length,'Favorite lists')}<button data-act="actreload" style="grid-column:1/-1">Refresh</button></div>`;
+  const res=r=>r==='web'?'Web size':'Original',lim=c.favLimit>0?' of '+c.favLimit:'';
   let body;
-  if(aSec==='favorites'){const uniq=[...new Set(favorites.map(f=>f.file))];
-    body=`<h2 class="sh">Favorites</h2><p class="hp">Photos your clients picked. Copy the file names to find them in Lightroom or your files.</p>`
-    +(favGroups.length?`<div class="scard"><div class="swrow"><span><b>All favorites</b><small>${uniq.length} different photos from ${favGroups.length} lists</small></span><span class="row"><button data-act="copyfavall">Copy for Lightroom</button></span></div></div>`:'')
-    +(favGroups.map((f,i)=>`<div class="fav"><div class="favh"><div><b>${esc(nm[f.email]||f.email)}</b> <span class="muted">${esc(f.name)}</span><small style="margin:0">${esc(f.email)}, ${f.files.length}${lim} photos</small></div><div class="row"><button class="primary" data-act="copylr" data-i="${i}">Copy for Lightroom</button><button data-act="copyfav" data-i="${i}">Copy names…</button></div></div><div class="favt">${f.files.slice(0,30).map(p=>`<figure><img loading="lazy" src="${esc(tsrc(p,200))}" alt=""><figcaption>${esc(fname(p))}</figcaption></figure>`).join('')}</div></div>`).join('')||'<div class="empty"><p>No favorites yet. Clients mark favorites with the heart on each photo.</p></div>');
-  }else if(aSec==='visitors')body=`<h2 class="sh">Visitors</h2><p class="hp">Everyone who entered their details.</p>`+(people.length?`<div class="scard"><table class="tbl"><tr><th>Name</th><th>Email</th><th>Downloaded</th><th>Favorites</th><th>Last active</th></tr>${people.map(r=>`<tr><td>${esc(nm[r.email]||'')}</td><td>${esc(r.email)}</td><td>${r.d}</td><td>${r.f}</td><td>${r.t?when(r.t):''}</td></tr>`).join('')}</table></div>`:'<div class="empty"><p>No visitors yet.</p></div>');
-  else{const top={};singles.forEach(e=>{if(e.file)top[e.file]=(top[e.file]||0)+1});const tops=Object.entries(top).sort((a,b)=>b[1]-a[1]).slice(0,6);
-    body=`<h2 class="sh">Downloads</h2><p class="hp">Everything your clients downloaded.</p><div class="dlstats">${stat(singles.length,'Single photos')}${stat(zips.length,'ZIP downloads')}${stat(dls,'Photos in total')}</div>`
-    +(dlFiles.length?`<div class="scard"><div class="swrow"><span><b>Downloaded photos</b><small>${dlFiles.length} different photos downloaded one by one</small></span><span class="row"><button data-act="copydl">Copy for Lightroom</button></span></div></div>`:'')
-    +(tops.length?`<div class="scard"><b>Most downloaded</b>${tops.map(([p,n])=>`<div class="toprow"><img src="${esc(tsrc(p,120))}" alt=""><span>${esc(fname(p))}</span><b>${n}</b></div>`).join('')}</div>`:'')
-    +(events.length?`<div class="scard"><b>Recent downloads</b><table class="tbl"><tr><th>When</th><th>Who</th><th>What</th></tr>${events.slice(0,60).map(e=>`<tr><td>${when(e.created_at)}</td><td>${who(e.email)}</td><td>${e.kind==='zip'?'ZIP, '+e.n+' photos':esc(fname(e.file||''))}</td></tr>`).join('')}</table></div>`:'<div class="empty"><p>No downloads yet.</p></div>');}
-  return `<div class="gbody">${body}</div>`;
+  if(aSec==='download'){const rows=events.filter(e=>dlTab==='gallery'?e.kind==='zip':e.kind==='download');
+    body=`<div class="mh2"><h2 class="sh">Download Activity</h2><button data-act="dlexport">Export</button></div><div class="tabs2"><button data-act="dltab" data-v="gallery" class="${dlTab==='gallery'?'on':''}">Gallery</button><button data-act="dltab" data-v="single" class="${dlTab==='single'?'on':''}">Single Photo</button></div>`
+    +(rows.length?`<div class="scard tight"><table class="tbl"><tr><th>Email</th><th>${dlTab==='gallery'?'Photo set':'Photo'}</th><th>Resolution</th><th>Date downloaded</th></tr>${rows.map(e=>`<tr><td>${who(e.email)}</td><td>${dlTab==='gallery'?esc(e.set_name||e.file||'Whole gallery')+` <span class="muted">${e.n} photos</span>`:`<span class="thc"><img src="${esc(tsrc(e.file,120))}" alt=""><span>${esc(fname(e.file||''))}<br><span class="muted">${esc(e.set_name||setOf(c,e.file))}</span></span></span>`}</td><td>${res(e.resolution)}</td><td>${dt(e.created_at)}</td></tr>`).join('')}</table></div>`:'<div class="empty"><p>No downloads yet.</p></div>');
+  }else if(aSec==='favorites'){
+    body=`<div class="mh2"><h2 class="sh">Favorite Activity</h2></div>`+(favRows.length?`<div class="scard tight"><table class="tbl"><tr><th>Email</th><th>Favorite list</th><th>Photos</th><th>Date created</th><th>Date updated</th><th></th></tr>${favRows.map((r,i)=>`<tr class="clk" data-act="favview" data-i="${i}"><td>${who(r.email)}</td><td><span class="thc"><img src="${esc(tsrc(r.items[0].file,120))}" alt=""><span>${esc(r.name)}</span></span></td><td>${r.items.length}${lim}</td><td>${dt(r.created)}</td><td>${dt(r.updated)}</td><td><button class="tb" data-act="favmenu" data-i="${i}" aria-label="List options">⋯</button></td></tr>`).join('')}</table></div>`:'<div class="empty"><p>No favorites yet. Clients mark favorites with the heart on each photo.</p></div>');
+  }else body=`<div class="mh2"><h2 class="sh">Email Registration</h2><button data-act="emexport">Export</button></div>`+(emails.length?`<div class="scard tight"><table class="tbl"><tr><th>Name</th><th>Email</th><th>Registered</th><th>Downloaded</th><th>Favorites</th></tr>${emails.map(e=>`<tr><td>${esc(e.visitor_name||'')}</td><td>${esc(e.email)}</td><td>${dt(e.created_at)}</td><td>${events.filter(x=>x.email===e.email).reduce((a,x)=>a+x.n,0)}</td><td>${favorites.filter(x=>x.email===e.email).length}</td></tr>`).join('')}</table></div>`:'<div class="empty"><p>No one has registered yet.</p></div>');
+  const r=favRows[favOpen],drawer=aSec==='favorites'&&r?`<aside class="adr"><div class="adh"><h2>Favorite List Details</h2><button class="tb" data-act="favclose" aria-label="Close">✕</button></div><div class="adt"><button data-act="favcopy" data-i="${favOpen}">Copy filenames</button><button data-act="favexport" data-i="${favOpen}">Export</button></div><dl class="adm"><dt>Name</dt><dd>${esc(r.name)}</dd><dt>Email</dt><dd>${esc(r.email)}</dd><dt>No. of photos</dt><dd>${r.items.length}${lim}</dd><dt>Last modified</dt><dd>${dt(r.updated)}</dd></dl><div class="adl">${r.items.map(x=>`<div class="adi"><img src="${esc(tsrc(x.file,200))}" alt=""><div><b>${esc(fname(x.file))}</b><small style="margin:2px 0 0">${dt(x.t)} · ${esc(setOf(c,x.file))}</small></div></div>`).join('')}</div></aside>`:'';
+  return `<div class="gbody wideb">${body}</div>${drawer}`;
 }
 function copyNames(paths){
   if(!paths.length){toast('Select photos first');return}
   const d=$('#dlg'),names=paths.map(fname);
-  d.innerHTML=`<div class="dbox" style="width:min(520px,94vw)"><h2>Copy file names</h2><small style="margin-bottom:6px">${paths.length} photos. Original file names from your upload or Drive. “For Lightroom” gives names without extensions, separated by commas, to paste into Lightroom’s file name filter.</small>
-  <div class="seg" style="margin-top:10px"><button id="pr1">For Lightroom</button><button id="pr2">Plain list</button></div>
-  <div class="row" style="margin-top:10px"><select id="cx1" style="flex:1"><option value="keep">Keep extension</option><option value="none">No extension</option><option value="custom">Change extension…</option></select><input id="cx2" placeholder=".jpg" style="width:90px" hidden><select id="cx3" style="flex:1"><option value="line">One per line</option><option value="comma">Comma separated</option><option value="space">Space separated</option></select></div>
-  <div class="field"><textarea id="cx4" rows="9" readonly style="font-size:12px"></textarea></div><div class="actions"><button class="ghost" id="cxc">Close</button><button class="primary" id="cxk">Copy to clipboard</button></div></div>`;
+  d.innerHTML=`<div class="dbox" style="width:min(580px,94vw)"><h2>Copy filenames</h2><small>${paths.length} photos</small><textarea id="cx4" rows="6" readonly style="font-size:12.5px;margin:10px 0 6px"></textarea>
+  <label class="swrow"><span><b>Include commas</b><small>Turn off to use spaces, for example for Capture One.</small></span><span class="sw"><input type="checkbox" id="cx1" checked><i></i></span></label>
+  <label class="swrow"><span><b>Include file extension</b><small>Off by default, which suits Lightroom.</small></span><span class="sw"><input type="checkbox" id="cx5"><i></i></span></label>
+  <div class="field" id="cxe" hidden><label>Change extension to (optional)</label><input id="cx2" placeholder=".jpg" style="width:140px"></div>
+  <div class="actions"><button class="ghost" id="cxc">Cancel</button><button class="primary" id="cxk">Copy</button></div></div>`;
   d.classList.add('on');
-  const out=()=>{const m=$('#cx1').value,e=$('#cx2').value.trim();$('#cx2').hidden=m!=='custom';const ex=e?(e.startsWith('.')?e:'.'+e):'',sep={line:'\n',comma:', ',space:' '}[$('#cx3').value];
-    $('#cx4').value=names.map(n=>{const b=n.replace(/\.[^.]+$/,''),o=(n.match(/\.[^.]+$/)||[''])[0];return b+(m==='keep'?o:m==='custom'?ex:'')}).join(sep)};
-  ['cx1','cx2','cx3'].forEach(i=>$('#'+i).oninput=out);out();
-  $('#pr1').onclick=()=>{$('#cx1').value='none';$('#cx3').value='comma';out()};$('#pr2').onclick=()=>{$('#cx1').value='keep';$('#cx3').value='line';out()};
+  const out=()=>{const ext=$('#cx5').checked,e=$('#cx2').value.trim(),ex=e?(e.startsWith('.')?e:'.'+e):'';$('#cxe').hidden=!ext;
+    $('#cx4').value=names.map(n=>{const b=n.replace(/\.[^.]+$/,''),o=(n.match(/\.[^.]+$/)||[''])[0];return b+(ext?(ex||o):'')}).join($('#cx1').checked?', ':' ')};
+  ['cx1','cx5','cx2'].forEach(i=>$('#'+i).oninput=out);out();
   $('#cxk').onclick=()=>navigator.clipboard.writeText($('#cx4').value).then(()=>{toast('File names copied');d.classList.remove('on')});
   $('#cxc').onclick=()=>d.classList.remove('on');d.onclick=e=>{if(e.target===d)d.classList.remove('on')};
 }
@@ -737,6 +767,15 @@ async function act(a,el){
     else if(a==='cardview')window.open(shareUrl(g),'_blank');
     else if(a==='cardopen')go('client/'+encodeURIComponent(g.slug));
     else if(confirm('Delete the gallery “'+(g.name||'Untitled')+'”? This takes effect when you publish.')){D.clients.splice(D.clients.indexOf(g),1);mark();render()}}
+  else if(a==='dltab'){dlTab=el.dataset.v;render()}
+  else if(a==='dlexport'){const ev=(actData?.events||[]).filter(e=>dlTab==='gallery'?e.kind==='zip':e.kind==='download');csv([['Email','Photo set / file','Resolution','Photos','Date downloaded']].concat(ev.map(e=>[e.email,dlTab==='gallery'?(e.set_name||e.file):fname(e.file),e.resolution||'original',e.n,e.created_at])),'download-activity.csv')}
+  else if(a==='emexport'){csv([['Name','Email','Registered']].concat((actData?.emails||[]).map(e=>[e.visitor_name||'',e.email,e.created_at])),'email-registration.csv')}
+  else if(a==='favview'){favOpen=+el.dataset.i;render()}
+  else if(a==='favclose'){favOpen=-1;render()}
+  else if(a==='favcopy')copyNames(favRows[+el.dataset.i].items.map(x=>x.file));
+  else if(a==='favexport'){const r=favRows[+el.dataset.i];csv([['File name','Set','Date added']].concat(r.items.map(x=>[fname(x.file),setOf(CUR(),x.file),x.t])),(r.email+'-'+r.name+'.csv').replace(/[^\w.@-]+/g,'-'))}
+  else if(a==='favmenu'){const i=el.dataset.i;openPop(el,`<button data-act="favcopy" data-i="${i}">Copy filenames</button><button data-act="favview" data-i="${i}">View list</button><button data-act="favexport" data-i="${i}">Export</button>`,'fav'+i,200)}
+  else if(a==='feedgo'){pendingTab='activity';go('client/'+encodeURIComponent(el.dataset.s))}
   else if(a==='setval'){const k=el.dataset.k;let v=el.dataset.v;if(k.startsWith('lay.')&&k!=='lay.style')v=+v;setf(c,k,v);mark();render()}
   else if(a==='copylr'||a==='copydl'||a==='copyfavall'){const L=a==='copylr'?favGroups[+el.dataset.i].files:a==='copydl'?dlFiles:[...new Set(favGroups.flatMap(g=>g.files))];navigator.clipboard.writeText(L.map(x=>fname(x).replace(/\.[^.]+$/,'')).join(', ')).then(()=>toast(L.length+' names copied for Lightroom'))}
   else if(a==='setmenu'){const i=+el.dataset.i;closePop();setIdx=i;render();const b=$(`.dots[data-act="setmenu"][data-i="${i}"]`);if(b)openPop(b,'<button data-act="upload">Upload to this folder</button><button data-act="drive">Add from Google Drive</button><button data-act="renset">Rename folder</button><button data-act="delset" style="color:var(--red)">Delete folder</button>','setmenu',230)}
@@ -819,6 +858,7 @@ V.addEventListener('input',e=>{
 });
 V.addEventListener('change',e=>{
   const t=e.target;
+  if(t.id==='dlsw'){const c=CUR();if(t.checked)c.download=c.dlq||(isCloud?'orig':'std');else{c.dlq=c.download;c.download='off'}mark();render();return}
   if(t.id==='optim')localStorage.setItem('gm_opt',t.checked?'1':'0');
   else if(t.id==='pkey'){localStorage.setItem('gm_pkey',t.value);render()}
   else if(t.dataset.c&&view==='client'){CUR()[t.dataset.c]=t.checked;mark();refreshPv()}
@@ -957,7 +997,7 @@ function newClient(){
   d.querySelector('.typ').onclick=e=>{const b=e.target.closest('button');if(!b)return;type=b.dataset.t;$$('.typ button',d).forEach(x=>x.classList.toggle('on',x===b))};
   const make=()=>{
     const name=$('#ncn').value.trim();if(!name){toast('Enter a name for the gallery');return}
-    const base=name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'gallery';let slug=base,i=2;
+    const base=name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'gallery';let slug=type==='client'?base+'-'+Math.random().toString(36).slice(2,7):base,i=2;
     while(D.clients.some(c=>c.slug===slug))slug=base+'-'+i++;
     const g={name,slug,date:$('#ncd').value.trim(),story:'',cover:'',photos:[],private:false,onHome:false,ogOn:true,showCover:true,coverSize:'full',download:'off',lay:{style:'masonry',gap:14,cols:3,mcols:2,round:0},sets:[{id:'s1',name:'All photos',photos:[]}]};
     if(type==='client')Object.assign(g,{type:'client',private:true,emailGate:true,download:'orig',sets:[{id:'s1',name:'Photos',photos:[]}]});
@@ -1063,21 +1103,6 @@ async function upload(files){
       const {blob,ext,w,h}=await shrink(files[i]);
       const name=Date.now()+'-'+Math.random().toString(36).slice(2,6)+'.'+ext;
       await put(folder+'/'+name,await b64(blob),'Upload '+name);
-      // Generate a matching lightweight thumbnail for local client-gallery uploads.
-      // Gallery pages use /images/t/<filename> first and fall back to the original.
-      if(isC&&folder==='images'){
-        try{
-          const bm=await createImageBitmap(blob),scale=Math.min(1,720/Math.max(bm.width,bm.height));
-          if(scale<1){
-            const cv=document.createElement('canvas');cv.width=Math.round(bm.width*scale);cv.height=Math.round(bm.height*scale);
-            cv.getContext('2d').drawImage(bm,0,0,cv.width,cv.height);
-            const mime=ext==='png'?'image/png':ext==='webp'?'image/webp':'image/jpeg';
-            const tb=await new Promise(resolve=>cv.toBlob(resolve,mime,mime==='image/jpeg'?.78:undefined));
-            if(tb)await put('images/t/'+name,await b64(tb),'Create gallery thumbnail '+name);
-          }
-          bm.close&&bm.close();
-        }catch(te){console.warn('Thumbnail creation skipped; original image remains available',te)}
-      }
       const path='/'+folder+'/'+name;
       if(w&&h){D.dims=D.dims||{};D.dims[path]=[w,h]}
       D.names=D.names||{};D.names[path]=files[i].name;
@@ -1108,7 +1133,7 @@ async function load(){
     D.clients=D.clients||[];D.clients.forEach(c=>{c.photos=c.photos||[];c.lay=c.lay||{}});D.clients.forEach(c=>{c.sets=c.sets&&c.sets.length?c.sets:[{id:'s1',name:c.type==='client'?'Photos':'All photos',photos:c.photos||[]}];c.photos=c.sets.flatMap(x=>x.photos)});D.cloudSettings=D.cloudSettings||{};deployExpectedClients=JSON.stringify(D.clients);
     $('#login').hidden=true;$('#status').textContent='All changes saved';
     fetch(API,{headers:hdr()}).then(r=>r.ok?r.json():null).then(j=>{if(j){repoKB=j.size;repoText()}}).catch(()=>{});
-    route();
+    route();loadFeed();if(!window.__feedT)window.__feedT=setInterval(loadFeed,60000);
     // Background self-heal: if a client has a slug but its public page is missing
     // or stale, regenerate it without requiring a manual publish.
     setTimeout(()=>syncPublicGalleryPages(D,{repairOnly:true}).then(()=>{if(!dirty)$('#status').textContent='Gallery pages checked'}).catch(e=>{if(!dirty)$('#status').textContent='Gallery link repair pending';console.warn('Gallery auto-repair:',e)}),0);
@@ -1127,7 +1152,7 @@ async function syncPublicGalleryPages(data,options={}){
   if(!repairOnly)for(const item of existing){
     if(item.type!=='dir'||keep.has(item.name))continue;
     const children=await get('g/'+item.name);if(!Array.isArray(children))continue;
-    const page=children.find(x=>x.type==='file'&&x.name==='index.html');if(page){const raw=decodeURIComponent(escape(atob((page.content||'').replace(/\\n/g,''))));if(raw.includes('<!--gallery-redirect-->'))continue;await del('g/'+item.name+'/index.html',page.sha)}
+    const page=children.find(x=>x.type==='file'&&x.name==='index.html');if(page)await del('g/'+item.name+'/index.html',page.sha);
   }
   const name=data.name||'Jashwanth JP',share=data.share||{};
   for(const c of data.clients){
@@ -1137,8 +1162,7 @@ async function syncPublicGalleryPages(data,options={}){
     // Use the gallery's selected cover as the social preview image.
     // Covers may be hosted externally (e.g. Google Photos/Drive), so keep their
     // complete URL unchanged. Fall back to the legacy per-gallery/share image.
-    const rawImage=c.cover||((c.ogImg)?location.origin+c.ogImg+'?v='+(c.ogv||1):(share.image?location.origin+share.image+'?v='+(share.v||1):''));
-    const image=c.ogOn===false?'':(rawImage?new URL(rawImage,location.origin).href:'');
+    const image=c.ogOn===false?'':(c.cover||((c.ogImg)?location.origin+c.ogImg+'?v='+(c.ogv||1):(share.image?location.origin+share.image+'?v='+(share.v||1):'')));
     const canonical=location.origin+'/g/'+slug+'/';
     const block=['<!--og-->',`<title>${esc(title)}</title>`, `<meta name="description" content="${esc(desc)}">`,locked?'<meta name="robots" content="noindex,nofollow">':'','<meta property="og:type" content="website">',`<meta property="og:site_name" content="${esc(name)}">`,`<meta property="og:title" content="${esc(title)}">`,`<meta property="og:description" content="${esc(desc)}">`,`<meta property="og:url" content="${canonical}">`,image?`<meta property="og:image" content="${image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${esc(c.name)}">`:'',`<meta name="twitter:card" content="${image?'summary_large_image':'summary'}">`,'<!--/og-->'].filter(Boolean).join('\n');
     const html=template.replace(/<!--og-->[\s\S]*?<!--\/og-->/,()=>block).replace(/(href|src)="assets\//g,'$1="/assets/').replace(/<script\s+src="\/assets\/site\.js(?:\?[^"]*)?"><\/script>/,m=>`<script>window.GSLUG=${JSON.stringify(slug)}<\/script>`+m);
@@ -1146,8 +1170,7 @@ async function syncPublicGalleryPages(data,options={}){
     if(repairOnly&&old){
       const current=decodeURIComponent(escape(atob((old.content||'').replace(/\n/g,''))));
       const expected=location.origin+'/g/'+slug+'/';
-      const rawExpectedImage=c.cover||((c.ogImg)?location.origin+c.ogImg+'?v='+(c.ogv||1):(share.image?location.origin+share.image+'?v='+(share.v||1):''));
-      const expectedImage=c.ogOn===false?'':(rawExpectedImage?new URL(rawExpectedImage,location.origin).href:'');
+      const expectedImage=c.ogOn===false?'':(c.cover||((c.ogImg)?location.origin+c.ogImg+'?v='+(c.ogv||1):(share.image?location.origin+share.image+'?v='+(share.v||1):'')));
       if(current.includes('window.GSLUG='+JSON.stringify(slug))&&current.includes('content="'+expected+'"')&&(!expectedImage||current.includes('property="og:image" content="'+esc(expectedImage)+'"')))continue;
     }
     await put(path,html,old?.sha);
@@ -1229,24 +1252,12 @@ async function checkLiveGalleryPages(){
       try{
         const r=await fetch(url,{cache:'no-store'});
         const html=await r.text(),expected=location.origin+'/g/'+slug+'/';
-        const pageOK=r.ok&&html.includes('content="'+expected+'"');
-        const cover=c.cover||(c.photos||[])[0];let imageOK=true;
-        if(cover){
-          const src=/^https?:\/\//i.test(cover)?cover:location.origin+'/'+String(cover).replace(/^\/+/, '');
-          imageOK=await new Promise(resolve=>{
-            const im=new Image();let settled=false;
-            const finish=v=>{if(settled)return;settled=true;clearTimeout(timer);resolve(v)};
-            const timer=setTimeout(()=>finish(false),12000);
-            im.onload=()=>finish(true);im.onerror=()=>finish(false);
-            im.src=src+(src.startsWith(location.origin)?(src.includes('?')?'&':'?')+'deploycheck='+Date.now():'');
-          });
-        }
-        const ok=pageOK&&imageOK;
-        rows.push('<div>'+(ok?'✓ ':'… ')+esc(c.name||slug)+' — '+(ok?'gallery and cover image live':pageOK?'waiting for cover image':'waiting for Pages')+'</div>');
+        const ok=r.ok&&html.includes('content="'+expected+'"');
+        rows.push('<div>'+(ok?'✓ ':'… ')+esc(c.name||slug)+' — '+(ok?'live':'waiting for Pages')+'</div>');
       }catch{rows.push('<div>… '+esc(c.name||slug)+' — checking again</div>')}
     }
     const done=contentReady&&rows.length===clients.length&&rows.every(x=>x.startsWith('<div>✓'));
-    deploySet(done?'Fully deployed':'Deployment in progress',done?'All client gallery pages and their cover images are responding.':'Published to GitHub. This check waits for each gallery page and cover image to load; it will continue in the background.',rows.join(''));
+    deploySet(done?'Fully deployed':'Deployment in progress',done?'All client gallery URLs are responding with the published page.':'Published to GitHub. GitHub Pages is still updating; this check will continue in the background.',rows.join(''));
     if(done){if(deployTimer){clearInterval(deployTimer);deployTimer=null}$('#deploybtn').textContent='● Live';$('#status').textContent='All gallery pages live'}
     else $('#deploybtn').textContent='Deployment status';
   }finally{deployBusy=false}
