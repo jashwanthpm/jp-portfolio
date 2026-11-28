@@ -881,7 +881,7 @@ V.addEventListener('change',e=>{
   if(t.id==='dlsw'){const c=CUR();if(t.checked)c.download=c.dlq||(isCloud?'orig':'std');else{c.dlq=c.download;c.download='off'}mark();render();return}
   if(t.id==='optim')localStorage.setItem('gm_opt',t.checked?'1':'0');
   else if(t.id==='pkey'){localStorage.setItem('gm_pkey',t.value);render()}
-  else if(t.dataset.c&&view==='client'){const c=CUR();c[t.dataset.c]=t.checked;if(['askName','askEmail','askPhone'].includes(t.dataset.c))c.emailGate=!!(c.askName||c.askEmail||c.askPhone);mark();render()}
+  else if(t.dataset.c&&view==='client'){const c=CUR();if(['askName','askEmail','askPhone'].includes(t.dataset.c)){c.askName=c.askName??!!c.emailGate;c.askEmail=c.askEmail??!!c.emailGate;c.askPhone=!!c.askPhone}c[t.dataset.c]=t.checked;if(['askName','askEmail','askPhone'].includes(t.dataset.c))c.emailGate=!!(c.askName||c.askEmail||c.askPhone);mark();render()}
 });
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
 
