@@ -90,7 +90,7 @@ function cgBar(c){
  const draw=()=>{window.__set=multi?sets[si].name:'Whole gallery';const l=listOf();mason(g,l.length?l.map(src=>({src,client:c.name})):demo(9),c.lay);nextBox()};
  const setTab=i=>{si=i;document.querySelectorAll('#cgt button').forEach((x,k)=>x.classList.toggle('on',k===si));draw();const bar=q('cgbar');if(bar)bar.scrollIntoView({behavior:'smooth'})};
  g.insertAdjacentHTML('beforebegin',`<div id="cgbar"><div class="cgn"><b>${hx(c.name)}</b><small>${hx(c.date||'')}</small></div><div id="cgt">${multi?sets.map((x,i)=>`<button data-i="${i}" class="${i===0?'on':''}">${hx(x.name)}</button>`).join(''):''}</div><div class="cgi">${window.__fav?`<button id="cgf" aria-label="Favorites">${CGI.heart}<span class="z">0</span></button>`:''}${window.__dlon?`<button id="cgd" aria-label="Download">${CGI.dl}</button>`:''}<button id="cgs" aria-label="Share">${CGI.share}</button><button id="cgp" aria-label="Slideshow">${CGI.play}</button></div></div>`);
- g.insertAdjacentHTML('afterend','<div id="cgnext"></div><footer id="cgclosing"><span>Private gallery</span><b>Published by JP. Saki</b></footer>');
+ g.insertAdjacentHTML('afterend','<div id="cgnext"></div><footer id="cgclosing"><span>Private gallery</span><b>Published by JP. Sakkhi</b></footer>');
  q('cgt').onclick=e=>{const b=e.target.closest('button');if(b)setTab(+b.dataset.i)};
  q('cgnext').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.n==='top')setTab(0);else setTab(si+1)};
  if(q('cgf'))q('cgf').onclick=async()=>{let em='';try{em=localStorage.getItem('em_'+c.slug)||''}catch{}if(!em){if(!(await needEmail(true)))return;await loadFavs()}favDrawer()};
@@ -118,7 +118,7 @@ function needEmail(force){const c=window.__dlc||{},slug=c.slug||'gallery',askNam
  const g=document.getElementById('emg'),f=g.querySelector('form'),get=k=>(f.querySelector('[name="'+k+'"]')||{}).value?.trim()||'';
  const first=f.querySelector('input');if(first)first.focus();document.getElementById('emx').onclick=()=>{g.remove();ok(false)};
  f.onsubmit=e=>{e.preventDefault();const nm=get('visitor_name'),em=get('email'),ph=get('phone');try{if(askName)localStorage.setItem('nm_'+slug,nm);if(askEmail)localStorage.setItem('em_'+slug,em);if(askPhone)localStorage.setItem('ph_'+slug,ph);localStorage.setItem('reg_'+slug,'1')}catch{}
- gcall('email',{email:em||null,visitor_name:nm,phone:ph});g.remove();ok(true)}})}
+ gcall('email',{email:em||null,visitor_name:nm,phone:ph});if(window.__fav&&em)loadFavs();g.remove();ok(true)}})}
 const dlName=p=>{const c=window.__dlc||{},i=(c.photos||[]).indexOf(p),q=dlSrc(p),ext=(q.match(/\.(\w+)$/)||[0,'jpg'])[1];return `${c.slug||'photo'}-${String(i+1).padStart(3,'0')}.${ext}`};
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 function gate(c,ok){document.body.insertAdjacentHTML('beforeend',`<div id="gate"><i class="gbg"></i><form><span class="eb">Private gallery</span><h2>${c.name}</h2><p>Enter the PIN you were given to open this gallery.</p><input type="password" id="pin" autocomplete="off" placeholder="PIN" aria-label="PIN"><button class="btn f">Open gallery</button><small id="pe"></small></form></div>`);
