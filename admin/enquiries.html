@@ -93,6 +93,27 @@ select option{background:#1a1714}
 .tl{list-style:none;padding:0}.tl li{display:flex;gap:12px;padding:0 0 14px;position:relative;font-size:13.5px}.tl li:not(:last-child)::before{content:"";position:absolute;left:4px;top:14px;bottom:-2px;width:1px;background:var(--l2)}.tl li>i{width:9px;height:9px;border-radius:50%;margin-top:6px;flex:none;position:relative;z-index:1}.tl li small{display:block;color:var(--m);font-size:11.5px}.tl b{font-weight:600}
 @media(max-width:800px){.stat{padding:0 12px 8px;gap:12px}.srt{flex:1}.lg{flex-wrap:wrap}.lg input{flex:1 1 100%;order:-1}.lg select{flex:1}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Enquiries workspace navigation and views */
+.appnav{display:flex;align-items:center;gap:3px;padding:7px 14px 0;background:var(--p);border-bottom:1px solid var(--l);flex:none;overflow-x:auto;scrollbar-width:none}
+.appnav button{appearance:none;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--m);padding:10px 13px 11px;font-size:12.5px;white-space:nowrap;cursor:pointer}
+.appnav button.on{color:var(--fg);border-bottom-color:var(--a)}
+.workspace{display:flex;flex:1;min-height:0;flex-direction:column;background:var(--bg)}.workspace[hidden]{display:none!important}
+.workspacehead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:17px 18px 12px;flex:none}.workspacehead .whcopy{flex:1;min-width:160px}
+.workspacehead h2{font:500 28px/1.1 'Cormorant Garamond',serif;color:var(--fg)}.workspacehead p{font-size:12px;color:var(--m);margin-top:4px}
+.workspacehead input,.workspacehead select{min-width:145px;width:auto;min-height:38px;padding:8px 11px;background:var(--p);border:1px solid var(--l2);border-radius:10px;font-size:12px}
+.workspacebody{flex:1;min-height:0;overflow:auto;padding:5px 18px 24px}.workspacebody .empty{color:var(--m);text-align:center;padding:30px 12px;border:1px dashed var(--l2);border-radius:12px}.workspacebody .empty b{display:block;color:var(--fg);margin-bottom:5px}
+.wcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}.wcard{background:var(--p);border:1px solid var(--l);border-radius:var(--r);padding:14px;min-width:0}
+.wcrown{display:flex;align-items:flex-start;gap:10px}.wavatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--p3);color:var(--a);font-weight:600}.wcmain{flex:1;min-width:0}
+.wctitle{font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wcsub{font-size:11.5px;color:var(--m);line-height:1.55;margin-top:3px;overflow-wrap:anywhere}
+.wctags,.wcactions,.wdateactions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px}.wdateactions input{width:auto;min-width:130px;min-height:34px;padding:6px 8px;font-size:11.5px;background:var(--p2);border:1px solid var(--l2);border-radius:8px}
+.wsection{margin:0 0 20px}.wsection h3{font:500 23px/1.15 'Cormorant Garamond',serif;margin-bottom:8px;display:flex;align-items:center;gap:8px}.wsectionhint{font-size:11.5px;color:var(--m);margin:-2px 0 10px}
+.wcontactlist{display:grid;gap:8px}.wcontact{display:flex;align-items:center;gap:12px;padding:12px;background:var(--p);border:1px solid var(--l);border-radius:12px;cursor:pointer}.wcontact:hover{border-color:var(--l2)}.wcontact .wcsub{white-space:normal}
+.wstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:15px}.wstat{background:var(--p);border:1px solid var(--l);border-radius:var(--r);padding:14px}.wstat small{display:block;color:var(--m);font-size:11.5px}.wstat b{display:block;font:500 28px/1.2 'Cormorant Garamond',serif;margin-top:3px}.wstat span{display:block;color:var(--m);font-size:11px;margin-top:4px}
+.wbarlist{display:grid;gap:11px}.wbarrow{display:grid;grid-template-columns:105px minmax(40px,1fr) auto;gap:9px;align-items:center;font-size:11.5px}.wbarlabel{color:var(--m);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wbartrack{height:7px;border-radius:99px;background:var(--p3);overflow:hidden}.wbarfill{height:100%;border-radius:99px;background:var(--a)}.wbarvalue{font-variant-numeric:tabular-nums;font-weight:600}
+.wtable{width:100%;border-collapse:collapse;font-size:12px}.wtable td,.wtable th{text-align:left;padding:10px 8px;border-bottom:1px solid var(--l)}.wtable th{color:var(--m);font-weight:500}.wtable td:last-child,.wtable th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.app[data-active-tab="followups"] > :not(#appnav):not(#workspaceView),.app[data-active-tab="contacts"] > :not(#appnav):not(#workspaceView),.app[data-active-tab="reports"] > :not(#appnav):not(#workspaceView){display:none!important}
+@media(max-width:700px){.appnav{padding-left:8px;padding-right:8px}.appnav button{padding:10px}.workspacehead{padding:13px 12px 10px}.workspacehead .whcopy{flex:1 1 100%}.workspacehead input,.workspacehead select{flex:1;min-width:115px}.workspacebody{padding:5px 12px 22px}.wcards{grid-template-columns:1fr}.wbarrow{grid-template-columns:82px minmax(35px,1fr) auto}}
 </style></head><body>
 <header class="top">
  <div class="brand"><img src="/images/favicon-1791284648615.png" alt=""><div><b>Enquiries</b><small>Track every lead to a booking</small></div></div>
@@ -109,11 +130,21 @@ select option{background:#1a1714}
 <main class="login" id="login" hidden><div class="lc"><img src="/images/favicon-1791284648615.png" alt=""><h1>Enquiries</h1><p>Sign in once through Studio Admin. This page automatically uses that same browser session.</p><div class="err" id="le" role="alert">Your Studio Admin session isn't available in this browser yet.</div><a class="btn pri" href="/admin/" style="width:100%;margin-top:12px;min-height:46px">Open Studio Admin</a></div></main>
 
 <div class="app" id="app" hidden>
+ <nav class="appnav" id="appnav" aria-label="Enquiries workspace">
+  <button type="button" class="on" data-tab="enquiries">Enquiries</button>
+  <button type="button" data-tab="followups">Follow-ups</button>
+  <button type="button" data-tab="contacts">Contacts</button>
+  <button type="button" data-tab="reports">Reports</button>
+ </nav>
  <div class="kpis" id="kpis"></div>
  <div class="bar"><div class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search name, phone, venue…" autocomplete="off" enterkeyhint="search"></div><select id="srt" class="srt" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="stale">Longest quiet</option><option value="event">Event date</option></select><div class="seg" id="vw"><button data-v="list" class="on">List</button><button data-v="board">Board</button></div></div>
  <div class="stat" id="stat"></div><div class="chips" id="chips"></div>
  <div class="ptr" id="ptr" aria-live="polite"><span class="ptricon">↻</span><span id="ptrText">Pull to refresh</span></div>
  <div class="body" id="body"></div>
+ <section class="workspace" id="workspaceView" hidden>
+  <div class="workspacehead" id="workspaceHead"></div>
+  <div class="workspacebody" id="workspaceBody"></div>
+ </section>
 </div>
 
 <div class="ov" id="ov"></div><aside class="dr" id="dr" aria-label="Enquiry details"></aside>
