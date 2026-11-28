@@ -80,6 +80,13 @@ Deno.serve(async (req) => {
       return J({ ok: true });
     case "fav":
       if (!visitorId || !file) return J({ error: "Missing visitor or file" }, 400);
+      if (email) {
+        const { data: byEmail } = await db.from("gallery_favorites").select("id").eq("gallery_slug", slug).eq("email", email).eq("list_name", list).eq("file", file).limit(1);
+        if (byEmail?.length) {
+          await db.from("gallery_favorites").update({ visitor_id: visitorId }).eq("id", byEmail[0].id);
+          return J({ ok: true });
+        }
+      }
       await db.from("gallery_favorites").upsert({ gallery_slug: slug, email, visitor_id: visitorId, file, list_name: list }, { onConflict: "gallery_slug,visitor_id,list_name,file" });
       return J({ ok: true });
     case "unfav":
