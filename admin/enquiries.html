@@ -130,7 +130,7 @@ const ago=t=>{const s=(Date.now()-new Date(t))/1000;if(s<60)return'just now';if(
 const fdt=t=>new Date(t).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
 const fday=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}):'';
 const phone=v=>{v=String(v||'').replace(/\D/g,'');return v.length==10?'91'+v:v};
-let rows=[],flt='all',view=(()=>{try{return localStorage.getItem('jp_enq_view')||'list'}catch(e){return'list'}})(),cur=null,first=true,maxSeen='',ownerName='',busy=false,tmr;
+let rows=[],flt='all',view=(()=>{try{return localStorage.getItem('jp_enq_view')||'list'}catch(e){return'list'}})(),cur=null,first=true,maxSeen=(()=>{try{return localStorage.getItem('jp_enq_last_seen')||''}catch(e){return''}})(),ownerName='',busy=false,tmr;
 const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('on'),2200)};
 const due=r=>!!r.follow_up_on&&!DONE.includes(r.status)&&r.follow_up_on<=today();
 const late=r=>!!r.follow_up_on&&!DONE.includes(r.status)&&r.follow_up_on<today();
@@ -180,8 +180,8 @@ $('#notifyBtn').onclick=async()=>{
 async function load(manual){if(busy)return;busy=true;
  try{const data=await ENQDB.rest('GET','?select=*&order=created_at.desc&limit=1000');
   const newest=data.length?data[0].created_at:'';
-  const incoming=!first&&maxSeen?data.filter(r=>r.created_at>maxSeen&&r.status==='new'):[];if(incoming.length){toast(incoming.length+(incoming.length===1?' new enquiry':' new enquiries'));notifyIncoming(incoming)}
-  maxSeen=newest||maxSeen;first=false;rows=data.map(norm);syncNewBadge();$('#upd').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});render();if(cur){const r=rows.find(x=>x.id===cur);if(r&&$('#dr').classList.contains('on')&&!document.activeElement.closest('#dr'))drawer(r)}
+  const incoming=maxSeen?data.filter(r=>r.created_at>maxSeen&&r.status==='new'):[];if(incoming.length){toast(incoming.length+(incoming.length===1?' new enquiry':' new enquiries'));notifyIncoming(incoming)}
+  maxSeen=newest||maxSeen;try{if(maxSeen)localStorage.setItem('jp_enq_last_seen',maxSeen)}catch(e){}first=false;rows=data.map(norm);syncNewBadge();$('#upd').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});render();if(cur){const r=rows.find(x=>x.id===cur);if(r&&$('#dr').classList.contains('on')&&!document.activeElement.closest('#dr'))drawer(r)}
   autoQuote();if(manual)toast('Up to date')}
  catch(e){if(e.auth){ENQDB.signOut();showLogin(e.message)}else toast(e.message||'Could not load')}
  busy=false}
