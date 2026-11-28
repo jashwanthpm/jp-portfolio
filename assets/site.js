@@ -85,7 +85,7 @@ function cgBar(c){
  const sets=(c.sets||[]).filter(x=>x.photos&&x.photos.length),multi=sets.length>1;let si=0;
  const listOf=()=>multi?sets[si].photos:(c.photos||[]);
  const q=id=>document.getElementById(id);
- const nextBox=()=>{const n=q('cgnext');if(!n)return;if(!multi||si>=sets.length-1){n.innerHTML='';return}
+ const nextBox=()=>{const n=q('cgnext');if(!n)return;if(!multi||si>=sets.length-1){n.innerHTML='';n.style.display='none';return}n.style.display='flex';
   n.innerHTML=`<button data-n="1"><small>Next collection</small><b>${hx(sets[si+1].name)}</b><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`};
  const draw=()=>{window.__set=multi?sets[si].name:'Whole gallery';const l=listOf();mason(g,l.length?l.map(src=>({src,client:c.name})):demo(9),c.lay);nextBox()};
  const setTab=i=>{si=i;document.querySelectorAll('#cgt button').forEach((x,k)=>x.classList.toggle('on',k===si));draw();const bar=q('cgbar');if(bar)bar.scrollIntoView({behavior:'smooth'})};
