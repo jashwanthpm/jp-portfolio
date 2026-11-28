@@ -162,7 +162,7 @@ const tlHtml=r=>{const items=r._log.slice().reverse().map(e=>{const v=EV[e.k]||E
  return `<div class="sec"><h4>Activity timeline</h4><div class="qk">${[['call','Spoke on call'],['call','No answer'],['reply','Client replied'],['whatsapp','Sent details']].map(([k,t])=>`<button class="chip" data-q="${k}|${t}">${t}</button>`).join('')}</div><div class="lg"><select id="lk" aria-label="Type">${['note','call','whatsapp','email','meeting','reply'].map(k=>`<option value="${k}">${EV[k][0]}</option>`).join('')}</select><button class="btn pri sm" id="la" style="min-height:40px">Add</button><input id="lt" placeholder="What happened? e.g. wants candid + album" enterkeyhint="send"></div><ul class="tl">${items}<li><i style="background:var(--l2)"></i><div><b>Enquiry received</b>${r.source?' via '+esc(r.source):''}<small>${esc(fdt(r.created_at))}</small></div></li></ul></div>`};
 /* ---------- auth ---------- */
 function showLogin(msg){$('#login').hidden=false;$('#app').hidden=true;$('#le').textContent=msg||'Open Studio Admin to continue with your existing GitHub access.';closeDr();setTop(false)}
-function setTop(on){['#upd','#rf','#add','.menu'].forEach(s=>{const e=$(s);if(e)e.style.display=on?'':'none'})}
+function setTop(on){['#upd','#rf','#add','#notifBtn','.menu'].forEach(s=>{const e=$(s);if(e)e.style.display=on?'':'none'})}
 $('#out').onclick=()=>{location.href='/admin/'};
 /* ---------- data ---------- */
 function syncNewBadge(){
