@@ -10,6 +10,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 a{color:inherit;text-decoration:none}
 [hidden]{display:none!important}
+.newbadge{display:inline-flex;align-items:center;justify-content:center;padding:4px 9px;border-radius:99px;background:rgba(201,164,106,.16);color:var(--a);font-size:11px;font-weight:600;white-space:nowrap}.newbadge[hidden]{display:none}
+@media(max-width:520px){#notifyBtn{font-size:11px;padding:0 8px;min-height:32px}.newbadge{font-size:10px;padding:3px 7px}}
 /* top bar */
 .top{display:flex;align-items:center;gap:12px;min-height:58px;padding:0 16px;padding-top:env(safe-area-inset-top,0px);border-bottom:1px solid var(--l);background:var(--p);flex:none}
 .brand{display:flex;align-items:center;gap:11px;min-width:0}.brand img{width:30px;height:30px;border-radius:8px;object-fit:cover}
@@ -93,6 +95,8 @@ select option{background:#1a1714}
 </style></head><body>
 <header class="top">
  <div class="brand"><img src="/images/favicon-1791284648615.png" alt=""><div><b>Enquiries</b><small>Track every lead to a booking</small></div></div>
+ <span id="newBadge" class="newbadge" hidden>0 new</span>
+ <button id="notifyBtn" class="btn sm ghost" type="button" title="Enable new enquiry notifications">Notifications</button>
  <div class="sp"></div>
  <span id="upd" class="hm" style="color:var(--m);font-size:12px"></span>
  <button class="btn ic ghost" id="rf" aria-label="Refresh" title="Refresh"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.6-5.9M20 4v5h-5"/></svg></button>
@@ -152,14 +156,32 @@ const tlHtml=r=>{const items=r._log.slice().reverse().map(e=>{const v=EV[e.k]||E
  return `<div class="sec"><h4>Activity timeline</h4><div class="qk">${[['call','Spoke on call'],['call','No answer'],['reply','Client replied'],['whatsapp','Sent details']].map(([k,t])=>`<button class="chip" data-q="${k}|${t}">${t}</button>`).join('')}</div><div class="lg"><select id="lk" aria-label="Type">${['note','call','whatsapp','email','meeting','reply'].map(k=>`<option value="${k}">${EV[k][0]}</option>`).join('')}</select><button class="btn pri sm" id="la" style="min-height:40px">Add</button><input id="lt" placeholder="What happened? e.g. wants candid + album" enterkeyhint="send"></div><ul class="tl">${items}<li><i style="background:var(--l2)"></i><div><b>Enquiry received</b>${r.source?' via '+esc(r.source):''}<small>${esc(fdt(r.created_at))}</small></div></li></ul></div>`};
 /* ---------- auth ---------- */
 function showLogin(msg){$('#login').hidden=false;$('#app').hidden=true;$('#le').textContent=msg||'Open Studio Admin to continue with your existing GitHub access.';closeDr();setTop(false)}
-function setTop(on){['#upd','#rf','#add','.menu'].forEach(s=>{const e=$(s);if(e)e.style.display=on?'':'none'})}
+function setTop(on){['#upd','#rf','#add','.menu','#notifyBtn'].forEach(s=>{const e=$(s);if(e)e.style.display=on?'':'none'})}
 $('#out').onclick=()=>{location.href='/admin/'};
 /* ---------- data ---------- */
+function syncNewBadge(){
+ const n=rows.filter(r=>r.status==='new').length,el=$('#newBadge');
+ if(el){el.hidden=!n;el.textContent=n+' new';el.setAttribute('aria-label',n+' new enquiries')}
+ document.title=(n?'('+n+') ':'')+'Enquiries';
+ try{if(n&&navigator.setAppBadge)navigator.setAppBadge(n);else if(!n&&navigator.clearAppBadge)navigator.clearAppBadge()}catch(e){}
+ const b=$('#notifyBtn');if(b){const enabled='Notification'in window&&Notification.permission==='granted';b.textContent=enabled?'Notifications on':'Enable notifications';b.title=enabled?'New enquiry desktop notifications are enabled':'Enable desktop notifications for new enquiries'}
+}
+function notifyIncoming(items){
+ if(!('Notification'in window)||Notification.permission!=='granted')return;
+ const n=items.length, names=items.slice(0,3).map(x=>x.name||'New client').join(', ');
+ try{const note=new Notification(n===1?'New enquiry received':'New enquiries received',{body:n===1?names:n+' new enquiries: '+names+(n>3?'…':''),icon:'/images/favicon-1791284648615.png',tag:'jp-enquiries-new'});note.onclick=()=>{window.focus();note.close()}}catch(e){}
+}
+$('#notifyBtn').onclick=async()=>{
+ if(!('Notification'in window)){toast('Desktop notifications are not supported in this browser');return}
+ if(Notification.permission==='granted'){toast('Desktop notifications are enabled');return}
+ if(Notification.permission==='denied'){toast('Notifications are blocked in browser settings');return}
+ const p=await Notification.requestPermission();syncNewBadge();toast(p==='granted'?'Notifications enabled':'Notification permission not enabled')
+};
 async function load(manual){if(busy)return;busy=true;
  try{const data=await ENQDB.rest('GET','?select=*&order=created_at.desc&limit=1000');
   const newest=data.length?data[0].created_at:'';
-  if(!first&&maxSeen){const n=data.filter(r=>r.created_at>maxSeen&&r.status==='new').length;if(n)toast(n+(n==1?' new enquiry':' new enquiries'))}
-  maxSeen=newest||maxSeen;first=false;rows=data.map(norm);$('#upd').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});render();if(cur){const r=rows.find(x=>x.id===cur);if(r&&$('#dr').classList.contains('on')&&!document.activeElement.closest('#dr'))drawer(r)}
+  const incoming=!first&&maxSeen?data.filter(r=>r.created_at>maxSeen&&r.status==='new'):[];if(incoming.length){toast(incoming.length+(incoming.length===1?' new enquiry':' new enquiries'));notifyIncoming(incoming)}
+  maxSeen=newest||maxSeen;first=false;rows=data.map(norm);syncNewBadge();$('#upd').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});render();if(cur){const r=rows.find(x=>x.id===cur);if(r&&$('#dr').classList.contains('on')&&!document.activeElement.closest('#dr'))drawer(r)}
   autoQuote();if(manual)toast('Up to date')}
  catch(e){if(e.auth){ENQDB.signOut();showLogin(e.message)}else toast(e.message||'Could not load')}
  busy=false}
@@ -173,7 +195,7 @@ function cardHtml(r){const s=SM[r.status]||SM.new,bits=[r.occasion,r.event_date&
  return `<div class="card" role="button" tabindex="0" data-id="${esc(r.id)}" draggable="true"><div class="r1"><div class="nm"><span class="av" style="color:${s[2]}">${esc((r.name||'?').trim().charAt(0).toUpperCase())}</span><span style="overflow:hidden;text-overflow:ellipsis">${esc(r.name)}</span></div><span class="sb"><i style="background:${s[2]}"></i>${s[1]}</span></div>
  ${bits?`<div class="ln"><b>${bits}</b></div>`:''}${r.budget?`<div class="ln">Budget ${esc(r.budget)}</div>`:''}
  <div class="ln la">${lastLine(r)}</div><div class="ft"><span>${ago(r.created_at)}</span>${tags2(r)}${r.source?`<span class="tag">${esc(r.source)}</span>`:''}${late(r)?`<span class="tag late">Follow-up overdue</span>`:due(r)?`<span class="tag due">Follow up today</span>`:r.follow_up_on&&!DONE.includes(r.status)?`<span class="tag">Follow up ${esc(fday(r.follow_up_on))}</span>`:''}${r.quote_amount?`<span class="tag amt">${esc(r.quote_ref||'Quote')} · ${inr(r.quote_amount)}</span>`:''}</div></div>`}
-function render(){if($('#app').hidden)return;const c=counts();
+function render(){if($('#app').hidden)return;syncNewBadge();const c=counts();
  const K=[['new','New'],['contacted','Contacted'],['quoted','Quotation sent'],['attn','Needs attention'],['booked','Booked']];
  $('#kpis').innerHTML=K.map(([k,t])=>{const col=(k==='due'||k==='attn')?'#e5a24a':SM[k][2];return `<button class="k${flt===k?' on':''}" data-f="${k}"><small><i style="background:${col}"></i>${t}</small><b>${c[k]||0}</b></button>`}).join('');
  $('#chips').innerHTML=[['all','All'],['attn','Needs attention']].concat(ST.map(s=>[s[0],s[1]])).concat([['soon','Upcoming shoots']]).map(([k,t])=>`<button class="chip${flt===k?' on':''}" data-f="${k}">${t}<em>${c[k]||0}</em></button>`).join('');
