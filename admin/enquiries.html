@@ -102,7 +102,7 @@ select option{background:#1a1714}
  <button class="btn ic ghost" id="rf" aria-label="Refresh" title="Refresh"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.6-5.9M20 4v5h-5"/></svg></button>
  <button class="btn pri" id="add"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="hm">Add enquiry</span></button>
  <div class="menu"><button class="btn ic" id="mn" aria-label="More"><svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>
-  <div class="pop" id="pop" hidden><a href="quote.html"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/></svg>Quotation studio</a><a href="./"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8"/></svg>Site editor</a><button id="csv"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Export to CSV</button><button id="out"><svg class="i" viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h9"/></svg>Studio Admin</button></div></div>
+  <div class="pop" id="pop" hidden><a href="quote.html"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/></svg>Quotation studio</a><a href="./"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8"/></svg>Site editor</a><button id="notifyMenu" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>Enable notifications</button><button id="csv"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Export to CSV</button><button id="out"><svg class="i" viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h9"/></svg>Studio Admin</button></div></div>
 </header>
 
 <main class="login" id="login" hidden><div class="lc"><img src="/images/favicon-1791284648615.png" alt=""><h1>Enquiries</h1><p>Sign in once through Studio Admin. This page automatically uses that same browser session.</p><div class="err" id="le" role="alert">Your Studio Admin session isn't available in this browser yet.</div><a class="btn pri" href="/admin/" style="width:100%;margin-top:12px;min-height:46px">Open Studio Admin</a></div></main>
@@ -221,6 +221,16 @@ document.addEventListener('click',e=>{const k=e.target.closest('[data-f]');if(k&
  const c=e.target.closest('.card[data-id]');if(c&&!e.target.closest('#dr')){openDr(c.dataset.id);return}
  if(!e.target.closest('.menu'))$('#pop').hidden=true});
 $('#mn').onclick=()=>{$('#pop').hidden=!$('#pop').hidden};
+$('#notifyMenu').onclick=async()=>{
+ $('#pop').hidden=true;
+ if(!('Notification'in window)){toast('Desktop notifications are not supported here');return}
+ if(Notification.permission==='granted'){toast('Notifications are already enabled');return}
+ if(Notification.permission==='denied'){toast('Allow notifications in your browser’s site settings, then reload');return}
+ const p=await Notification.requestPermission();
+ syncNewBadge();
+ if(p==='granted'){toast('Notifications enabled');$('#notifyModal').hidden=true}
+ else toast('Notifications were not enabled')
+};
 $('#rf').onclick=()=>load(true);$('#q').oninput=()=>render();$('#srt').onchange=render;
 $('#vw').onclick=e=>{const b=e.target.closest('button');if(!b)return;view=b.dataset.v;try{localStorage.setItem('jp_enq_view',view)}catch(x){}render()};
 addEventListener('resize',()=>{clearTimeout(tmr);tmr=setTimeout(render,150)});
